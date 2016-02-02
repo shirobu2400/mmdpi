@@ -14,18 +14,15 @@ shirobu(または wq2400kskm)と申します。<br>
 
 <ul>
   <li>
-  COPYING     :   このコードのライセンス
+  COPYING     :   このソースコードのライセンス
   </li><li>
   libmmdpi    :   ライブラリフォルダ( mmdpi の処理 )  .cpp, .h があります。
   <ul>
-    <li>
-    define*   :   プログラム設定
-    </li><li>
     lpng      :   libpng
     </li>
   </ul>
   </li><li>
-  mmdpi       :   ビューアフォルダ                    .cpp, .h があります。
+  mmdpiv       :   ビューアフォルダ                    .cpp, .h があります。
   </li>
 </ul>
 
