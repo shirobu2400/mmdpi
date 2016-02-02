@@ -33,8 +33,8 @@ shirobu(または wq2400kskm)と申します。<br>
   make
 </p>
 cmake を -Dpi=on オプションで実行してください。<br>
-make で ./mmdpi に実行ファイル mmdpi ができます。<br>
-実行ファイル mmdpi は　ビューアプログラムです。<br>
+make で ./mmdpiv に実行ファイル mmdpiv ができます。<br>
+実行ファイル mmdpiv は　ビューアプログラムです。<br>
 
 
 # その他、注意事項など
