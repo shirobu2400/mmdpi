@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
-project(mmdpi CXX)
+project(mmdpi C CXX)
 
 #	リリースオプション
 set(CMAKE_CXX_FLAG_RELEASE "-Wall -Os")
@@ -18,18 +18,30 @@ set(SERIAL "1.00.00")
 
 #	Source
 set(libmmdpi_src
-	bitmap.cpp        pmx_draw.h        pmd_draw.h       pmx_ik.cpp
-	bitmap.h          mmdpi_include.h   pmd_ik.cpp       pmx_ik.h
-	get_bin.cpp       mmdpi_model.cpp   pmd_ik.h         pmx_load.cpp
-	get_bin.h         mmdpi_model.h     pmd_load.cpp     pmx_load.h
-	mmdpi.cpp         mmdpi_shader.cpp  pmd_load.h       pmx_struct.h
-	mmdpi.h           mmdpi_shader.h    pmd_struct.h     png.cpp
-	mmdpi_adjust.cpp  mmdpi_struct.h    pmx.cpp          tga_image.cpp
-	mmdpi_adjust.h    pmd.cpp           pmx.h            tga_image.h
-	mmdpi_bone.cpp    pmd.h             pmx_analyze.cpp  utf8tosjis.h
-	mmdpi_bone.h      pmd_analyze.cpp   pmx_analyze.h    vmd.cpp
-	pmd_analyze.h     pmx_draw.cpp     	vmd.h            pmd_draw.cpp
-
+	mmdpi.cpp         
+	model/tools/cpp/get_bin.cpp       
+	model/tools/cpp/bitmap.cpp        
+	model/tools/cpp/png.cpp
+	model/tools/cpp/tga_image.cpp
+	
+	model/cpp/mmdpi_model.cpp   
+	model/cpp/mmdpi_shader.cpp  
+	model/cpp/mmdpi_adjust.cpp  
+	model/cpp/mmdpi_bone.cpp    
+	
+	pmx/cpp/pmx_ik.cpp
+	pmx/cpp/pmx_load.cpp
+	pmx/cpp/pmx_analyze.cpp  
+	pmx/cpp/pmx_draw.cpp
+	pmx/cpp/pmx.cpp          
+	
+	pmd/cpp/pmd_ik.cpp       
+	pmd/cpp/pmd_load.cpp
+	pmd/cpp/pmd_analyze.cpp   
+	pmd/cpp/pmd_draw.cpp
+	pmd/cpp/pmd.cpp           
+	
+	vmd/vmd.cpp
 )
 
 #	Include Directory
@@ -38,14 +50,6 @@ set(libmmdpi_inc
 	./GL 
 	./$(LIBPNG)
 )
-
-if(WIN32)
-	set(libmmdpi_inc ${libmmdpi_inc} define)
-else(pi)
-	set(libmmdpi_inc ${libmmdpi_inc} define_es)
-else()
-	set(libmmdpi_inc ${libmmdpi_inc} define_unix)
-endif()
 
 #	Raspberry Pi
 set(libmmdpi_inc_raspi
@@ -60,14 +64,28 @@ set(libmmdpi_bullet_src
 	mmdpi_bullet.h 
 )
 
+#	OpenGL ES
+if( ES OR pi )
+	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
+	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
+endif()
+
 #	Bullet
-#set(${libmmdpi_src} ${libmmdpi_src} ${libmmdpi_bullet_src})
+if( bullet )
+	set(${libmmdpi_src} ${libmmdpi_src} ${libmmdpi_bullet_src})
+	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
+endif()
+
+#	Outline
+#	It needs a lot of VRAM.
+if( outline )
+	add_definitions( -D_MMDPI_OUTLINE_ )
+endif()
 
 #	Include
 set(libmmdpi_bullet_inc
 	-I./bullet/
 )
-
 
 #	静的ライブラリとしてビルド
 add_library(mmdpi STATIC ${libmmdpi_src})
