@@ -74,10 +74,6 @@ set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 	${PNG_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIRS}
 )
-set( PNG_LIBRARIES ${PNG_LIBRARIES} ${PNG_LIBRARY} )
-set( ZLIB_LIBRARIES ${ZLIB_LIBRARIES} ${ZLIB_LIBRARY})
-set( m_LIBRARIES ${m_LIBRARIES} ${m_LIBRARY} )
-set( rt_LIBRARIES ${rt_LIBRARIES} ${rt_LIBRARY})
 
 #	Opengl Mode
 
