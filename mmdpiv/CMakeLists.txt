@@ -53,6 +53,7 @@ endif()
 
 find_package( glut )
 find_package( freeglut )
+find_package( freeGLUT )
 
 #find_package( GLESv2 )
 #find_package( EGL )
@@ -106,6 +107,7 @@ set(mmdpi_inc_path
 set( mmdpi_lib
 	${mmdpi_lib}
 	
+	${GLUT_LIBRARIES}
 	${glut_LIBRARIES}
 	${freeglut_LIBRARIES}
 )
