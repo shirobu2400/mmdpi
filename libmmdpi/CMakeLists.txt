@@ -1,4 +1,4 @@
-#	cmake 必要バージョン
+﻿#	cmake 必要バージョン
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
@@ -63,10 +63,10 @@ set(libmmdpi_bullet_src
 )
 
 find_package( PNG REQUIRED )
-find_package( GL )
+find_package( GLUT )
 
 #	OpenGL
-if( NOT GL_FOUND )
+if( NOT GLUT_FOUND )
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 endif()
