@@ -19,14 +19,14 @@
 //-----------------------------------------------------------------------------------------------------
 int MMDPI_BMP::ReadBMP( const char *filename )
 {
-    FILE *fp;
+    FILE*				fp;
 
-    BITMAPINFOHEADER bitmapInfoHeader;
-    BITMAPFILEHEADER header;
-    GLubyte temp = 0;
+    BITMAPINFOHEADER	bitmapInfoHeader;
+    BITMAPFILEHEADER	header;
+    GLubyte				temp = 0;
 
     //　ファイルを開く
-    if ( (fp = fopen(filename, "rb")) == NULL )
+    if ( ( fp = fopen( filename, "rb" ) ) == NULL )
     {
         cout << "Error : Connot open.\n";
         cout << "File Name : " << filename << endl;
@@ -34,7 +34,11 @@ int MMDPI_BMP::ReadBMP( const char *filename )
     }
 
     //　ヘッダー情報の読み取り
-    fread( &header, sizeof( BITMAPFILEHEADER ), 1, fp );
+	if( fread( &header, sizeof( BITMAPFILEHEADER ), 1, fp ) == 0 )
+	{
+		fclose( fp );
+		return -1;
+	}
 
     //　ファイルチェック
     if( header.bfType != 0x4d42 )
@@ -45,7 +49,11 @@ int MMDPI_BMP::ReadBMP( const char *filename )
     }
 
     //　ヘッダー情報の読み取り
-    fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, fp);
+	if( fread( &bitmapInfoHeader, sizeof( BITMAPINFOHEADER ), 1, fp ) == 0 )
+	{
+		fclose( fp );
+		return -1;
+	}
 
     //　幅と高さを取得
     width = bitmapInfoHeader.biWidth;
@@ -63,28 +71,34 @@ int MMDPI_BMP::ReadBMP( const char *filename )
     bits = new GLubyte[ bit_size + 1 ];
 
     //　エラーチェック
-    if( !bits )
+    if( bits == 0x00 )
     {
         cout << "Error : Allocation error!\n";
         delete[] bits;
         fclose( fp );
+
         return -1;
     }
 
     //　ピクセルデータの読み込み
-    fread( bits, 1, bitmapInfoHeader.biSizeImage, fp );
+    if( fread( bits, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
+	{
+		fclose( fp );
+		return -1;
+	}
 
     //　BGR　→　RGBに変換
-    for ( int i=0; i<(int)bit_size; i+=3 )
+    for( uint i = 0; i < bit_size; i += 3 )
     {
-        temp = bits[i+0];
-        bits[i+0] = bits[i+2];
-        bits[i+2] = temp;
+        temp = bits[ i + 0 ];
+        bits[ i + 0 ] = bits[ i + 2 ];
+        bits[ i + 2 ] = temp;
     }
 
     //　ファイルを閉じる
-    fclose(fp);
+    fclose( fp );
 
+	//	成功
     return 0;
 }
 

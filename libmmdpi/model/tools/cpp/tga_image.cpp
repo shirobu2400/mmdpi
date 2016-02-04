@@ -22,7 +22,11 @@ int MMDPI_TGA::ReadTGA( const char *filename )
     }
 
     //　ヘッダー情報の読み込み
-    fread( header, 1, sizeof( header ), fp );
+    if( fread( header, 1, sizeof( header ), fp ) == 0 )
+	{
+		fclose( fp );
+		return -1;
+	}
     
     //　幅と高さを決める
     width = header[ 13 ] * 256 + header[ 12 ];
@@ -54,10 +58,14 @@ int MMDPI_TGA::ReadTGA( const char *filename )
     imageData = new GLubyte[ imageSize ];
 
     //　テクセルデータを一気に読み取り
-    fread( imageData, 1, imageSize, fp );
+    if( fread( imageData, 1, imageSize, fp ) == 0 )
+	{
+		fclose( fp );
+		return -1;
+	}
 
     //　BGR(A)をRGB(A)にコンバート
-    for( int i = 0; i < ( int )imageSize; i += bytePerPixel )
+    for( uint i = 0; i < imageSize; i += bytePerPixel )
     {
         temp = imageData[ i ];
         imageData[ i ] = imageData[ i + 2 ];

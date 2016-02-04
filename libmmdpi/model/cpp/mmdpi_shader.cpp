@@ -291,7 +291,7 @@ void mmdpiShader::set_buffer( int buffer_id )
 	glBindBuffer( GL_ARRAY_BUFFER, buffers[ buffer_id ]->get_vertex() );
 	
 	glVertexAttribPointer( vertex_id, 3, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( size_t )vertex_start ) );
 
 	glVertexAttribPointer( uv_id, 4, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) ) );

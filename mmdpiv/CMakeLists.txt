@@ -1,4 +1,4 @@
-#	cmake 必要バージョン
+﻿#	cmake 必要バージョン
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
@@ -112,6 +112,8 @@ set( mmdpi_lib
 	${GLEW_LIBRARIES}
 	${GLU_LIBRARIES}
 	${GLUT_LIBRARIES}
+	${glut_LIBRARIES}
+	${freeglut_LIBRARIES}
 )
 
 #	静的ライブラリとしてビルド

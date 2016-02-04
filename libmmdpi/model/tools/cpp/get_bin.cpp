@@ -57,9 +57,14 @@ int	GetBin::load( const char *file_name )
 	buf_base = buf = new unsigned char[ ( unsigned int )buf_len + 2 ];
 	if( buf == NULL )
 		return -1;
-	fread( buf, sizeof( unsigned char ), ( unsigned int )buf_len, fp );
+	
+	size_t	get_size;
+	get_size = fread( buf, sizeof( unsigned char ), ( unsigned int )buf_len, fp );
 
 	fclose( fp );
+
+	if( get_size != buf_len )
+		return -1;
 	return 0;
 }
 
