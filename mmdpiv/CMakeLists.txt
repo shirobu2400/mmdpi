@@ -27,29 +27,23 @@ endif()
 #	Include Directory
 set(mmdpi_inc_path
 	/usr/local/include/
-	./GL 
-	../libmmdpi/lpng
+	/usr/include/
 	../libmmdpi
 )
 
 set(mmdpi_lib_path
 	/usr/local/lib
-	../libmmdpi/lpng
+	/usr/lib
 	../libmmdpi
 )
 
-#	OpenGL ES
-if( ES OR pi )
-	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
-	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
-endif()
-
 #	Bullet
-if( bullet )
-	set(${libmmdpi_src} ${libmmdpi_src} ${libmmdpi_bullet_src})
+find_package( Bullet )
+if( bullet AND Bullet_FOUND )
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
+	include_directories( Bullet_INCLUDE_DIRS )
+	set( mmdpi_lib ${mmdpi_lib} ${Bullet_LIBRARIES} )
 endif()
-
 #	Outline
 #	It needs a lot of VRAM.
 if( outline )
@@ -57,58 +51,69 @@ if( outline )
 endif()
 
 
-if( pi )
-	#	Raspberry Pi
-	set(mmdpi_inc_path
-		${mmdpi_inc_path}
-		/opt/vc/include/interface/vmcs_host/linux 
-		/opt/vc/include 
-		/opt/vc/include/interface/vcos/pthreads
-	)
+find_package( GL )
+find_package( OpenGL )
+find_package( GLEW )
+find_package( GLU )
+find_package( GLUT )
 
-	set(mmdpi_lib_path
-		${mmdpi_lib_path}
-		/opt/vc/lib
-	)
-	
-	#find_package(GLESv2)
-	#find_package(EGL)
-	#find_package(bcm_host)
-	#find_package(rt)
-	set(mmdpi_lib
-		GLESv2
-		EGL
-		bcm_host
-		rt
-		#${GLESv2_LIBRARY}
-		#${EGL_LIBRARY}
-		#${bcm_host_LIBRARY}
-		#${rt_LIBRARY}
-	)
+#find_package( GLESv2 )
+#find_package( EGL )
+#find_package( bcm_host )	#	Raspberry pi graphics driver
 
-else()
-	#	
-	find_package(GL)
-	find_package(OpenGL)
-	find_package(GLEW)
-	find_package(GLU)
-	find_package(GLUT)
-
-	set(mmdpi_lib
-		${GL_LIBRARY}
-		${OpenGL_LIBRARY}
-		${GLEW_LIBRARY}
-		${GLU_LIBRARY}
-		${GLUT_LIBRARY}
+find_package( PNG REQUIRED )
+find_package( ZLIB REQUIRED )
+#find_package( rt )
+#find_package( m )
+if( NOT WIN32 )
+	set(mmdpi_lib ${mmdpi_lib}
+		rt m
 	)
+endif()
+set(mmdpi_inc_path ${mmdpi_inc_path}
+	${PNG_INCLUDE_DIRS}
+	${ZLIB_INCLUDE_DIRS}
+)
+#	Opengl Mode
 
+#	OpenGL ES
+if( NOT GL_FOUND )
+	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
+	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
+	if( pi )
+		set( mmdpi_lib_path ${mmdpi_lib_path} /opt/vc/lib )
+	endif()
+	set( RASPGL_LIBRARIES GLESv2 EGL )
+	if( pi )
+		set( RASPGL_LIBRARIES ${RASPGL_LIBRARIES} bcm_host )
+	endif()
 endif()
 
-find_package(m)
+#	Raspberry Pi
+set(mmdpi_inc_path
+	${mmdpi_inc_path}
+	/opt/vc/include/interface/vmcs_host/linux 
+	/opt/vc/include 
+	/opt/vc/include/interface/vcos/pthreads
+)
+
+set(mmdpi_lib
+	${mmdpi_lib}
+	
+	${GL_LIBRARIES}
+	${OpenGL_LIBRARIES}
+	${GLEW_LIBRARIES}
+	${GLU_LIBRARIES}
+	${GLUT_LIBRARIES}
+)
 
 #	静的ライブラリとしてビルド
-link_directories(${mmdpi_lib_path})
+link_directories( ${mmdpi_lib_path} )
 include_directories( ${mmdpi_inc_path} )
-add_executable(mmdpiv ${mmdpi_src})
-target_link_libraries(mmdpiv mmdpi png z ${m_LIBRARY} ${mmdpi_lib})
-
+add_executable( mmdpiv ${mmdpi_src} )
+target_link_libraries( mmdpiv 
+	mmdpi 
+	${m_LIBRARIES} ${rt_LIBRARIES} 
+	${PNG_LIBRARIES} ${ZLIB_LIBRARIES} 
+	${mmdpi_lib} ${RASPGL_LIBRARIES}
+)

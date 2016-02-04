@@ -47,8 +47,6 @@ set(libmmdpi_src
 #	Include Directory
 set(libmmdpi_inc
 	/usr/local/include/
-	./GL 
-	./$(LIBPNG)
 )
 
 #	Raspberry Pi
@@ -64,16 +62,22 @@ set(libmmdpi_bullet_src
 	mmdpi_bullet.h 
 )
 
-#	OpenGL ES
-if( ES OR pi )
+find_package( PNG REQUIRED )
+include_directories( ${PNG_L_INCLUDE_DIRS} )
+find_package( GL )
+
+#	OpenGL
+if( NOT GL_FOUND )
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 endif()
 
 #	Bullet
-if( bullet )
+find_package( Bullet )
+if( bullet AND Bullet_FOUND )
 	set(${libmmdpi_src} ${libmmdpi_src} ${libmmdpi_bullet_src})
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
+	include_directories( Bullet_INCLUDE_DIRS )
 endif()
 
 #	Outline
@@ -82,13 +86,8 @@ if( outline )
 	add_definitions( -D_MMDPI_OUTLINE_ )
 endif()
 
-#	Include
-set(libmmdpi_bullet_inc
-	-I./bullet/
-)
-
 #	静的ライブラリとしてビルド
 add_library(mmdpi STATIC ${libmmdpi_src})
 include_directories( ${libmmdpi_inc} )
 include_directories( ${libmmdpi_inc_raspi} )
-include_directories( ${libmmdpi_bullet_inc} )
+

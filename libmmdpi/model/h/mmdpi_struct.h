@@ -4,7 +4,7 @@
 #include "../tools/h/bitmap.h"
 #include "../tools/h/tga_image.h"
 
-#include "lpng/png.h"
+#include "png.h"
 
 
 #pragma once
