@@ -51,12 +51,6 @@ if( outline )
 endif()
 
 
-find_package( GL )
-find_package( OpenGL )
-find_package( GLEW )
-find_package( GLU )
-find_package( glu )
-find_package( GLUT )
 find_package( glut )
 find_package( freeglut )
 
@@ -82,7 +76,7 @@ set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 
 #	OpenGL ES
 if( GLUT_FOUND OR glut_FOUND OR freeglut_FOUND )
-	set( mmdpi_lib ${mmdpi_lib} GL GLU )
+	set( mmdpi_lib ${mmdpi_lib} GL GLU GLEW )
 	
 else()
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
