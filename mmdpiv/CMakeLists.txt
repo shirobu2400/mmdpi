@@ -90,6 +90,8 @@ if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
 	if( pi )
 		set( RASPGL_LIBRARIES ${RASPGL_LIBRARIES} bcm_host )
 	endif()
+else()
+	set( mmdpi_lib ${mmdpi_lib} GL )
 endif()
 
 if( x64 )
