@@ -95,7 +95,7 @@ endif()
 if( x64 )
 	add_definitions( -D_MMDPI_AMD64BIT_ )
 else()
-	set( CMAKE_CXX_FLAG -m32 )
+	set( CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} -m32 )
 endif()
 
 #	Raspberry Pi
