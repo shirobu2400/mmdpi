@@ -8,6 +8,7 @@ shirobu(または wq2400kskm)と申します。<br>
 バグがたくさんありますのでライブラリとして使用するには頼りないですが、<br>
 このプログラム、ライブラリでコンピュータグラフィックスに触れられる人が増えたら私は嬉しいです。<br>
 なお、本プログラムはpngファイル読み込みにlibpngをしようさせていただいてます。<br>
+libpng がない場合には zlib, libpng をインストールしてください。<br>
 
 
 # ディレクトリの構成
@@ -17,9 +18,6 @@ shirobu(または wq2400kskm)と申します。<br>
   COPYING     :   このソースコードのライセンス
   </li><li>
   libmmdpi    :   ライブラリフォルダ( mmdpi の処理 )  .cpp, .h があります。
-  <ul>
-    lpng      :   libpng
-    </li>
   </ul>
   </li><li>
   mmdpiv       :   ビューアフォルダ                    .cpp, .h があります。
@@ -27,12 +25,20 @@ shirobu(または wq2400kskm)と申します。<br>
 </ul>
 
 
-# コンパイル方法
+# コンパイル方法(Raspbian)
 <p style="padding-left:2em">
   cmake -Dpi=on <br>
-  make
+  make  <br>
 </p>
 cmake を -Dpi=on オプションで実行してください。<br>
+
+# コンパイル方法(Other OS)
+<p style="padding-left:2em">
+  cmake .　<br>
+  make  <br>
+</p>
+bullet オプションで Bullet Physics インストール済みの場合に物理演算が可能です。<br>
+
 make で ./mmdpiv に実行ファイル mmdpiv ができます。<br>
 実行ファイル mmdpiv は　ビューアプログラムです。<br>
 
