@@ -51,9 +51,9 @@ if( outline )
 endif()
 
 
+find_package( GLUT )
 find_package( glut )
 find_package( freeglut )
-find_package( freeGLUT )
 
 #find_package( GLESv2 )
 #find_package( EGL )
