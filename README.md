@@ -71,4 +71,4 @@ make で ./mmdpiv に実行ファイル mmdpiv ができます。<br>
 # 質問などがありましたら気軽にご連絡ください。
   
   Twitter : @2400kskm
-  
+  ニコニコ: shirobu
