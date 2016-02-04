@@ -55,6 +55,7 @@ find_package( GL )
 find_package( OpenGL )
 find_package( GLEW )
 find_package( GLU )
+find_package( glu )
 find_package( GLUT )
 find_package( glut )
 find_package( freeglut )
@@ -113,6 +114,7 @@ set( mmdpi_lib
 	${OpenGL_LIBRARIES}
 	${GLEW_LIBRARIES}
 	${GLU_LIBRARIES}
+	${glu_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${glut_LIBRARIES}
 	${freeglut_LIBRARIES}
