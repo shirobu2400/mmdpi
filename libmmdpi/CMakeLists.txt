@@ -93,8 +93,8 @@ else()
 	set( CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} -m32 )
 endif()
 
-#	Stack memory setting
-set( CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} Wl,--stack,20971520 )
+##	Stack memory setting
+#set( CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} Wl,--stack,20971520 )
 
 #	静的ライブラリとしてビルド
 add_library(mmdpi STATIC ${libmmdpi_src})
