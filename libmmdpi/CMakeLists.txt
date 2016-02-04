@@ -64,9 +64,11 @@ set(libmmdpi_bullet_src
 
 find_package( PNG REQUIRED )
 find_package( GLUT )
+find_package( glut )
+find_package( freeglut )
 
 #	OpenGL
-if( NOT GLUT_FOUND )
+if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 endif()

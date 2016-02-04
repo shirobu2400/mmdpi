@@ -56,6 +56,8 @@ find_package( OpenGL )
 find_package( GLEW )
 find_package( GLU )
 find_package( GLUT )
+find_package( glut )
+find_package( freeglut )
 
 #find_package( GLESv2 )
 #find_package( EGL )
@@ -65,7 +67,7 @@ find_package( PNG REQUIRED )
 find_package( ZLIB REQUIRED )
 
 if( NOT WIN32 )
-	set(mmdpi_lib ${mmdpi_lib}
+	set( mmdpi_lib ${mmdpi_lib}
 		rt m
 	)
 endif()
@@ -78,7 +80,7 @@ set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 #	Opengl Mode
 
 #	OpenGL ES
-if( NOT GLUT_FOUND )
+if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 	if( pi )
@@ -102,7 +104,7 @@ set(mmdpi_inc_path
 	/opt/vc/include/interface/vcos/pthreads
 )
 
-set(mmdpi_lib
+set( mmdpi_lib
 	${mmdpi_lib}
 	
 	${GL_LIBRARIES}
