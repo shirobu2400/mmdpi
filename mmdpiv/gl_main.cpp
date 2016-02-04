@@ -263,7 +263,7 @@ void init( void )
 	
 	//	Sound
 	if( Argc > 4 )
-		system( Argv[ 4 ] );
+		system( ( const char* )Argv[ 4 ] );
 	
 	if( Argc > 2 )
 	{
