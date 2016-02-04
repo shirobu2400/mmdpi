@@ -63,17 +63,22 @@ find_package( GLUT )
 
 find_package( PNG REQUIRED )
 find_package( ZLIB REQUIRED )
-#find_package( rt )
-#find_package( m )
+
 if( NOT WIN32 )
 	set(mmdpi_lib ${mmdpi_lib}
 		rt m
 	)
 endif()
-set(mmdpi_inc_path ${mmdpi_inc_path}
+
+set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 	${PNG_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIRS}
 )
+set( PNG_LIBRARIES ${PNG_LIBRARIES} ${PNG_LIBRARY} )
+set( ZLIB_LIBRARIES ${ZLIB_LIBRARIES} ${ZLIB_LIBRARY})
+set( m_LIBRARIES ${m_LIBRARIES} ${m_LIBRARY} )
+set( rt_LIBRARIES ${rt_LIBRARIES} ${rt_LIBRARY})
+
 #	Opengl Mode
 
 #	OpenGL ES

@@ -63,7 +63,6 @@ set(libmmdpi_bullet_src
 )
 
 find_package( PNG REQUIRED )
-include_directories( ${PNG_L_INCLUDE_DIRS} )
 find_package( GL )
 
 #	OpenGL
