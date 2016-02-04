@@ -87,7 +87,7 @@ endif()
 
 if( x64 )
 	add_definitions( -D_MMDPI_AMD64BIT_ )
-endif
+endif()
 
 #	静的ライブラリとしてビルド
 add_library(mmdpi STATIC ${libmmdpi_src})

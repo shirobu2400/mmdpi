@@ -92,7 +92,7 @@ endif()
 
 if( x64 )
 	add_definitions( -D_MMDPI_AMD64BIT_ )
-endif
+endif()
 
 #	Raspberry Pi
 set(mmdpi_inc_path
