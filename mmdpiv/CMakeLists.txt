@@ -81,7 +81,10 @@ set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 #	Opengl Mode
 
 #	OpenGL ES
-if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
+if( GLUT_FOUND OR glut_FOUND OR freeglut_FOUND )
+	set( mmdpi_lib ${mmdpi_lib} GL GLU )
+	
+else()
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 	if( pi )
@@ -91,8 +94,7 @@ if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
 	if( pi )
 		set( RASPGL_LIBRARIES ${RASPGL_LIBRARIES} bcm_host )
 	endif()
-else()
-	set( mmdpi_lib ${mmdpi_lib} GL )
+
 endif()
 
 if( x64 )
@@ -110,12 +112,6 @@ set(mmdpi_inc_path
 set( mmdpi_lib
 	${mmdpi_lib}
 	
-	${GL_LIBRARIES}
-	${OpenGL_LIBRARIES}
-	${GLEW_LIBRARIES}
-	${GLU_LIBRARIES}
-	${glu_LIBRARIES}
-	${GLUT_LIBRARIES}
 	${glut_LIBRARIES}
 	${freeglut_LIBRARIES}
 )
