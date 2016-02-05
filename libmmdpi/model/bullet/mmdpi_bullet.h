@@ -1,6 +1,6 @@
 ﻿
-#include "../h/mmdpi_include.h"
-#include "../h/mmdpi_struct.h"
+#include "../mmdpi_include.h"
+#include "../mmdpi_struct.h"
 
 #pragma once
 

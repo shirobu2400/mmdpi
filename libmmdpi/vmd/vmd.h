@@ -1,9 +1,9 @@
 ﻿
-#include "../model/h/mmdpi_include.h"
-#include "../model/h/mmdpi_bone.h"
-#include "../model/tools/h/get_bin.h"
-#include "../pmx/h/pmx_struct.h"
-#include "../pmd/h/pmd_struct.h"
+#include "model/mmdpi_include.h"
+#include "model/mmdpi_bone.h"
+#include "model/tools/get_bin.h"
+#include "pmx/pmx_struct.h"
+#include "pmd/pmd_struct.h"
 
 #pragma once
 #pragma pack( push, 1 )		//	アライメント
@@ -146,11 +146,11 @@ protected :
 	
 public :
 	
-	int					operator++( void )
+	int	operator++( void )
 	{ 
 		return this->advance_time();
 	}
-	int					operator+=( float frame )
+	int	operator+=( float frame )
 	{ 
 		if( frame < 1e-4f )
 			return 0;

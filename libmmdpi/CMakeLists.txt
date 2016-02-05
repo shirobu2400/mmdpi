@@ -19,27 +19,27 @@ set(SERIAL "1.00.00")
 #	Source
 set(libmmdpi_src
 	mmdpi.cpp         
-	model/tools/cpp/get_bin.cpp       
-	model/tools/cpp/bitmap.cpp        
-	model/tools/cpp/png.cpp
-	model/tools/cpp/tga_image.cpp
+	model/tools/get_bin.cpp       
+	model/tools/bitmap.cpp        
+	model/tools/png.cpp
+	model/tools/tga_image.cpp
 	
-	model/cpp/mmdpi_model.cpp   
-	model/cpp/mmdpi_shader.cpp  
-	model/cpp/mmdpi_adjust.cpp  
-	model/cpp/mmdpi_bone.cpp    
+	model/mmdpi_model.cpp   
+	model/mmdpi_shader.cpp  
+	model/mmdpi_adjust.cpp  
+	model/mmdpi_bone.cpp    
 	
-	pmx/cpp/pmx_ik.cpp
-	pmx/cpp/pmx_load.cpp
-	pmx/cpp/pmx_analyze.cpp  
-	pmx/cpp/pmx_draw.cpp
-	pmx/cpp/pmx.cpp          
+	pmx/pmx_ik.cpp
+	pmx/pmx_load.cpp
+	pmx/pmx_analyze.cpp  
+	pmx/pmx_draw.cpp
+	pmx/pmx.cpp          
 	
-	pmd/cpp/pmd_ik.cpp       
-	pmd/cpp/pmd_load.cpp
-	pmd/cpp/pmd_analyze.cpp   
-	pmd/cpp/pmd_draw.cpp
-	pmd/cpp/pmd.cpp           
+	pmd/pmd_ik.cpp       
+	pmd/pmd_load.cpp
+	pmd/pmd_analyze.cpp   
+	pmd/pmd_draw.cpp
+	pmd/pmd.cpp           
 	
 	vmd/vmd.cpp
 )
