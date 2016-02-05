@@ -1,9 +1,9 @@
 ﻿
-#include "model/mmdpi_include.h"
-#include "model/mmdpi_bone.h"
-#include "model/tools/get_bin.h"
-#include "pmx/pmx_struct.h"
-#include "pmd/pmd_struct.h"
+#include "../model/mmdpi_include.h"
+#include "../model/mmdpi_bone.h"
+#include "../model/tools/get_bin.h"
+#include "../pmx/pmx_struct.h"
+#include "../pmd/pmd_struct.h"
 
 #pragma once
 #pragma pack( push, 1 )		//	アライメント

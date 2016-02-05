@@ -1,11 +1,9 @@
 ﻿
-//#include "pmd_bullet.h"
-#include "model/tools/bitmap.h"
-#include "model/tools/tga_image.h"
+#include "../model/tools/bitmap.h"
+#include "../model/tools/tga_image.h"
+#include "../model/mmdpi_struct.h"
 #include <cstring>
 #include <string>
-
-#include "model/mmdpi_struct.h"
 
 
 #pragma once

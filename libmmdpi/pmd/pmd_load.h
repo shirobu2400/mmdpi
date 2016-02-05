@@ -1,5 +1,5 @@
 ﻿
-#include "model/tools/get_bin.h"
+#include "../model/tools/get_bin.h"
 #include "pmd_struct.h"
 #pragma once
 

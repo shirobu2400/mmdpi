@@ -1,6 +1,6 @@
 ﻿
 #include "pmx_load.h"
-#include "model/mmdpi_model.h"
+#include "../model/mmdpi_model.h"
 
 #pragma once
 

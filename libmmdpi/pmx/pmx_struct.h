@@ -1,5 +1,5 @@
 ﻿
-#include "model/mmdpi_struct.h"
+#include "../model/mmdpi_struct.h"
 
 #pragma once
 
