@@ -47,6 +47,7 @@ if( bullet AND Bullet_FOUND )
 		libBulletCollision.a  libBulletSoftBody.a  )
 	link_directories( /usr/local/lib )
 endif()
+
 #	Outline
 #	It needs a lot of VRAM.
 if( outline )
