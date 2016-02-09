@@ -45,7 +45,7 @@ if( bullet AND Bullet_FOUND )
 	set( mmdpi_lib ${mmdpi_lib} ${Bullet_LIBRARIES} 
 		libBulletDynamics.a  libLinearMath.a
 		libBulletCollision.a  libBulletSoftBody.a  )
-	link_directories( /usr/local/lib )
+	set( mmdpi_lib ${mmdpi_lib} /usr/local/lib )
 endif()
 
 #	Outline
