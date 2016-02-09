@@ -41,8 +41,11 @@ set(mmdpi_lib_path
 find_package( Bullet )
 if( bullet AND Bullet_FOUND )
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
-	include_directories( Bullet_INCLUDE_DIRS )
-	set( mmdpi_lib ${mmdpi_lib} ${Bullet_LIBRARIES} )
+	include_directories( Bullet_INCLUDE_DIRS /usr/local/include/bullet )
+	set( mmdpi_lib ${mmdpi_lib} ${Bullet_LIBRARIES} 
+		libBulletDynamics.a  libLinearMath.a
+		libBulletCollision.a  libBulletSoftBody.a  )
+	link_directories( /usr/local/lib )
 endif()
 #	Outline
 #	It needs a lot of VRAM.
