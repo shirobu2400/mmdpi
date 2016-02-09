@@ -1,5 +1,3 @@
-Raspbian 上での動作を想定しています。
-
 # mmdpi
 Miku_Miku_Pi(mmdpi)v0.1 
 
@@ -70,7 +68,7 @@ Bullet Physics インストール済みおよび、-Dbullet オプションを�
   <p> =>  unsigned short 型に収まるようにメッシュ分割しました。</p><br>
   
   
-# 質問、指摘、要望などがありましたら気軽にご連絡ください。
+# ご質問、ご指摘、ご要望などがありましたら気軽にご連絡ください。
   
   Twitter : @2400kskm<br>
   ニコニコ: shirobu<br>
