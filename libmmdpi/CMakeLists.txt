@@ -76,9 +76,14 @@ endif()
 #	Bullet
 find_package( Bullet )
 if( bullet AND Bullet_FOUND )
-	set(${libmmdpi_src} ${libmmdpi_src} ${libmmdpi_bullet_src})
+	set( ${libmmdpi_src} ${libmmdpi_src} ${libmmdpi_bullet_src} )
+	
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
-	include_directories( Bullet_INCLUDE_DIRS )
+	include_directories( Bullet_INCLUDE_DIRS /usr/local/include/bullet )
+	set( mmdpi_lib ${mmdpi_lib} ${Bullet_LIBRARIES} 
+		libBulletDynamics.a  libLinearMath.a
+		libBulletCollision.a  libBulletSoftBody.a  )
+	link_directories( /usr/local/lib )
 endif()
 
 #	Outline
