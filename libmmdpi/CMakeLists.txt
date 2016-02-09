@@ -58,8 +58,8 @@ set(libmmdpi_inc_raspi
 
 #	Bullet Physics Source
 set(libmmdpi_bullet_src
-	mmdpi_bullet.cpp
-	mmdpi_bullet.h 
+	model/bullet/mmdpi_bullet.cpp
+	model/bullet/mmdpi_bullet.h 
 )
 
 find_package( PNG REQUIRED )
