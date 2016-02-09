@@ -26,8 +26,8 @@ endif()
 
 #	Include Directory
 set(mmdpi_inc_path
-	/usr/local/include/
-	/usr/include/
+	/usr/local/include
+	/usr/include
 	../libmmdpi
 )
 
@@ -44,10 +44,7 @@ find_package( Bullet )
 if( bullet AND Bullet_FOUND )
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
 	include_directories( Bullet_INCLUDE_DIRS /usr/local/include/bullet )
-	set( mmdpi_lib ${mmdpi_lib} #${Bullet_LIBRARIES} 
-		BulletDynamics LinearMath
-		BulletCollision BulletSoftBody  )
-	set( mmdpi_lib_path ${mmdpi_lib_path} /usr/local/lib )
+	set( mmdpi_lib ${mmdpi_lib} BulletDynamics BulletCollision BulletSoftBody LinearMath )
 endif()
 
 #	Outline
