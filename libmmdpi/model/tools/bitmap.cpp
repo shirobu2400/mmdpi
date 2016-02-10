@@ -28,8 +28,8 @@ int MMDPI_BMP::ReadBMP( const char *filename )
     //　ファイルを開く
     if ( ( fp = fopen( filename, "rb" ) ) == NULL )
     {
-        cout << "Error : Connot open.\n";
-        cout << "File Name : " << filename << endl;
+        //cout << "Error : Connot open.\n";
+        //cout << "File Name : " << filename << endl;
         return -1;
     }
 
@@ -43,7 +43,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
     //　ファイルチェック
     if( header.bfType != 0x4d42 )
     {
-        cout << "Error : This is not bitmap.\n";
+        //cout << "Error : This is not bitmap.\n";
         fclose( fp );
         return -1;
     }
@@ -73,7 +73,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
     //　エラーチェック
     if( bits == 0x00 )
     {
-        cout << "Error : Allocation error!\n";
+        //cout << "Error : Allocation error!\n";
         delete[] bits;
         fclose( fp );
 
