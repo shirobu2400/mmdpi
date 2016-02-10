@@ -32,10 +32,10 @@ float			Rotate;
 
 float			RotationAxis[ 3 ];
 
-int				screen_width, screen_height;
+int			screen_width, screen_height;
 
-int				Argc;
-const char**			Argv;
+int			Argc;
+char**			Argv;
 
 #include "fps.h"
 
@@ -263,9 +263,9 @@ void init( void )
 		exit( 0 );
 	//p->load( "../Release/reimu/reimu.pmd"/*Argv[ 1 ]*/ );
 	
-	//	Sound
-	if( Argc > 4 )
-		system( ( const char* )Argv[ 4 ] );
+	////	Sound
+	//if( Argc > 4 )
+	//	system( ( const char* )Argv[ 4 ] );
 	
 	if( Argc > 2 )
 	{
