@@ -3,10 +3,12 @@
 #include "../libmmdpi/mmdpi.h"
 //#include "../gl_xfile/gl_xfile.h"
 
-#ifdef _DEBUG
-	#pragma comment( lib, "../Debug/libmmdpi.lib" )
-#else
-	#pragma comment( lib, "../Release/libmmdpi.lib" )
+#ifdef _WIN32
+#	ifdef _DEBUG
+#		pragma comment( lib, "../Debug/libmmdpi.lib" )
+#	else
+#		pragma comment( lib, "../Release/libmmdpi.lib" )
+#	endif
 #endif
 
 //#ifdef _DEBUG
@@ -33,7 +35,7 @@ float			RotationAxis[ 3 ];
 int				screen_width, screen_height;
 
 int				Argc;
-char**			Argv;
+const char**			Argv;
 
 #include "fps.h"
 
@@ -295,7 +297,7 @@ void end( void )
 	delete p;
 }
 
-int main( int argc, char *argv[] )
+int main( int argc, const char *argv[] )
 {
 	if( argc < 2 )
 	{
