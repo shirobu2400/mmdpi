@@ -267,7 +267,7 @@ void init( void )
 	//if( Argc > 4 )
 	//	system( ( const char* )Argv[ 4 ] );
 	
-	if( Argc > 2 )
+	if( Argc > 2 && Argv[ 2 ][ 0 ] )
 	{
 		motion_flag = 1;
 		puts( Argv[ 2 ] );
@@ -278,7 +278,7 @@ void init( void )
 	//if( p->vmd_load( "vmd/nolifequeen.vmd" ) )
 	//	motion_flag = 0;
 
-	if( Argc > 3 )
+	if( Argc > 3 && Argv[ 3 ][ 0 ] )
 	{
 		_fps_ = atoi( Argv[ 3 ] );
 		_fps_ = ( _fps_ < 6 || 480 < _fps_ )? 30.0f : _fps_ ;
