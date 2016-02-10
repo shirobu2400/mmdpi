@@ -80,7 +80,7 @@ int mmdpiShader::default_shader( void )
 	"	}\n"
 	"\n"
 #ifdef _MMDPI_OUTLINE_
-	"	vertex00 = Vertex + SkinVertex + Normal * Edge_size * 0.05;\n"
+	"	vertex00 = Vertex + SkinVertex + Normal * Edge_size * 0.02;\n"
 #else
 	"	vertex00 = Vertex;\n"
 #endif
