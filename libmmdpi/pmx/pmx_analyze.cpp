@@ -137,7 +137,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 	for( dword i = 0; i < 10; i ++ )
 	{
 		char	texture_file_name_full[ 0xff ];
-		sprintf( texture_file_name_full, "toon/toon%02lu.bmp", i + 1 );
+		sprintf( texture_file_name_full, "toon/toon%02d.bmp", ( int )i + 1 );
 		toon_texture00[ i ].load( texture_file_name_full );
 	}
 
