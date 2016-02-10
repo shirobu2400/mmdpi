@@ -297,7 +297,7 @@ void end( void )
 	delete p;
 }
 
-int main( int argc, const char *argv[] )
+int main( int argc, char *argv[] )
 {
 	if( argc < 2 )
 	{
