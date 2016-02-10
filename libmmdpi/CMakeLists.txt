@@ -73,9 +73,10 @@ if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 endif()
 
-#	Bullet
-find_package( Bullet )
-if( bullet AND Bullet_FOUND )
+##	Bullet
+#find_package( Bullet )
+#if( bullet AND Bullet_FOUND )
+if( bullet )
 	set( libmmdpi_src ${libmmdpi_src} ${libmmdpi_bullet_src} )
 	
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
