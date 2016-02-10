@@ -42,7 +42,7 @@ set( mmdpi_lib )
 #	Bullet
 #find_package( Bullet )
 #if( bullet AND Bullet_FOUND )
-if( bulet )
+if( bullet )
 	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
 	include_directories( Bullet_INCLUDE_DIRS /usr/local/include/bullet )
 	set( mmdpi_lib ${mmdpi_lib} BulletDynamics BulletCollision BulletSoftBody LinearMath )
