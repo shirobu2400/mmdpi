@@ -162,7 +162,7 @@ int	mmdpiPmxLoad::reader( GetBin* buf )
 		if( material[ i ].toon_flag )
 		{
 			buf->get_bin2( &material[ i ].toon_texture_number, sizeof( dword ), sizeof( BYTE ) );
-			sprintf( material[ i ].toon_name, "toon%02lu.bmp", material[ i ].toon_texture_number + 1 );
+			sprintf( material[ i ].toon_name, "toon%02d.bmp", ( int )material[ i ].toon_texture_number + 1 );
 			//material[ i ].toon_name = convert_sjis( material[ i ].toon_name, strlen( material[ i ].toon_name ) );
 		}
 		else
