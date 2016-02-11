@@ -73,5 +73,5 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
   
 # ご質問、ご指摘、ご要望などがありましたら気軽にご連絡ください。
   
-  Twitter : @2400kskm<br>
+  Twitter : @wq2400kskm<br>
   ニコニコ: shirobu<br>
