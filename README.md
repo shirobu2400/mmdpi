@@ -39,7 +39,9 @@ bullet オプションで Bullet Physics インストール済みの場合に物
 make で ./mmdpiv に実行ファイル mmdpiv ができます。<br>
 実行ファイル mmdpiv は　ビューアプログラムです。<br>
 GL, GLU, GLUT, GLEWが必要です。<br>
-Bullet Physics インストール済みおよび、-Dbullet オプションを付けるとBullet Physics による物理演算を行えます。<br>
+Bullet Physics インストール済みおよび、-Dbullet=on オプションを付けるとBullet Physics による物理演算を行えます。<br>
+-Doutline=onをすると輪郭が表示されます。<br>
+linux x64 では-Dx64=onオプションを付けてください。<br>
 (ただし、正常に動作するかは一部を除いて未確認。)<br>
 
 
