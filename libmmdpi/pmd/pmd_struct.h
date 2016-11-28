@@ -157,7 +157,7 @@ typedef struct tagMMDPI_PMD_ENGLISH_SKIN_NAME
 // 英語ボーン枠用枠名リスト
 typedef struct tagMMDPI_PMD_ENGLISH_BONE_DISP_NAME
 {
-	char bone_disp_en[ 20 ]; // ボーン名(英語)
+	char bone_disp_en[ 50 ]; // ボーン名(英語)
 } MMDPI_PMD_ENGLISH_BONE_DISP_NAME, *MMDPI_PMD_ENGLISH_BONE_DISP_NAME_PTR;
 
 // toon 情報

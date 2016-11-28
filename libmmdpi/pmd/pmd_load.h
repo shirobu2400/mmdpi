@@ -71,7 +71,7 @@ protected :
 
 	int		reader( GetBin* buf );
 	
-	char	directory[ 0xff ];
+	char		directory[ 0xff ];
 	int		get_direcotory( const char *file_name );
 	int		get_header( GetBin* buf );
 	int		bin_string( GetBin* buf, char *str, int bufRange );
@@ -81,7 +81,7 @@ protected :
 
 public :
 
-	virtual int		load( const char *file_name );
+	virtual int	load( const char *file_name );
 		
 	MMDPI_PMD_BONE_INFO_PTR	get_pmd_bone( void )
 	{

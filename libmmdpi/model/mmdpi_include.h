@@ -202,16 +202,14 @@ typedef struct _mmdpiVector3d_
 		return c;
 	}
 
-	inline float length_sq( const _mmdpiVector3d_& v )
+	inline float length( void )
 	{
-		float	d = 0, n;
-		n = x - v.x;
-		d += n * n;
-		n = y - v.y;
-		d += n * n;
-		n = z - v.z;
-		d += n * n;
-		return d;
+		return sqrt( x * x + y * y + z * z );
+	}
+
+	inline float length_sq( void )
+	{
+		return x * x + y * y + z * z;
 	}
   
 	_mmdpiVector3d_()
@@ -342,10 +340,11 @@ typedef struct	_mmdpiVector4d_
 		float time_f
 	)
 	{
+		//	内積
 		float	qr	= q1.x * q2.x 
-					+ q1.y * q2.y
-					+ q1.z * q2.z
-					+ q1.w * q2.w;
+				+ q1.y * q2.y
+				+ q1.z * q2.z
+				+ q1.w * q2.w;
 		float	ss = 1.0f - ( qr * qr );
 			
 		*this = q1;
@@ -367,7 +366,7 @@ typedef struct	_mmdpiVector4d_
 		if( sin_ph == 0.0f )
 			return *this;
 
-		if( qr < 0.0f && 1.57079f < ph )
+		if( qr < 0.0f )
 		{	
 			qr = - q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
 			if( 1.0f < qr )
@@ -380,7 +379,7 @@ typedef struct	_mmdpiVector4d_
 			if( sin_ph == 0.0f )
 				return *this;
 			s1 = sin( ph * ( 1.0f - time_f ) ) / sin_ph;
-			s2 = sin( ph * time_f			 ) / sin_ph;
+			s2 = sin( ph *   time_f	         ) / sin_ph;
 
 			this->x = q1.x * s1 - q2.x * s2;
 			this->y = q1.y * s1 - q2.y * s2;
@@ -391,7 +390,7 @@ typedef struct	_mmdpiVector4d_
 		}
 
 		s1 = sin( ph * ( 1.0f - time_f ) ) / sin_ph;
-		s2 = sin( ph * time_f			 ) / sin_ph;
+		s2 = sin( ph *   time_f          ) / sin_ph;
 
 		this->x = q1.x * s1 + q2.x * s2;
 		this->y = q1.y * s1 + q2.y * s2;
@@ -558,8 +557,8 @@ typedef struct _mmdpiMatrix_
 	//	サラスの行列式による逆行列解法
 	inline _mmdpiMatrix_ get_inverse( void )
 	{
-		_mmdpiMatrix_			r;
-		float					idet, det;
+		_mmdpiMatrix_		r;
+		float			idet, det;
 		det = determinant();
 		
 		if( fabs( det ) < 1e-8f )
@@ -596,8 +595,8 @@ typedef struct _mmdpiMatrix_
 			return 0;
  
 		float	sub_matrix[ 3 ][ 3 ];
-		int		src_y;
-		int		src_x;
+		int	src_y;
+		int	src_x;
 
 		float	sarrus;
 
@@ -687,7 +686,7 @@ typedef struct _mmdpiMatrix_
 			break;
 		case 2: // z
 			q.x = ( _13 + _31 ) * s;
-			q.y = ( _23 + _23 ) * s;
+			q.y = ( _23 + _32 ) * s;
 			q.w = ( _21 - _12 ) * s;
 			break;
 		case 3: // w

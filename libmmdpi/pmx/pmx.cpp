@@ -26,8 +26,8 @@ int mmdpiPmx::load( const char* pmx_name )
 
 		mmdpiBone::rigidbody_count		= mmdpiPmxLoad::p_rigid_num;
 		mmdpiBone::joint_count			= mmdpiPmxLoad::p_joint_num;
-		mmdpiBone::physics				= mmdpiPmxLoad::p_rigid;
-		mmdpiBone::joint				= mmdpiPmxLoad::p_joint;
+		mmdpiBone::physics			= mmdpiPmxLoad::p_rigid;
+		mmdpiBone::joint			= mmdpiPmxLoad::p_joint;
 
 		create_physical_info();
 	}

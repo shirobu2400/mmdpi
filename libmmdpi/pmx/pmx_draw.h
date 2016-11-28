@@ -10,11 +10,11 @@ class mmdpiPmxDraw : public mmdpiPmxAnalyze, public mmdpiPmxIk
 
 private :
 
-	int						morph_exec( dword index, float rate );
+	int		morph_exec( dword index, float rate );
 
 public :
 
-	void					draw( void );
+	void		draw( void );
 
 	mmdpiPmxDraw();
 	~mmdpiPmxDraw();

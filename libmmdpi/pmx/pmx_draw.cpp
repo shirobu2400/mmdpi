@@ -1,6 +1,7 @@
 ﻿
 #include "pmx_draw.h"
 
+
 void mmdpiPmxDraw::draw( void )
 {
 	//	ik

@@ -168,7 +168,7 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 	char*	eng_name;			//	ボーン名(英)
 
 	float	pos[ 3 ];			//	位置
-	dword	parent_index;		//	親ボーンのボーンIndex
+	dword	parent_index;			//	親ボーンのボーンIndex
 	dword	level;				//	変形階層	4byte
 
 	ushort	bone_flag;		//	ボーンフラグ(16bit) 各bit 0:OFF 1:ON

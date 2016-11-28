@@ -39,6 +39,11 @@ void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix )
 	pmm->set_projection_matrix( p_projection_matrix );
 }
 
+void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix )
+{
+	pmm->set_projection_matrix( p_projection_matrix );
+}
+
 mmdpiVmd* mmdpi::get_vmd( int index )
 {
 	if( index < 0 || vmd.size() <= ( unsigned )index )
@@ -49,16 +54,18 @@ mmdpiVmd* mmdpi::get_vmd( int index )
 //	Vmd Loader
 int mmdpi::vmd_load( const char *file_name )
 {
-	mmdpiVmd*				lvmd = new mmdpiVmd();
-	MMDPI_BONE_INFO_PTR		bone = ( pmx )? pmx->get_bone() : 0x00 ;
+	mmdpiVmd*			lvmd = new mmdpiVmd();
+	MMDPI_BONE_INFO_PTR		bone = 0x00;
 
 	if( pmx )
 	{
+		bone = pmx->get_bone();
 		lvmd->create_bone_map_pmx( pmx->get_pmx_bone(), pmx->get_bone_num() );
 		//lvmd->create_morph_map_pmx( mmdpiPmxLoad::morph, mmdpiPmxLoad::morph_num );
 	}
 	else	//if( pmd )
 	{
+		bone = pmd->get_bone();
 		lvmd->create_bone_map( pmd->get_pmd_bone(), pmd->get_bone_num() );
 		//lvmd->create_morph_map_pmx( mmdpiPmxLoad::morph, mmdpiPmxLoad::morph_num );
 	}

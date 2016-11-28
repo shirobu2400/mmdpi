@@ -109,34 +109,32 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 		buf->get_bin( en_head.model_name_eg, sizeof( char ) * 20 );
 		buf->get_bin( en_head.comment_eg, sizeof( char ) * 256 );
 
-		// 英語ボーン名
+		//	英語ボーン名
 		if( bone_num > 0 )
 		{
 			en_bone_name = new MMDPI_PMD_ENGLISH_BONE_NAME[ bone_num ];
 			buf->get_bin( en_bone_name, sizeof( MMDPI_PMD_ENGLISH_BONE_NAME ) * bone_num );
 		}
 
-		// 英語表情名
+		//	英語表情名
 		if( skin_num > 1 )
 		{
 			en_skin_name = new MMDPI_PMD_ENGLISH_SKIN_NAME[ skin_num - 1 ];
 			buf->get_bin( en_skin_name, sizeof( MMDPI_PMD_ENGLISH_SKIN_NAME ) * ( skin_num - 1 ) );
 		}
 
-		// 英語ボーン枠用表示リスト
-		if( bone_number_num > 0 )
+		//	英語ボーン枠用表示リスト
+		if( bone_name_num > 1 )
 		{
-			en_bone_disp_name = new MMDPI_PMD_ENGLISH_BONE_DISP_NAME[ bone_number_num ];
-			buf->get_bin( en_bone_disp_name, sizeof( MMDPI_PMD_ENGLISH_BONE_DISP_NAME ) * bone_number_num );
+			en_bone_disp_name = new MMDPI_PMD_ENGLISH_BONE_DISP_NAME[ bone_name_num ];
+			buf->get_bin( en_bone_disp_name, sizeof( MMDPI_PMD_ENGLISH_BONE_DISP_NAME ) * ( bone_name_num ) );	
 		}
 	}
 
 	// toon
 	toon_name = new MMDPI_PMD_TOON_NAME[ 1 ];
 	if( buf->get_bin( toon_name, sizeof( MMDPI_PMD_TOON_NAME ) ) )
-	{
-
-	}
+		;
 
 	p_rigid_num = 0;
 	p_joint_num = 0;

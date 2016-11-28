@@ -23,7 +23,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		if( vpn == NULL )	// これ以上モーションがない -> 番兵に当たった
 			continue;
 
-		mmdpiMatrix now_matrix, rot_matrix, pos_matrix;
+		mmdpiMatrix	now_matrix, rot_matrix, pos_matrix;
 
 		mmdpiQuaternion	next_qt( vpn->qx, vpn->qy, vpn->qz, vpn->qw );
 		mmdpiVector3d	next_vec( vpn->vx, vpn->vy, vpn->vz );
@@ -31,31 +31,31 @@ int mmdpiVmd::advance_time( float time_scale )
 		mmdpiQuaternion	now_qt( vp->qx, vp->qy, vp->qz, vp->qw );
 		mmdpiVector3d	now_vec( vp->vx, vp->vy, vp->vz );
 		
-		float time_f = 0;
+		float		time_f = 0;
 		if( vpn->FrameNo > 0 && vpn->FrameNo > vp->FrameNo ) 
 			time_f = ( ( float ) motion_time - ( float )vp->FrameNo ) / ( float )( vpn->FrameNo - vp->FrameNo ); 
 		
-		int				interInde = 0;
-		const float		_interpolation_div = 127.0f;
+		int		interInde = 0;
+		const float	_interpolation_div = 127.0f;
 		mmdpiVector3d	s_vec;
-		float			radw;
+		float		radw;
 
 		// 高度な補間
 
 		// x
-		s_vec.x = interpolate_bezier( ( float )vp->Interpolation[ 0 ] / _interpolation_div, ( float )vp->Interpolation[ 4 ] / _interpolation_div, 
+		s_vec.x = interpolate( ( float )vp->Interpolation[ 0 ] / _interpolation_div, ( float )vp->Interpolation[ 4 ] / _interpolation_div, 
 					( float )vp->Interpolation[ 8 ] / _interpolation_div, ( float )vp->Interpolation[ 12 ] / _interpolation_div, 
 					time_f ) * ( next_vec.x - now_vec.x );
 		// y
-		s_vec.y = interpolate_bezier( ( float )vp->Interpolation[ 1 ] / _interpolation_div, ( float )vp->Interpolation[ 5 ] / _interpolation_div, 
+		s_vec.y = interpolate( ( float )vp->Interpolation[ 1 ] / _interpolation_div, ( float )vp->Interpolation[ 5 ] / _interpolation_div, 
 					( float )vp->Interpolation[ 9 ] / _interpolation_div, ( float )vp->Interpolation[ 13 ] / _interpolation_div, 
 					time_f ) * ( next_vec.y - now_vec.y );
 		// z
-		s_vec.z = interpolate_bezier( ( float )vp->Interpolation[ 2 ] / _interpolation_div, ( float )vp->Interpolation[ 6 ] / _interpolation_div, 
+		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div, ( float )vp->Interpolation[ 6 ] / _interpolation_div, 
 					( float )vp->Interpolation[ 10 ] / _interpolation_div, ( float )vp->Interpolation[ 14 ] / _interpolation_div, 
 					time_f ) * ( next_vec.z - now_vec.z );
 		//radw
-		radw = interpolate_bezier( ( float )vp->Interpolation[ 3 ] / _interpolation_div, ( float )vp->Interpolation[ 7 ] / _interpolation_div, 
+		radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div, ( float )vp->Interpolation[ 7 ] / _interpolation_div, 
 					( float )vp->Interpolation[ 11 ] / _interpolation_div, ( float )vp->Interpolation[ 15 ] / _interpolation_div, 
 					time_f );
 		s_vec = s_vec + now_vec;
@@ -68,7 +68,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		s_qt.slerp_quaternion( now_qt, next_qt, time_f );
 		rot_matrix.quaternion( s_qt );
 
-		if( motion_time >= ( double )vpn->FrameNo )
+		if( motion_time >= ( float )vpn->FrameNo )
 			now_motion[ i ] = now_motion[ i ]->next;	//次のモーションへ
 
 		bone[ i ].bone_mat = ( rot_matrix * pos_matrix ) * bone[ i ].init_mat;
@@ -81,7 +81,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		{
 			now_skin = now_skin->next;
 		}
-		if( ( double )now_skin->skin->FrameNo <= motion_time )
+		if( ( float )now_skin->skin->FrameNo <= motion_time )
 		{
 			MMDPI_VMD_SKIN_INFO_LIST_PTR	skinl = now_skin;
 			while( skinl )
@@ -102,10 +102,10 @@ int mmdpiVmd::advance_time( float time_scale )
 
 int mmdpiVmd::is_end( void )
 {
-	return ( double )max_frame <= motion_time;
+	return ( float )max_frame <= motion_time;
 }
 
-int	mmdpiVmd::init_motion( void )
+int mmdpiVmd::init_motion( void )
 {
 	motion_time = 0;
 	for( int i = 0; i < bone_num; i ++ )
@@ -115,11 +115,11 @@ int	mmdpiVmd::init_motion( void )
 }
 
 //	ベイズ補間
-float mmdpiVmd::interpolate_bezier( float x1, float y1, float x2, float y2, float x )
+float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 {
 	//	ベジェ曲線を利用して補間する。
 	////	3次方程式は2分法を利用。
-	const int	_loop_len_ = 4;
+	const int	_loop_len_ = 16;
 	float		s = 0.5f, t = 0.5f;
 	float		r;
 	float		ft, ftd, d;
@@ -141,7 +141,7 @@ float mmdpiVmd::interpolate_bezier( float x1, float y1, float x2, float y2, floa
 		ftd = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;
 
 		d = ft / ftd;
-		if( fabs( d ) < 1e-8f ) 
+		if( fabs( d ) < 1e-16f ) 
 			break;
 		t = t - d;
 	}
@@ -151,14 +151,14 @@ float mmdpiVmd::interpolate_bezier( float x1, float y1, float x2, float y2, floa
 	return r;
 }
 
-int	mmdpiVmd::set_bone( MMDPI_BONE_INFO_PTR bone )
+int mmdpiVmd::set_bone( MMDPI_BONE_INFO_PTR bone )
 {
 	this->bone = bone;
 	return 0;
 }
 
 //	リスト構築
-int	mmdpiVmd::analyze( void )
+int mmdpiVmd::analyze( void )
 {
 	int		bone_id;
 	m_list = new MMDPI_VMD_INFO_LIST[ bone_num ];
@@ -209,9 +209,9 @@ int	mmdpiVmd::analyze( void )
 }
 
 //	スキン
-int	mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
+int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 {
-	int								bflag = 0;
+	int				bflag = 0;
 	MMDPI_VMD_SKIN_INFO_LIST_PTR	ml = skin_line;
 
 	//	Insert
@@ -338,7 +338,7 @@ int	mmdpiVmd::create_bone_map( MMDPI_PMD_BONE_INFO_PTR bone, int bone_num )
 //}
 
 //	map で名前TOボーンインデックスを作る
-int	mmdpiVmd::create_bone_map_pmx( MMDPI_PMX_BONE_INFO_PTR bone, int bone_num )
+int mmdpiVmd::create_bone_map_pmx( MMDPI_PMX_BONE_INFO_PTR bone, int bone_num )
 {
 	this->bone_num = bone_num;
 
@@ -357,7 +357,7 @@ int	mmdpiVmd::create_bone_map_pmx( MMDPI_PMX_BONE_INFO_PTR bone, int bone_num )
 }
 
 //	map で名前TOボーンインデックスを作る
-int	mmdpiVmd::create_morph_map_pmx( MMDPI_PMX_MORPH_INFO_PTR morph, int morph_num )
+int mmdpiVmd::create_morph_map_pmx( MMDPI_PMX_MORPH_INFO_PTR morph, int morph_num )
 {
 	for( int i = 0; i < morph_num; i ++ )
 	{

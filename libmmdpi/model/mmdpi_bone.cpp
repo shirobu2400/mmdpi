@@ -3,7 +3,7 @@
 
 
 //	matrix 分だけ変換する
-int	mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
+int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	if( mmdpiBone::bone_num <= bone_index )
 		return -1;
@@ -50,7 +50,7 @@ mmdpiMatrix mmdpiBone::get_local_matrix( MMDPI_BONE_INFO_PTR bone )
 {
 	if( bone->parent )	
 	{
-		mmdpiMatrix		parent_matrix = get_local_matrix( bone->parent );
+		mmdpiMatrix	parent_matrix = get_local_matrix( bone->parent );
 		return bone->bone_mat * parent_matrix;
 	}
 	return bone->bone_mat;
@@ -81,9 +81,9 @@ int mmdpiBone::advance_time_physical( int fps )
 	if( bullet_flag <= 0 )
 		return 0;
 	
-	float frametime = 1;//getFrameTime( fps );
-	//if( frametime > 10 )
-	//	frametime = 10;
+	float frametime = getFrameTime( fps );
+	if( frametime > 10 )
+		frametime = 10;
 
 	for( dword i = 0; i < rigidbody_count; i ++ )
 	{
@@ -242,7 +242,7 @@ int mmdpiBone::create_physical_info( void )
 		}
 	}
 
-	physics_sys = new MMDPI_PHYSICAL_INFO[ rigidbody_count ];
+	physics_sys = ( rigidbody_count )? new MMDPI_PHYSICAL_INFO[ rigidbody_count ] : 0x00 ;
 	// 剛体情報
 	for( uint i = 0; i < rigidbody_count; i ++ )
 	{

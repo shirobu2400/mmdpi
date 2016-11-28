@@ -179,7 +179,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 }
 
 //	ボーン関係処理
-int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len )
+int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len )
 {
 	mmdpiModel::bone_num = pbone_len;
 	mmdpiModel::bone = new MMDPI_BONE_INFO[ mmdpiModel::bone_num ];
@@ -208,7 +208,7 @@ int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
-		ushort		bone_flag		= pbone[ i ].bone_flag;
+		ushort		bone_flag	= pbone[ i ].bone_flag;
 		dword		parent_index	= pbone[ i ].parent_index;
 
 		mmdpiModel::bone[ i ].child_bone = 0x00;
@@ -234,9 +234,14 @@ int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 	{
 		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
 	}
-
+	
 	//	init_mat 初期化
 	init_mat_calc( &mmdpiModel::bone[ 0 ], 0x00 );
+	for( uint i = 1; i < mmdpiModel::bone_num; i ++ )
+	{
+		if( mmdpiModel::bone[ i ].parent == 0x00 )
+			init_mat_calc( &mmdpiModel::bone[ i ], 0x00 );
+	}
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{

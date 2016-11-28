@@ -13,7 +13,7 @@ int mmdpiModel::create( void )
 	{
 		MMDPI_BLOCK_FACE_PTR	face = &get_face_block()[ i ];
 		mmdpiShader::set_vertex_buffers	( i, face->vertex, face->vertex_num );
-		mmdpiShader::set_face_buffers	( i, face->face, face->face_num );
+		mmdpiShader::set_face_buffers	( i, face->face  , face->face_num   );
 	}
 
 	//	bullet
@@ -50,7 +50,7 @@ void mmdpiModel::draw( void )
 	this->make_local_matrix();
 	this->refresh_bone_mat();
 	
-	//	ボーン処理
+	//	ボーン行列をシェーダに送る準備
 	update_matrix( mmdpiBone::bone, mmdpiBone::bone_num );
 
 	//	Using My Shader
@@ -175,10 +175,16 @@ void mmdpiModel::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 	mmdpiBone::set_bone_matrix( bone_index, matrix );
 }
 
- void mmdpiModel::set_projection_matrix( const GLfloat* p_projection_matrix )
+void mmdpiModel::set_projection_matrix( const GLfloat* p_projection_matrix )
 {
 	for( int i = 0; i < 16; i ++ )
 		projection_matrix[ i ] = p_projection_matrix[ i ];
+}
+
+void mmdpiModel::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix )
+{
+	for( int i = 0; i < 16; i ++ )
+		projection_matrix[ i ] = ( *p_projection_matrix )[ i ];
 }
 
 int mmdpiModel::set_physics_engine( int type )
