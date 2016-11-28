@@ -81,7 +81,7 @@ int mmdpiBone::advance_time_physical( int fps )
 	if( bullet_flag <= 0 )
 		return 0;
 	
-	float frametime = getFrameTime( fps );
+	float	frametime = 1;//getFrameTime( fps );
 	if( frametime > 10 )
 		frametime = 10;
 
