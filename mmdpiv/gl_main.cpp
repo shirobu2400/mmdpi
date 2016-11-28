@@ -3,30 +3,24 @@
 #include "../libmmdpi/mmdpi.h"
 //#include "../gl_xfile/gl_xfile.h"
 
-#ifdef _WIN32
-#	ifdef _DEBUG
+#if defined( _WIN32 )
+#	if defined( _DEBUG )
 #		pragma comment( lib, "../Debug/libmmdpi.lib" )
 #	else
 #		pragma comment( lib, "../Release/libmmdpi.lib" )
 #	endif
 #endif
 
-//#ifdef _DEBUG
-//	#pragma comment( lib, "../Debug/gl_xfile.lib" )
-//#else
-//	#pragma comment( lib, "../Release/gl_xfile.lib" )
-//#endif
-
 
 #include <iostream>
 #include "GL/glut.h"
 
 
-const int		_zoom_default_	= -1024 * 2 * 0.1f;// * 16;
+const int		_zoom_default_		= -1024 * 2 * 0.1f;// * 16;
 float			_y_pos_			= 11 * 0.1f;
-static mmdpi*	p = NULL;
-int				_fps_			= 30;
-int 			motion_flag = 0;
+static mmdpi*		p = NULL;
+int			_fps_			= 30;
+int 			motion_flag		= 0;
 float			Zoom;
 float			Rotate;
 
@@ -55,7 +49,8 @@ void display( void )
 	//glClearColor( 0.0, 0.0, 1.0, 1.0 );	//	bule
 	//glClearColor( 0.0, 0.2, 0.0, 1.0 );	//	bule
 	//glClearColor( 0.0, 0.0, 0.0, 1.0 );	//	black
-	glClearColor( 1.0, 1.0, 1.0, 1.0 );	//	white
+	//glClearColor( 1.0, 1.0, 1.0, 1.0 );	//	white
+	glClearColor( 0.5, 0.5, 0.5, 1.0 );	//	gray
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glColor3d( 1.0, 0.0, 0.0 );
@@ -132,12 +127,12 @@ void sp_keyboard( int key, int x, int y )
 
 	switch( key )
 	{
-		case GLUT_KEY_PAGE_UP: 	_y_pos_ += 0.1f;	break;
-		case GLUT_KEY_PAGE_DOWN:_y_pos_ -= 0.1f;	break;
+		case GLUT_KEY_PAGE_UP	: 	_y_pos_ += 0.1f;	break;
+		case GLUT_KEY_PAGE_DOWN	:	_y_pos_ -= 0.1f;	break;
 		case GLUT_KEY_LEFT	:	Rotate += -0.05f;	break;		//	←
-		case GLUT_KEY_UP	:	Zoom += +4;			break;		//	↑
+		case GLUT_KEY_UP	:	Zoom += +4;		break;		//	↑
 		case GLUT_KEY_RIGHT	:	Rotate += +0.05f;	break;		//	→
-		case GLUT_KEY_DOWN	:	Zoom += -4;			break;		//	↓
+		case GLUT_KEY_DOWN	:	Zoom += -4;		break;		//	↓
 	}
 
 	glMatrixMode( GL_MODELVIEW );
@@ -157,7 +152,7 @@ void timer( int value )
 	fps->draw();
 	fps->update();
 	
-	if( motion_flag )
+	if( motion_flag && p->get_vmd( 0 ) )
 	{
 		float	frame = 30.0f / fps->get_mfps();	//fps->get_dframe();
 		//	フレームを進める関数
@@ -253,19 +248,14 @@ void init( void )
 	p = new mmdpi();	
 	if( p == NULL )
 		exit( 0 );
-	//p->set_physics_engine( 0 );
 	
 	// Test
-	puts( Argv[ 1 ] );
-	if( p->load( Argv[ 1 ] ) )
-	//if( p->load( "udon/udon.pmx" ) )
-	//if( p->load( "sakuya/sakuya.pmx" ) )
-		exit( 0 );
-	//p->load( "../Release/reimu/reimu.pmd"/*Argv[ 1 ]*/ );
-	
-	////	Sound
-	//if( Argc > 4 )
-	//	system( ( const char* )Argv[ 4 ] );
+	if( Argc > 1 )
+	{
+		puts( Argv[ 1 ] );
+		if( p->load( Argv[ 1 ] ) )
+			exit( 0 );
+	}
 	
 	if( Argc > 2 && Argv[ 2 ][ 0 ] )
 	{
@@ -274,9 +264,6 @@ void init( void )
 		if( p->vmd_load( Argv[ 2 ] ) )
 			motion_flag = 0;
 	}
-	//motion_flag = 1;
-	//if( p->vmd_load( "vmd/nolifequeen.vmd" ) )
-	//	motion_flag = 0;
 
 	if( Argc > 3 && Argv[ 3 ][ 0 ] )
 	{
@@ -299,9 +286,12 @@ void end( void )
 
 int main( int argc, char *argv[] )
 {
-	if( argc < 2 )
+	if( argc < 2 && 0 )
 	{
-		printf( "モデル、モーションを!\n\n" );
+		printf( 
+			"argment1: PMD or PMX\n"
+			"argment2: VMD\n"
+			);
 		return 0;
 	}
 	

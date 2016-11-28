@@ -31,7 +31,7 @@ void mmdpiModel::draw( void )
 {
 	//	Make bone matrix
 	this->global_matrix();
-
+	
 	//	物理演算
 	if( bullet_flag )	
 		this->advance_time_physical( fps );

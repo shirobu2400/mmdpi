@@ -5,10 +5,10 @@ class Fps
 {
 	static const int	sample_average	= 60;		//平均を取るサンプル数
 	
-	float				start_time;         //測定開始時刻
-	int					count;				//カウンタ
-	float				m_fps;				//fps
-	int					fps;				//設定したFPS
+	float			start_time;         //測定開始時刻
+	int			count;				//カウンタ
+	float			m_fps;				//fps
+	int			fps;				//設定したFPS
 
 public:
 	

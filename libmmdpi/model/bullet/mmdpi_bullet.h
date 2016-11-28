@@ -181,13 +181,12 @@ public:
 	//	フレーム操作
 	virtual float getFrameTime( int fps )
 	{
-		//static clock_t prev_time = 0;
-		clock_t cl = clock();
-		clock_t curtime = prev_time + 1;//cl;	//GetTickCount();// & INT_MAX;// / 1000;
+		clock_t	curtime = clock();
+		float	frame_time;
 
 		if( prev_time == 0 )
 			prev_time = curtime; 
-		float frame_time = ( float )( curtime - prev_time ) * ( ( float )fps / CLOCKS_PER_SEC );  
+		frame_time = ( float )( curtime - prev_time ) * ( ( float )fps / CLOCKS_PER_SEC );  
 		prev_time = curtime;  
 
 		return frame_time;
