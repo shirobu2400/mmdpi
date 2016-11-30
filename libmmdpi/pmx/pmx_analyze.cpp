@@ -89,9 +89,9 @@ void mmdpiPmxAnalyze::load_texture( void )
 
 	//	一時的に読み込み
 	texture			= new MMDPI_IMAGE[ get_material_num() ];
-	toon_texture	= new MMDPI_IMAGE[ get_material_num() ];
+	toon_texture		= new MMDPI_IMAGE[ get_material_num() ];
 
-	texture00			= new MMDPI_IMAGE[ texture_num ];
+	texture00		= new MMDPI_IMAGE[ texture_num ];
 	toon_texture00		= new MMDPI_IMAGE[ 10 ];
 	for( dword i = 0; i < texture_num; i ++ )
 	{
@@ -204,6 +204,8 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 		mmdpiModel::bone[ i ].name = new char[ strlen( pbone[ i ].name ) + 1 ];
 		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].name );
+		mmdpiModel::bone[ i ].sjis_name = new char[ strlen( pbone[ i ].sjis_name ) + 1 ];
+		strcpy( mmdpiModel::bone[ i ].sjis_name, pbone[ i ].sjis_name );
 	}
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )

@@ -22,7 +22,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 	mmdpiVector4d		v0001( 0, 0, 0, 1 );
 			
 	mmdpiVector4d		effect_pos_base	= mmdpiBone::get_local_matrix( nb ) * v0001;	//	IKの目指す目標位置	Effector
-			
+					
 	for( uint j = 0; j < iteration_num; j ++ )
 	{
 		float	rotation_distance = 0;	//	移動した距離
@@ -63,17 +63,14 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			//	向かう度合
 			float	p = local_effect_dir.dot( local_target_dir );
 			if( 1 < p )			
-				continue;	// arccos error!
+				continue;	//	arccos error!
 
 			float	angle = acos( p );
 			if( angle > +npb->ik_radius_range ) 
 				angle = +npb->ik_radius_range;
 			if( angle < -npb->ik_radius_range ) 
 				angle = -npb->ik_radius_range;			
-		
-			//if( bone_index==88 )
-			//	angle = 0;
-	
+
 			if( npb->const_axis_flag )
 			{
 				//	回転軸制御（ボーン指定）
@@ -152,7 +149,7 @@ int mmdpiPmxIk::rotation_range( mmdpiMatrix_ptr rotation_matrix, mmdpiVector3d_p
 	//	fX = minv->x;
 	//if( fX > maxv->x )
 	//	fX = maxv->x;
-	//
+	
 	if( fX < -maxv->x )
 		fX = -maxv->x;
 	if( fX > -minv->x )

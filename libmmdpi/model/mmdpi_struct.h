@@ -278,19 +278,20 @@ typedef struct tagMMDPI_BLOCK_FACE
 
 typedef struct tagMMDPI_BONE_INFO
 {
-	int					id;				//	ボーンID（通し番号）
+	int					id;			//	ボーンID（通し番号）
 
 	char*					name;
+	char*					sjis_name;
 	
 	int					visible;		//	表示するか否か
 	float					length;			//	表示用ボーンの長さ
 	
 	tagMMDPI_BONE_INFO*			parent;			//	親ボーン
 	
-	tagMMDPI_BONE_INFO*			first_child;	//	第1子ボーン
+	tagMMDPI_BONE_INFO*			first_child;		//	第1子ボーン
 	tagMMDPI_BONE_INFO*			sibling;		//	次の兄弟ボーン
 
-	int					child_flag;			//	0:座標オフセットで指定 1:ボーンで指定
+	int					child_flag;		//	0:座標オフセットで指定 1:ボーンで指定
 	tagMMDPI_BONE_INFO*			child_bone;
 	mmdpiMatrix				posoffset_matrix;	//	child_flag == 0 の時のみ
 
@@ -298,19 +299,21 @@ typedef struct tagMMDPI_BONE_INFO
 	mmdpiMatrix				init_mat;		// 初期姿勢行列
 	mmdpiMatrix				offset_mat;		// ボーンオフセット行列
 	mmdpiMatrix				bone_mat;		// ボーン姿勢行列 => 親ボーンから見た姿勢行列
-	mmdpiMatrix				local_matrix;	// offsetMat に matrix を掛けた状態(実際にシェーダに渡す値)
+	mmdpiMatrix				local_matrix;		// offsetMat に matrix を掛けた状態(実際にシェーダに渡す値)
 	mmdpiMatrix				matrix;			// 位置、姿勢行列 => 実際の空間上の行列
 	
-	mmdpiMatrix				delta_matrix;	// 変化量行列（ユーザー定義）
-
+	mmdpiMatrix				delta_matrix;		// 変化量行列（ユーザー定義）
+		
 	tagMMDPI_BONE_INFO()
 	{
 		name = 0;
+		sjis_name = 0;
 	}
 
 	~tagMMDPI_BONE_INFO()
 	{
 		delete[] name;
+		delete[] sjis_name;
 	}
 	
 } MMDPI_BONE_INFO, *MMDPI_BONE_INFO_PTR;

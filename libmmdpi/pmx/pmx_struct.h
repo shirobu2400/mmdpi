@@ -237,18 +237,18 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 
 	//	設定情報
 	//	生データにはなし
-	BYTE	child_flag;			//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
+	BYTE	child_flag;		//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
 	BYTE	rotation_flag;		//	回転可能
 	BYTE	translate_flag;		//	移動可能
-	BYTE	show_flag;			//	表示
+	BYTE	show_flag;		//	表示
 	BYTE	user_update_flag;	//	操作可
-	BYTE	ik_flag;			//	IK
+	BYTE	ik_flag;		//	IK
 	BYTE	rotation_s_flag;	//	回転付与
 	BYTE	translate_s_flag;	//	移動付与
 	BYTE	const_axis_flag;	//	軸固定
 	BYTE	local_axis_flag;	//	ローカル軸
-	BYTE	physical_update_flag;//	物理後変形
-	BYTE	out_parent_update_flag;//	外部親変形
+	BYTE	physical_update_flag;	//	物理後変形
+	BYTE	out_parent_update_flag;	//	外部親変形
 
 	tagMMDPI_PMX_BONE_INFO()
 	{
@@ -256,18 +256,18 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 		offset[ 0 ] = offset[ 1 ] = offset[ 2 ] = 0;
 		child_index = ~0;
 
-		child_flag = 0;		//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
+		child_flag = 0;			//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
 		rotation_flag = 0;		//	回転可能
 		translate_flag = 0;		//	移動可能
 		show_flag = 0;			//	表示
-		user_update_flag = 0;	//	操作可
+		user_update_flag = 0;		//	操作可
 		ik_flag = 0;			//	IK
-		rotation_s_flag = 0;	//	回転付与
-		translate_s_flag = 0;	//	移動付与
-		const_axis_flag = 0;	//	軸固定
-		local_axis_flag = 0;	//	ローカル軸
-		physical_update_flag = 0;//	物理後変形
-		out_parent_update_flag = 0;//	外部親変形
+		rotation_s_flag = 0;		//	回転付与
+		translate_s_flag = 0;		//	移動付与
+		const_axis_flag = 0;		//	軸固定
+		local_axis_flag = 0;		//	ローカル軸
+		physical_update_flag = 0;	//	物理後変形
+		out_parent_update_flag = 0;	//	外部親変形
 	}
 
 	char*	sjis_name;
