@@ -58,9 +58,6 @@ extern "C"
 mmdpi*		p;
 mmdpiMatrix	Model_offset;
 
-char*		pmd_file = NULL;
-char*		vmd_file = NULL;
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -195,7 +192,7 @@ void init( int argc, char *argv[] )
 	if( argc > 2 )
 		vmd_name = argv[ 2 ];
 	vmd_flag = 0;
-	if( p && vmd_file )
+	if( p && vmd_name )
 	{
 		if( p->vmd_load( vmd_name ) )
 		{
