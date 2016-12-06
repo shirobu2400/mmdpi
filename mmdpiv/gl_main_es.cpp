@@ -169,7 +169,7 @@ public:
 	}
 };
 
-Fps* 			fps = NULL;
+Fps* 			fps = 0x00;
 static int		vmd_flag = 0;
 
 
@@ -543,7 +543,7 @@ int main( int argc, char *argv[] )
 	
 	/* 1200frame / 60fps = 20sec */
 	//while( frames < 1200 ) 
-	while( !p->get_vmd( 0 )->is_end() || ( !vmd_file && frames < 160 ) )
+	while( !p->get_vmd( 0 )->is_end() || ( !vmd_flag && frames < 160 ) )
 	//while( 1 )
 	{
 		Mat4	pl_matrix;
