@@ -175,19 +175,19 @@ public:
 Fps* 			fps = NULL;
 static int		vmd_flag = 0;
 
-char* get_command_option( const char* option )
+char* get_command_option( const char* option, int argc, char* argv[] )
 {
 	int		i;
 	size_t		option_length = strlen( option );
 
-	for( i = 0; i < __argc; i ++ )
+	for( i = 0; i < argc; i ++ )
 	{
-		if( strncmp( __argv[ i ], option, option_length ) == 0 )
+		if( strncmp( argv[ i ], option, option_length ) == 0 )
 		{
-			char* r = __argv[ i ] + option_length;
+			char* r = argv[ i ] + option_length;
 			if( *r )
 				return r;
-			return __argv[ i ];
+			return argv[ i ];
 		}
 	}
 
@@ -197,7 +197,7 @@ char* get_command_option( const char* option )
 void init( int argc, char *argv[] )
 {
 	
-	char*	model_name = get_command_option( "-p" );
+	char*	model_name = get_command_option( "-p", argc, argv );
 	if( p->load( model_name ) )
 	{
 		p = new mmdpi();
@@ -205,7 +205,7 @@ void init( int argc, char *argv[] )
 		exit( 0 );
 	}
 		
-	char*	vmd_name = get_command_option( "-v" );
+	char*	vmd_name = get_command_option( "-v", argc, argv );
 	vmd_flag = 0;
 	if( vmd_file )
 	{
