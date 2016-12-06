@@ -183,7 +183,7 @@ void init( int argc, char *argv[] )
 		p = new mmdpi();
 		if( p->load( model_name ) )
 		{
-			printf( "Not found %s.\n", pmd_file );
+			printf( "Not found %s.\n", model_name );
 			exit( 0 );
 		}
 	}
