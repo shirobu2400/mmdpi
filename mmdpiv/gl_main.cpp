@@ -324,7 +324,7 @@ char* get_command_option( const char* option, int argc, char* argv[] )
 
 int main( int argc, char *argv[] )
 {
-	if( argc < 2 && 0 )
+	if( argc < 2 )
 	{
 		printf( 
 			"argment: -p [pmd or pmx file name] \n"

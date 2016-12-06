@@ -207,7 +207,7 @@ void init( int argc, char *argv[] )
 		
 	char*	vmd_name = get_command_option( "-v", argc, argv );
 	vmd_flag = 0;
-	if( vmd_file )
+	if( p && vmd_file )
 	{
 		if( p->vmd_load( vmd_name ) )
 		{
@@ -218,7 +218,8 @@ void init( int argc, char *argv[] )
 			vmd_flag = 1;
 	}
 
-	p->set_fps( _fps_ );
+	if( p ) 
+		p->set_fps( _fps_ );
 
 	Model_offset.rotation( 0, 1, 0, 3.14f );
 
@@ -228,7 +229,7 @@ void init( int argc, char *argv[] )
 void draw()
 {
 	fps->update();
-	if( vmd_flag && p->get_vmd( 0 ) )
+	if( p && vmd_flag && p->get_vmd( 0 ) )
 	{
 		float	frame = 30.0f / fps->get_mfps();
 		//	フレームを進める関数
@@ -237,8 +238,11 @@ void draw()
 		( *p->get_vmd( 0 ) ) += frame;
 		//++ ( *p->get_vmd( 0 ) );
 	}
-	p->set_bone_matrix( 0, Model_offset );
-	p->draw();
+	if( p )
+	{
+		p->set_bone_matrix( 0, Model_offset );
+		p->draw();
+	}
 }
 
 void end()
@@ -291,7 +295,7 @@ EGLBoolean WinCreate(ScreenSettings *sc)
 	return EGL_TRUE;
 }
 
-EGLBoolean SurfaceCreate(ScreenSettings *sc)
+EGLBoolean SurfaceCreate( ScreenSettings *sc )
 {
 	EGLint attrib[] = 
 	{
@@ -307,32 +311,32 @@ EGLBoolean SurfaceCreate(ScreenSettings *sc)
 	EGLConfig config;
 
 	sc->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-	if (sc->display == EGL_NO_DISPLAY)
+	if( sc->display == EGL_NO_DISPLAY )
 		return EGL_FALSE;
-	if (!eglInitialize(sc->display, &sc->majorVersion, &sc->minorVersion))
+	if( !eglInitialize(sc->display, &sc->majorVersion, &sc->minorVersion ) )
 		return EGL_FALSE;
-	if (!eglChooseConfig(sc->display, attrib, &config, 1, &numConfigs))
+	if( !eglChooseConfig( sc->display, attrib, &config, 1, &numConfigs ) )
 		return EGL_FALSE;
 
-	sc->surface = eglCreateWindowSurface(sc->display, config, sc->nativeWin, NULL);
-	if (sc->surface == EGL_NO_SURFACE) 
+	sc->surface = eglCreateWindowSurface( sc->display, config, sc->nativeWin, NULL );
+	if( sc->surface == EGL_NO_SURFACE ) 
 		return EGL_FALSE;
-	sc->context = eglCreateContext(sc->display, config, EGL_NO_CONTEXT, context);
-	if (sc->context == EGL_NO_CONTEXT) 
+	sc->context = eglCreateContext( sc->display, config, EGL_NO_CONTEXT, context );
+	if( sc->context == EGL_NO_CONTEXT ) 
 		return EGL_FALSE;
-	if (!eglMakeCurrent(sc->display, sc->surface, sc->surface, sc->context))
+	if( !eglMakeCurrent( sc->display, sc->surface, sc->surface, sc->context ) )
 		return EGL_FALSE;
 
 	return EGL_TRUE;
 }
 
-void makeUnit(Mat4 *m)
+void makeUnit( Mat4 *m )
 {
 	memset(m, 0, sizeof(Mat4));
 	m->m[0] = m->m[5] = m->m[10]= m->m[15] = 1.0f;
 }
 
-void makeProjectionMatrix(Mat4 *m, float n, float f, float hfov, float r)
+void makeProjectionMatrix( Mat4 *m, float n, float f, float hfov, float r )
 {
 	float w = 1.0f / tan(hfov * 0.5f * M_PI / 180);
 	float h = w * r;
@@ -469,7 +473,7 @@ int main( int argc, char *argv[] )
 	
 	int		debug_flag = 0;
 	
-	if( argc < 2 && 0 )
+	if( argc < 2 )
 	{
 		printf( "argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
