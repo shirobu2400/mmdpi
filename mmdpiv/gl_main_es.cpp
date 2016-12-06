@@ -194,7 +194,7 @@ char* get_command_option( const char* option )
 	return 0x00;
 }
 
-void init( int argc, const char *argv[] )
+void init( int argc, char *argv[] )
 {
 	
 	char*	model_name = get_command_option( "-p" );
