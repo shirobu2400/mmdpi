@@ -181,22 +181,25 @@ void init( int argc, char *argv[] )
 	char*	model_name = 0x00;
 	if( argc > 1 )
 		model_name = argv[ 1 ];
-	if( p->load( model_name ) )
+	if( model_name )
 	{
 		p = new mmdpi();
-		printf( "Not found %s.\n", pmd_file );
-		exit( 0 );
+		if( p->load( model_name ) )
+		{
+			printf( "Not found %s.\n", pmd_file );
+			exit( 0 );
+		}
 	}
 
 	char*	vmd_name = 0x00;
 	if( argc > 2 )
-		model_name = argv[ 2 ];
+		vmd_name = argv[ 2 ];
 	vmd_flag = 0;
 	if( p && vmd_file )
 	{
 		if( p->vmd_load( vmd_name ) )
 		{
-			printf( "Not found %s.\n", vmd_file );
+			printf( "Not found %s.\n", vmd_name );
 			exit( 0 );
 		}
 		else
