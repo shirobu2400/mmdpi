@@ -282,6 +282,8 @@ typedef struct tagMMDPI_BONE_INFO
 
 	char*					name;
 	char*					sjis_name;
+
+	int					level;
 	
 	int					visible;		//	表示するか否か
 	float					length;			//	表示用ボーンの長さ
@@ -308,6 +310,7 @@ typedef struct tagMMDPI_BONE_INFO
 	{
 		name = 0;
 		sjis_name = 0;
+		level = 0;
 	}
 
 	~tagMMDPI_BONE_INFO()

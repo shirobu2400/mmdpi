@@ -3,13 +3,16 @@
 
 
 //	IK
-int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
+int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index, int bone_level )
 {
 	const int	_ik_range_ = 255;
 	const float	bottom_noise = 1e-16f;
-
+	
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
+
+	//if( bone[ bone_index ].level != bone_level )
+	//	return -1;
 	
 	MMDPI_PMX_BONE_INFO_PTR		npb	= &pbone[ bone_index ];
 	MMDPI_BONE_INFO_PTR		nb	= &bone [ bone_index ];
@@ -21,7 +24,8 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 	mmdpiVector4d		v0001( 0, 0, 0, 1 );
 			
-	mmdpiVector4d		effect_pos_base	= mmdpiBone::get_local_matrix( nb ) * v0001;	//	IKの目指す目標位置	Effector
+	mmdpiVector4d		effect_pos_base	= mmdpiBone::get_global_matrix( nb ) * v0001;	//	IKの目指す目標位置	Effector
+	//mmdpiVector4d		effect_pos_base	= nb->matrix * v0001;	//	IKの目指す目標位置	Effector
 					
 	for( uint j = 0; j < iteration_num; j ++ )
 	{
@@ -35,9 +39,12 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			dword			attention_index		= my_ik->ik_bone_index;
 
 			MMDPI_BONE_INFO_PTR	target_bone		= &bone[ attention_index ];			//	IKで目標を目指すボーン	Target
-			mmdpiVector4d		target_pos_base		= mmdpiBone::get_local_matrix( &bone[ npb->ik_target_bone_index ] ) * v0001;	// Target
-			
-			mmdpiMatrix		local_mat		= mmdpiBone::get_local_matrix( target_bone );
+			MMDPI_BONE_INFO_PTR	ik_target_bone		= &bone[ npb->ik_target_bone_index ];
+			mmdpiVector4d		target_pos_base		= mmdpiBone::get_global_matrix( ik_target_bone ) * v0001;	// Target
+			//mmdpiVector4d		target_pos_base		= ik_target_bone->matrix * v0001;	// Target
+
+			mmdpiMatrix		local_mat		= mmdpiBone::get_global_matrix( target_bone );
+			//mmdpiMatrix		local_mat		= target_bone->matrix;
 			mmdpiMatrix		inv_coord		= local_mat.get_inverse();
 
 			mmdpiVector4d		local_effect_pos;		//	Effector
@@ -81,10 +88,10 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			{
 				axis = local_effect_dir.cross( local_target_dir );
 				if( axis.dot( axis ) < bottom_noise )	//	axis is zero vector.
-					continue;			
+					continue;
 				axis.normalize();
 			}
-
+			
 			//	Rotation matrix create.
 			rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
 			
@@ -106,7 +113,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
 		if( rotation_distance < 1e-4f )
-			return 0;
+			break;
 	}
 
 	return 0;

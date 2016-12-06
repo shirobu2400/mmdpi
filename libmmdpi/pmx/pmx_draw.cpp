@@ -4,9 +4,27 @@
 
 void mmdpiPmxDraw::draw( void )
 {
-	//	ik
+	////for( int level = mmdpiPmxLoad::bone_level_range - 1; level >= 0; level -- )
+	//for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
+	////uint level = 0;
+	//{
+	//	//	matrix
+	//	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+	//		make_global_matrix( i, level, 0 );
+
+	//	//	ik
+	//	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+	//		ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i, level );
+	//}
+	
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
+		ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i, 0 );
+
+	this->global_matrix();
+	
+	//	物理演算
+	if( bullet_flag )	
+		this->advance_time_physical( mmdpiModel::get_fps() );
 	
 	mmdpiModel::draw();
 }

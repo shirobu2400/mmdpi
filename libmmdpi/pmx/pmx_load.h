@@ -32,6 +32,7 @@ protected :
 	//	Bone
 	dword						bone_num;
 	MMDPI_PMX_BONE_INFO_PTR				bone;
+	dword						bone_level_range;
 
 	//	Morph
 	dword						morph_num;

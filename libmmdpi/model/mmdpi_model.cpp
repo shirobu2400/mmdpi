@@ -17,8 +17,6 @@ int mmdpiModel::create( void )
 	}
 
 	//	bullet
-	//	Make bone matrix
-	this->global_matrix();
 	phy_load_flag = 0;
 	if( bullet_flag == 0 )
 		return 0;
@@ -29,13 +27,6 @@ int mmdpiModel::create( void )
 
 void mmdpiModel::draw( void )
 {
-	//	Make bone matrix
-	this->global_matrix();
-	
-	//	物理演算
-	if( bullet_flag )	
-		this->advance_time_physical( fps );
-	
 	////	Morph
 	//skin_init_update();
 	//for( uint i = 0; i < morph_num; i ++ )
@@ -79,6 +70,8 @@ void mmdpiModel::draw( void )
 	//	オプション
 	OptionDisable();
 
+	glDisable( GL_DEPTH_TEST );
+
 	//	Not Using My Shader
 	shader_off();
 
@@ -95,7 +88,7 @@ int mmdpiModel::draw_main( int cull_flag )
 		for( uint i = 0; i < face->material_num; i ++ )
 		{
 			MMDPI_MATERIAL_PTR	m = face->material[ i ];
-			uint				material_hash = m->pid;
+			uint			material_hash = m->pid;
 
 			glActiveTexture( GL_TEXTURE0 );
 			
@@ -163,7 +156,7 @@ int mmdpiModel::OptionDisable( void )
 	glDisable( GL_TEXTURE_2D );
 	glDisable( GL_CULL_FACE );
 	
-	glDisable( GL_DEPTH_TEST );
+	//glDisable( GL_DEPTH_TEST );
 	//glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
 	

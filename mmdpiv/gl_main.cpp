@@ -1,13 +1,16 @@
 ﻿
 
 #include "../libmmdpi/mmdpi.h"
+#include "../libmmdpix/mmdpix.h"
 //#include "../gl_xfile/gl_xfile.h"
 
 #if defined( _WIN32 )
 #	if defined( _DEBUG )
 #		pragma comment( lib, "../Debug/libmmdpi.lib" )
+#		pragma comment( lib, "../Debug/libmmdpix.lib" )
 #	else
 #		pragma comment( lib, "../Release/libmmdpi.lib" )
+#		pragma comment( lib, "../Release/libmmdpix.lib" )
 #	endif
 #endif
 
@@ -18,7 +21,8 @@
 
 const int		_zoom_default_		= -1024 * 2 * 0.1f;// * 16;
 float			_y_pos_			= 11 * 0.1f;
-static mmdpi*		p = NULL;
+static mmdpi*		p;
+static mmdpix*		xfile;
 int			_fps_			= 30;
 int 			motion_flag		= 0;
 float			Zoom;
@@ -33,9 +37,10 @@ char**			Argv;
 
 #include "fps.h"
 
-Fps* fps = NULL;
+Fps*			fps = 0x00;
 
 void end( void );
+char* get_command_option( const char* option );
 
 void display( void )
 {
@@ -69,22 +74,24 @@ void display( void )
    
 	glPushMatrix();
 	{
-	//	glRotatef( rot, 1, 0, 0 );
-		//glRotatef( 3.14f, 0, 1, 0 );
-		//glRotatef( rot, 0, 1, 0 );
-		//glTranslatef( 0, 0, Zoom );
-
-		//glutSolidTeapot( 0.5 );
-
 		glRotatef( RotationAxis[ 0 ], 1, 0, 0 );
 		glRotatef( RotationAxis[ 1 ], 0, 1, 0 );
 
 		glScalef( 0.1f, 0.1f, 0.1f );
-		p->draw();
+		if( p )
+			p->draw();
 	}
 	glPopMatrix();
 
-	//rot += 0.1f;
+	glPushMatrix();
+	{	
+		glRotatef( RotationAxis[ 0 ], 1, 0, 0 );
+		glRotatef( RotationAxis[ 1 ] + 180.0f, 0, 1, 0 );
+		
+		if( xfile )
+			xfile->draw();
+	}
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -152,7 +159,7 @@ void timer( int value )
 	fps->draw();
 	fps->update();
 	
-	if( motion_flag && p->get_vmd( 0 ) )
+	if( p && motion_flag && p->get_vmd( 0 ) )
 	{
 		float	frame = 30.0f / fps->get_mfps();	//fps->get_dframe();
 		//	フレームを進める関数
@@ -164,13 +171,14 @@ void timer( int value )
 		if( p->get_vmd( 0 )->is_end() )
 			exit( 0 );
 	}
-	
+
 	mmdpiMatrix	matrix;
 	static float dy = 3.14f;
 	//dy += 0.01f;
 	//matrix.rotation( 0, 1, 0, dy );
 	//matrix.rotation( 0, 1, 0, 3.14f );
-	p->set_bone_matrix( 0, matrix );
+	if( p )
+		p->set_bone_matrix( 0, matrix );
 
 	glutPostRedisplay();
 }
@@ -243,37 +251,47 @@ void mouse_motion( int x, int y )
 	}
 }
 
-void init( void )
+void init( int argc, char* argv[] )
 {
-	p = new mmdpi();	
-	if( p == NULL )
-		exit( 0 );
-	
-	// Test
-	if( Argc > 1 )
+	char*	model_name = get_command_option( "-p" );
+	if( model_name )
 	{
-		puts( Argv[ 1 ] );
-		if( p->load( Argv[ 1 ] ) )
+		p = new mmdpi();
+		if( p == 0x00 )
+			exit( 0 );
+		puts( model_name );
+		if( p->load( model_name ) )
 			exit( 0 );
 	}
-	
-	if( Argc > 2 && Argv[ 2 ][ 0 ] )
+
+	char*	vmd_name = get_command_option( "-v" );
+	if( vmd_name )
 	{
 		motion_flag = 1;
-		puts( Argv[ 2 ] );
-		if( p->vmd_load( Argv[ 2 ] ) )
+		puts( vmd_name );
+		if( p->vmd_load( vmd_name ) )
 			motion_flag = 0;
 	}
 
-	if( Argc > 3 && Argv[ 3 ][ 0 ] )
+	char*	xfile_name = get_command_option( "-x" );
+	if( xfile_name )
 	{
-		_fps_ = atoi( Argv[ 3 ] );
+		xfile = new mmdpix();
+		if( xfile == 0x00 )
+			exit( 0 );
+		xfile->load( xfile_name );
+	}
+
+	//if( Argc > 3 && Argv[ 3 ][ 0 ] )
+	{
+		_fps_ = 60;//atoi( Argv[ 3 ] );
 		_fps_ = ( _fps_ < 6 || 480 < _fps_ )? 30.0f : _fps_ ;
 	}
 	fps = new Fps();
 	fps->set_fps( _fps_ );
 
-	p->set_fps( _fps_ );
+	if( p )
+		p->set_fps( _fps_ );
 
 	puts( "END Loading." );
 }
@@ -282,6 +300,26 @@ void end( void )
 {
 	delete fps;
 	delete p;
+	delete xfile;
+}
+
+char* get_command_option( const char* option )
+{
+	int		i;
+	size_t		option_length = strlen( option );
+
+	for( i = 0; i < __argc; i ++ )
+	{
+		if( strncmp( __argv[ i ], option, option_length ) == 0 )
+		{
+			char* r = __argv[ i ] + option_length;
+			if( *r )
+				return r;
+			return __argv[ i ];
+		}
+	}
+
+	return 0x00;
 }
 
 int main( int argc, char *argv[] )
@@ -289,8 +327,9 @@ int main( int argc, char *argv[] )
 	if( argc < 2 && 0 )
 	{
 		printf( 
-			"argment1: PMD or PMX\n"
-			"argment2: VMD\n"
+			"argment: -p [pmd or pmx file name] \n"
+			"argment: -v [vmd file name] \n"
+			"argment: -x [x file name] \n"
 			);
 		return 0;
 	}
@@ -316,7 +355,7 @@ int main( int argc, char *argv[] )
 	glutPassiveMotionFunc( mouse_passive_func );
 	glutMotionFunc( mouse_motion );
 
-	init();
+	init( argc, argv );
 
 	//glutIdleFunc( idle );
 	glutTimerFunc( 1000.0f / 30.0f , timer, 0 );

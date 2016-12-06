@@ -3,7 +3,7 @@
 
 
 // データ整列
-int	mmdpiPmxLoad::reader( GetBin* buf )
+int mmdpiPmxLoad::reader( GetBin* buf )
 {
 	// head
 	if( get_header( buf ) )
@@ -192,8 +192,10 @@ int	mmdpiPmxLoad::reader( GetBin* buf )
 	buf->get_bin( &bone_num, sizeof( bone_num ) );
 	bone = new MMDPI_PMX_BONE_INFO[ bone_num ];
 
-	ushort						bone_flag;
+	ushort				bone_flag;
 	MMDPI_PMX_BONE_INFO_PTR		tbone;
+	
+	bone_level_range = 1;
 	for( dword i = 0; i < bone_num; i ++ )
 	{
 		tbone = &bone[ i ];
@@ -318,6 +320,9 @@ int	mmdpiPmxLoad::reader( GetBin* buf )
 		}
 		else
 			bone[ i ].ik_link = NULL;
+
+		if( bone_level_range < bone[ i ].level + 1 )
+			bone_level_range = bone[ i ].level + 1;
 	}
 
 	//	モーフ

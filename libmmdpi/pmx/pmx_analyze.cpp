@@ -189,6 +189,8 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 		mmdpiModel::bone[ i ].parent		= NULL;
 		mmdpiModel::bone[ i ].first_child	= NULL;
 		mmdpiModel::bone[ i ].sibling		= NULL;
+
+		mmdpiModel::bone[ i ].level		= pbone[ i ].level;
 	}
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
@@ -238,12 +240,8 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 	}
 	
 	//	init_mat 初期化
-	init_mat_calc( &mmdpiModel::bone[ 0 ], 0x00 );
-	for( uint i = 1; i < mmdpiModel::bone_num; i ++ )
-	{
-		if( mmdpiModel::bone[ i ].parent == 0x00 )
-			init_mat_calc( &mmdpiModel::bone[ i ], 0x00 );
-	}
+	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+		mmdpiModel::bone[ i ].init_mat = init_mat_calc_bottom( &mmdpiModel::bone[ i ] );
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
@@ -256,7 +254,9 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 	//	初期設定
 	refresh_bone_mat();
-	global_matrix();
+	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
+		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+			make_global_matrix( i, level, 0 );
 		
 	return 0;
 }

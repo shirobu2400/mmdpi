@@ -133,8 +133,9 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 
 	// toon
 	toon_name = new MMDPI_PMD_TOON_NAME[ 1 ];
-	if( buf->get_bin( toon_name, sizeof( MMDPI_PMD_TOON_NAME ) ) )
-		;
+	//if( buf->get_bin( toon_name, sizeof( MMDPI_PMD_TOON_NAME ) ) )
+	//	;
+	buf->get_bin( toon_name, sizeof( MMDPI_PMD_TOON_NAME ) );
 
 	p_rigid_num = 0;
 	p_joint_num = 0;

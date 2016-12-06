@@ -7,15 +7,15 @@ class mmdpi
 {
 protected :
 
-	mmdpiModel*				pmm;
-	mmdpiPmx*				pmx;
-	mmdpiPmd*				pmd;
+	mmdpiModel*			pmm;
+	mmdpiPmx*			pmx;
+	mmdpiPmd*			pmd;
 	vector< mmdpiVmd* >		vmd;
 	
 public :
 
-	virtual int			load( const char* model_name );
-	virtual int			vmd_load( const char *file_name );
+	virtual int		load( const char* model_name );
+	virtual int		vmd_load( const char *file_name );
 	virtual mmdpiVmd*	get_vmd( int index );
 
 	virtual void		draw( void );

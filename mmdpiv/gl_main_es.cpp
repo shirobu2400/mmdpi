@@ -26,14 +26,14 @@ extern "C"
 
 	typedef struct 
 	{
-	  EGLNativeWindowType  nativeWin;
-	  EGLDisplay  display;
-	  EGLContext  context;
-	  EGLSurface  surface;
-	  EGLint      majorVersion;
-	  EGLint      minorVersion;
-	  int         width;
-	  int         height;
+		EGLNativeWindowType  nativeWin;
+		EGLDisplay  display;
+		EGLContext  context;
+		EGLSurface  surface;
+		EGLint      majorVersion;
+		EGLint      minorVersion;
+		int         width;
+		int         height;
 	} ScreenSettings;
 
 	typedef struct
@@ -43,11 +43,11 @@ extern "C"
 
 	typedef struct 
 	{
-	  GLint   aPosition;
-	  GLint   aTex;
-	  GLint   uVpMatrix;
-	  GLint   uModelMatrix;
-	  Mat4    VpMatrix;
+		GLint   aPosition;
+		GLint   aTex;
+		GLint   uVpMatrix;
+		GLint   uModelMatrix;
+		Mat4    VpMatrix;
 	} ShaderParams;
 
 	ShaderParams    g_sp;
@@ -69,7 +69,7 @@ char*		vmd_file = NULL;
 
 char get_keyboard( void )
 {
-	int f = open( "/dev/tty", O_RDONLY|O_NONBLOCK|O_NDELAY|O_NOCTTY );
+	int f = open( "/dev/tty", O_RDONLY | O_NONBLOCK | O_NDELAY|O_NOCTTY );
 	char c;
 	struct termios term, default_term;
 	
@@ -175,21 +175,22 @@ public:
 Fps* 			fps = NULL;
 static int		vmd_flag = 0;
 
-void init()
+void init( int argc, const char *argv[] )
 {
-	p = new mmdpi();
-
-	//p->set_physics_engine( 0 );
-	if( p->load( pmd_file/*( char * )"obj/reimu/reimu.pmd"*/ ) )
+	
+	char*	model_name = get_command_option( "-p" );
+	if( p->load( model_name ) )
 	{
+		p = new mmdpi();
 		printf( "Not found %s.\n", pmd_file );
 		exit( 0 );
 	}
-	
+		
+	char*	vmd_name = get_command_option( "-v" );
 	vmd_flag = 0;
 	if( vmd_file )
 	{
-		if( p->vmd_load( vmd_file/*( char * )"obj/vmd/world_is_mine.vmd"*/ ) )
+		if( p->vmd_load( vmd_name ) )
 		{
 			printf( "Not found %s.\n", vmd_file );
 			exit( 0 );
@@ -435,20 +436,48 @@ int print_mat4( Mat4* m )
 	return 0;
 }
 
+char* get_command_option( const char* option )
+{
+	int		i;
+	size_t		option_length = strlen( option );
+
+	for( i = 0; i < __argc; i ++ )
+	{
+		if( strncmp( __argv[ i ], option, option_length ) == 0 )
+		{
+			char* r = __argv[ i ] + option_length;
+			if( *r )
+				return r;
+			return __argv[ i ];
+		}
+	}
+
+	return 0x00;
+}
+
 int main( int argc, char *argv[] )
 {
-	unsigned int frames = 0;
-	int   res;
-	Mat4	projection_matrix;
+	unsigned int	frames = 0;
+	int		res;
+	Mat4		projection_matrix;
 
-	Mat4  viewMat;
-	Mat4  rotMat;
-	Mat4  modelMat;
-	float aspect;
-	float	dw, dh;
+	Mat4		viewMat;
+	Mat4		rotMat;
+	Mat4		modelMat;
+	float		aspect;
+	float		dw, dh;
 	
-	int	debug_flag = 0;
+	int		debug_flag = 0;
 	
+	if( argc < 2 && 0 )
+	{
+		printf( 
+			"argment: -p [pmd or pmx file name] \n"
+			"argment: -v [vmd file name] \n"
+			);
+		return 0;
+	}
+
 	bcm_host_init();
 	res = WinCreate( &g_sc );
 	if( !res ) 
@@ -487,22 +516,7 @@ int main( int argc, char *argv[] )
 	makeUnit(&rotMat);
 	setRotationY(&rotMat, 0.5); /* 30 degree/sec */
 
-	pmd_file = NULL;
-	vmd_file = NULL;
-	if( argc < 3 )
-	{
-		printf( "File Error!\n" );
-		printf( "Argment1 : Pmd or Pmx file.\n" );
-		printf( "Argment2 : Vmd file.\n" );
-		return 0;
-	}
-	if( argc > 1 )
-		pmd_file = argv[ 1 ];
-	
-	if( argc > 2 )
-		vmd_file = argv[ 2 ];
-
-	init();
+	init( argc, argv );
 
 	if( argc > 3 && argv[ 3 ] )
 	{

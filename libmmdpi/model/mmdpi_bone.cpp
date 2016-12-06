@@ -26,7 +26,7 @@ int mmdpiBone::global_matrix( void )
 	return make_matrix( &bone[ 0 ], 0x00 );
 }
 
-//	表示行列生成
+//	グローバル行列生成
 int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset )
 {
 	if( my_bone == NULL )
@@ -45,15 +45,54 @@ int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offs
 	return 0;
 }
 
+//	PMX
+mmdpiMatrix mmdpiBone::make_global_matrix( int index, int level, int physics_after_flag )
+{
+	bone[ index ].matrix = get_global_matrix( &bone[ index ], level );
+	return bone[ index ].matrix;
+}
+
+int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset, int level, int physics_after_flag )
+{
+	if( my_bone == NULL )
+		return -1;
+
+	if( my_bone->level == level )
+	{
+		if( offset )
+			my_bone->matrix = my_bone->bone_mat * ( *offset ) * my_bone->delta_matrix;
+		else
+			my_bone->matrix = my_bone->bone_mat * my_bone->delta_matrix;
+	}
+	
+	if( my_bone->first_child )
+		make_matrix( my_bone->first_child, &my_bone->matrix, level, physics_after_flag );
+	if( my_bone->sibling )
+		make_matrix( my_bone->sibling    , offset          , level, physics_after_flag );
+
+	return 0;
+}
+
 //	ボーンのモデル上のローカル座標系の取得
-mmdpiMatrix mmdpiBone::get_local_matrix( MMDPI_BONE_INFO_PTR bone )	
+mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone )	
 {
 	if( bone->parent )	
 	{
-		mmdpiMatrix	parent_matrix = get_local_matrix( bone->parent );
+		mmdpiMatrix	parent_matrix = get_global_matrix( bone->parent );
 		return bone->bone_mat * parent_matrix;
 	}
 	return bone->bone_mat;
+}
+
+//	ボーンのモデル上のローカル座標系の取得
+mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone, int level )	
+{
+	if( bone->parent && bone->parent->level == level )	
+	{
+		mmdpiMatrix	parent_matrix = get_global_matrix( bone->parent, level );
+		return bone->bone_mat * parent_matrix;
+	}
+	return bone->matrix;
 }
 
 void mmdpiBone::refresh_bone_mat( void )
@@ -72,6 +111,13 @@ void mmdpiBone::init_mat_calc( MMDPI_BONE_INFO_PTR my_bone, mmdpiMatrix* offset 
 
 	if( offset )
 		my_bone->init_mat = ( *offset ) * my_bone->init_mat;
+}
+
+mmdpiMatrix mmdpiBone::init_mat_calc_bottom( MMDPI_BONE_INFO_PTR now_bone )
+{
+	if( now_bone->parent )
+		return now_bone->parent->offset_mat * now_bone->init_mat;
+	return now_bone->init_mat;
 }
 
 //	物理演算再生

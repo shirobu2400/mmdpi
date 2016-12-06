@@ -15,7 +15,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 //#endif
 	mmdpiVector4d	v0( 0, 0, 0, 1 ), v1( 0, 0, 0, 1 );
 		
-	mmdpiVector4d	effect_pos_base	= mmdpiBone::get_local_matrix( &bone[ ik_one->ik_bone_index ] ) * ( v0 );	// Effector
+	mmdpiVector4d	effect_pos_base	= mmdpiBone::get_global_matrix( &bone[ ik_one->ik_bone_index ] ) * ( v0 );	// Effector
 			
 	for( uint j = 0; j < _iteration_num_; j ++ )
 	{
@@ -25,18 +25,18 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 		{		
 			ushort			attention_index = ik_one->ik_child_bone_index[ i ];
 
-			mmdpiVector4d	target_pos_base	= mmdpiBone::get_local_matrix( &bone[ ik_one->ik_target_bone_index ] )	* ( v1 );	// Target
+			mmdpiVector4d	target_pos_base	= mmdpiBone::get_global_matrix( &bone[ ik_one->ik_target_bone_index ] )	* ( v1 );	// Target
 		
-			mmdpiMatrix		attention_localmat	= mmdpiBone::get_local_matrix( &bone[ attention_index ] );
-			mmdpiMatrix		inv_coord = attention_localmat.get_inverse();
+			mmdpiMatrix		attention_localmat	= mmdpiBone::get_global_matrix( &bone[ attention_index ] );
+			mmdpiMatrix		inv_coord		= attention_localmat.get_inverse();
 
-			mmdpiVector4d	effect_pos		= effect_pos_base;		// Effector
-			mmdpiVector4d	target_pos		= target_pos_base;		// Target
+			mmdpiVector4d	effect_pos			= effect_pos_base;		// Effector
+			mmdpiVector4d	target_pos			= target_pos_base;		// Target
 
-			effect_pos.w		= 1;
-			target_pos.w		= 1;
-			effect_pos		 = inv_coord * ( effect_pos );
-			target_pos		 = inv_coord * ( target_pos );
+			effect_pos.w			= 1;
+			target_pos.w			= 1;
+			effect_pos			= inv_coord * effect_pos;
+			target_pos			= inv_coord * target_pos;
 
 			mmdpiVector4d	diff_pos = ( effect_pos - target_pos );
 			if( diff_pos.dot( diff_pos ) < 1e-8f )
