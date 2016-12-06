@@ -175,37 +175,22 @@ public:
 Fps* 			fps = NULL;
 static int		vmd_flag = 0;
 
-char* get_command_option( const char* option, int argc, char* argv[] )
-{
-	int		i;
-	size_t		option_length = strlen( option );
-
-	for( i = 0; i < argc; i ++ )
-	{
-		if( strncmp( argv[ i ], option, option_length ) == 0 )
-		{
-			char* r = argv[ i ] + option_length;
-			if( *r )
-				return r;
-			return argv[ i ];
-		}
-	}
-
-	return 0x00;
-}
 
 void init( int argc, char *argv[] )
 {
-	
-	char*	model_name = get_command_option( "-p", argc, argv );
+	char*	model_name = 0x00;
+	if( argc > 1 )
+		model_name = argv[ 1 ];
 	if( p->load( model_name ) )
 	{
 		p = new mmdpi();
 		printf( "Not found %s.\n", pmd_file );
 		exit( 0 );
 	}
-		
-	char*	vmd_name = get_command_option( "-v", argc, argv );
+
+	char*	vmd_name = 0x00;
+	if( argc > 2 )
+		model_name = argv[ 2 ];
 	vmd_flag = 0;
 	if( p && vmd_file )
 	{
