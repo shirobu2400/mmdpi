@@ -173,11 +173,31 @@ Fps* 			fps = 0x00;
 static int		vmd_flag = 0;
 
 
+char* get_command_option( const char* option, int argc, char* argv[] )
+{
+	int		i;
+	size_t		option_length = strlen( option );
+
+	for( i = 0; i < argc; i ++ )
+	{
+		if( strncmp( argv[ i ], option, option_length ) == 0 )
+		{
+			char* r = argv[ i ] + option_length;
+			if( *r )
+				return r;
+			return argv[ i ];
+		}
+	}
+
+	return 0x00;
+}
+
 void init( int argc, char *argv[] )
 {
 	char*	model_name = 0x00;
-	if( argc > 1 )
-		model_name = argv[ 1 ];
+	moodel_name = get_command_option( "-p", argc, argv );
+	//if( argc > 1 )
+	//	model_name = argv[ 1 ];
 	if( model_name )
 	{
 		p = new mmdpi();
@@ -189,8 +209,9 @@ void init( int argc, char *argv[] )
 	}
 
 	char*	vmd_name = 0x00;
-	if( argc > 2 )
-		vmd_name = argv[ 2 ];
+	vmd_name = get_command_option( "-v", argc, argv );
+	//if( argc > 2 )
+	//	vmd_name = argv[ 2 ];
 	vmd_flag = 0;
 	if( p && vmd_name )
 	{
@@ -204,7 +225,36 @@ void init( int argc, char *argv[] )
 	}
 
 	if( p ) 
+	{
 		p->set_fps( _fps_ );
+		char*	fps_name = 0x00;
+		fps_name = get_command_option( "-f", argc, argv );
+		if( fps_name )
+		{
+			_fps_ = atoi( fps_name );
+			p->set_fps( _fps_ );
+		}
+	}
+	
+	fps = new Fps();
+	fps->set_fps( _fps_ );
+	
+	char*	sound_name = 0x00;
+	sound_name = get_command_option( "-s", argc, argv );
+	if( sound_name )
+	{
+		int	i, j;
+		char	cmd_string[ 255 ] = { 0 };
+		int	length = 0;
+		strcpy( cmd_string, sound_name );
+		puts( cmd_string );
+		length = strlen( cmd_string );
+		cmd_string[ length ] = ' ';
+		cmd_string[ length + 1 ] = '&';
+		cmd_string[ length + 2 ] = '\0';
+			
+		system( cmd_string );
+	}
 
 	Model_offset.rotation( 0, 1, 0, 3.14f );
 
@@ -460,8 +510,11 @@ int main( int argc, char *argv[] )
 	
 	if( argc < 2 )
 	{
-		printf( "argment: -p [pmd or pmx file name] \n"
+		printf( 
+			"argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
+			"argment: -f [vmd file name] \n"
+			"argment: -s [vmd file name] \n"
 			);
 		return 0;
 	}
@@ -519,28 +572,7 @@ int main( int argc, char *argv[] )
 
 	Mat4	delta_mat;
 	makeUnit( &delta_mat );
-	
-	//if( argc > 4 )
-	//{
-	//	int	i, j;
-	//	char	cmd_string[ 255 ] = { 0 };
-	//	for( i = 3; i < argc; i ++ )
-	//	{
-	//		int	length = 0;
-	//		strcpy( cmd_string, argv[ i ] );
-	//		puts( cmd_string );
-	//		length = strlen( cmd_string );
-	//		cmd_string[ length ] = ' ';
-	//		cmd_string[ length + 1 ] = '&';
-	//		cmd_string[ length + 2 ] = '\0';
-	//		
-	//		system( cmd_string );
-	//	}
-	//}
-	
-	fps = new Fps();
-	fps->set_fps( _fps_ );
-	
+
 	/* 1200frame / 60fps = 20sec */
 	//while( frames < 1200 ) 
 	while( !p->get_vmd( 0 )->is_end() || ( !vmd_flag && frames < 160 ) )

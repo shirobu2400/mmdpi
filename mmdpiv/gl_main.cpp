@@ -282,9 +282,10 @@ void init( int argc, char* argv[] )
 		xfile->load( xfile_name );
 	}
 
-	//if( Argc > 3 && Argv[ 3 ][ 0 ] )
+	char*	fps_name = get_command_option( "-f", argc, argv );
+	if( fps_name )
 	{
-		_fps_ = 60;//atoi( Argv[ 3 ] );
+		_fps_ = atoi( fps_name );
 		_fps_ = ( _fps_ < 6 || 480 < _fps_ )? 30.0f : _fps_ ;
 	}
 	fps = new Fps();
@@ -292,6 +293,12 @@ void init( int argc, char* argv[] )
 
 	if( p )
 		p->set_fps( _fps_ );
+
+	char*	sound_name = get_command_option( "-s", argc, argv );
+	if( sound_name )
+	{
+		system( sound_name );
+	}
 
 	puts( "END Loading." );
 }
@@ -330,6 +337,7 @@ int main( int argc, char *argv[] )
 			"argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
 			"argment: -x [x file name] \n"
+			"argment: -f [fps] \n"
 			);
 		return 0;
 	}
