@@ -195,7 +195,7 @@ char* get_command_option( const char* option, int argc, char* argv[] )
 void init( int argc, char *argv[] )
 {
 	char*	model_name = 0x00;
-	moodel_name = get_command_option( "-p", argc, argv );
+	model_name = get_command_option( "-p", argc, argv );
 	//if( argc > 1 )
 	//	model_name = argv[ 1 ];
 	if( model_name )
