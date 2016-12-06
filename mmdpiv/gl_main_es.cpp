@@ -175,6 +175,25 @@ public:
 Fps* 			fps = NULL;
 static int		vmd_flag = 0;
 
+char* get_command_option( const char* option )
+{
+	int		i;
+	size_t		option_length = strlen( option );
+
+	for( i = 0; i < __argc; i ++ )
+	{
+		if( strncmp( __argv[ i ], option, option_length ) == 0 )
+		{
+			char* r = __argv[ i ] + option_length;
+			if( *r )
+				return r;
+			return __argv[ i ];
+		}
+	}
+
+	return 0x00;
+}
+
 void init( int argc, const char *argv[] )
 {
 	
@@ -436,25 +455,6 @@ int print_mat4( Mat4* m )
 	return 0;
 }
 
-char* get_command_option( const char* option )
-{
-	int		i;
-	size_t		option_length = strlen( option );
-
-	for( i = 0; i < __argc; i ++ )
-	{
-		if( strncmp( __argv[ i ], option, option_length ) == 0 )
-		{
-			char* r = __argv[ i ] + option_length;
-			if( *r )
-				return r;
-			return __argv[ i ];
-		}
-	}
-
-	return 0x00;
-}
-
 int main( int argc, char *argv[] )
 {
 	unsigned int	frames = 0;
@@ -471,8 +471,7 @@ int main( int argc, char *argv[] )
 	
 	if( argc < 2 && 0 )
 	{
-		printf( 
-			"argment: -p [pmd or pmx file name] \n"
+		printf( "argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
 			);
 		return 0;
@@ -485,16 +484,16 @@ int main( int argc, char *argv[] )
 		printf( "Create window error!\n" );
 		return 0;
 	}
-	res = SurfaceCreate(&g_sc);
+	res = SurfaceCreate( &g_sc );
 	if( !res ) 
 	{
 		printf( "Create surface error!\n" );
 		return 0;
 	}
 	
-	makeUnit(&viewMat);
+	makeUnit( &viewMat );
 
-	aspect = (float)g_sc.width / (float)g_sc.height;
+	aspect = ( float )g_sc.width / ( float )g_sc.height;
 	
 	//makeProjectionMatrix(&g_sp.VpMatrix, 1, 65536, 53, aspect);
 	//setPosition(&viewMat, 0, -4, -24 );
@@ -503,52 +502,52 @@ int main( int argc, char *argv[] )
 	dh = 0.5f;
 
 	perspectiveMatrix( -dw, +dw, -dh, +dh, 1, 160, &g_sp.VpMatrix );
-	setPosition(&viewMat, 0, -12, -32 );
+	setPosition( &viewMat, 0, -12, -32 );
 
 	//print_mat4( &g_sp.VpMatrix );
 
-	mulMatrix(&g_sp.VpMatrix, &g_sp.VpMatrix, &viewMat);
+	mulMatrix( &g_sp.VpMatrix, &g_sp.VpMatrix, &viewMat );
 	
-	makeUnit(&modelMat);
+	makeUnit( &modelMat );
 	
 	mulMatrix( &projection_matrix, &modelMat, &g_sp.VpMatrix );
 
-	makeUnit(&rotMat);
-	setRotationY(&rotMat, 0.5); /* 30 degree/sec */
+	makeUnit( &rotMat );
+	setRotationY( &rotMat, 0.5 ); /* 30 degree/sec */
 
 	init( argc, argv );
 
-	if( argc > 3 && argv[ 3 ] )
-	{
-		if( strncmp( argv[ 3 ], "-D", 2 ) == 0 )
-			debug_flag = 1;
-	}
+	//if( argc > 3 && argv[ 3 ] )
+	//{
+	//	if( strncmp( argv[ 3 ], "-D", 2 ) == 0 )
+	//		debug_flag = 1;
+	//}
 	
 	//print_mat4( &projection_matrix );
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable( GL_DEPTH_TEST );
 	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
-	Mat4 delta_mat;
+	Mat4	delta_mat;
 	makeUnit( &delta_mat );
 	
-	if( argc > 4 )
-	{
-		int	i, j;
-		char	cmd_string[ 255 ] = { 0 };
-		for( i = 3; i < argc; i ++ )
-		{
-			int	length = 0;
-			strcpy( cmd_string, argv[ i ] );
-			puts( cmd_string );
-			length = strlen( cmd_string );
-			cmd_string[ length ] = ' ';
-			cmd_string[ length + 1 ] = '&';
-			cmd_string[ length + 2 ] = '\0';
-			
-			system( cmd_string );
-		}
-	}
+	//if( argc > 4 )
+	//{
+	//	int	i, j;
+	//	char	cmd_string[ 255 ] = { 0 };
+	//	for( i = 3; i < argc; i ++ )
+	//	{
+	//		int	length = 0;
+	//		strcpy( cmd_string, argv[ i ] );
+	//		puts( cmd_string );
+	//		length = strlen( cmd_string );
+	//		cmd_string[ length ] = ' ';
+	//		cmd_string[ length + 1 ] = '&';
+	//		cmd_string[ length + 2 ] = '\0';
+	//		
+	//		system( cmd_string );
+	//	}
+	//}
 	
 	fps = new Fps();
 	fps->set_fps( _fps_ );
