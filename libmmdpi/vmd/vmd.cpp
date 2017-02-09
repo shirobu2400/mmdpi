@@ -71,6 +71,8 @@ int mmdpiVmd::advance_time( float time_scale )
 		if( motion_time >= ( float )vpn->FrameNo )
 			now_motion[ i ] = now_motion[ i ]->next;	//次のモーションへ
 
+		//	親ボーンからみた姿勢行列に
+		//	変更量 * 親ボーンからみた初期姿勢
 		bone[ i ].bone_mat = ( rot_matrix * pos_matrix ) * bone[ i ].init_mat;
 	}
 

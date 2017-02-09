@@ -105,11 +105,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		for( k = 0; directory[ k ]; k ++ )
 			texture_file_name_full[ k ] = directory[ k ];
 
-		for( j = 0;
-			texture_file_name[ j ] 
-			&& texture_file_name[ j ] != '*';
-			j ++, k ++ 
-		)
+		for( j = 0; texture_file_name[ j ] && texture_file_name[ j ] != '*'; j ++, k ++ )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 
@@ -122,11 +118,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		for( k = 0; directory[ k ]; k ++ )
 			texture_file_name_full[ k ] = directory[ k ];
 
-		for( j = 0;
-			texture_file_name[ j ] 
-			&& texture_file_name[ j ] != '*';
-			j ++, k ++ 
-		)
+		for( j = 0; texture_file_name[ j ] && texture_file_name[ j ] != '*'; j ++, k ++ )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 
@@ -254,9 +246,8 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 	//	初期設定
 	refresh_bone_mat();
-	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
-		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-			make_global_matrix( i, level, 0 );
+	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+		make_global_matrix( i );
 		
 	return 0;
 }

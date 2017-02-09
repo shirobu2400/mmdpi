@@ -133,7 +133,7 @@ typedef struct tagMMDPI_IMAGE
 
 	GLint		id;
 	
-	int	load( const char *file_name )
+	int load( const char *file_name )
 	{
 		uint	len = strlen( file_name );
 		ref = 0;
@@ -141,7 +141,7 @@ typedef struct tagMMDPI_IMAGE
 		if( strncmp( file_name + len - 4, ".tga", 3 ) == 0 )
 		{
 			tga = new MMDPI_TGA();
-			if( tga->load( file_name ) < 0 )
+			if( ( int )tga->load( file_name ) < 0 )
 				return -1;
 			type = 1;
 			id = tga->get_id();
@@ -149,7 +149,7 @@ typedef struct tagMMDPI_IMAGE
 		else if( strncmp( file_name + len - 4, ".png", 3 ) == 0 )
 		{
 			png = new MMDPI_PNG();
-			if( png->load( file_name ) < 0 )
+			if( ( int )png->load( file_name ) < 0 )
 				return -1;
 			type = 2;
 			id = png->get_id();
@@ -157,7 +157,7 @@ typedef struct tagMMDPI_IMAGE
 		else if( strncmp( file_name + len - 4, ".bmp", 3 ) == 0 )
 		{
 			bmp = new MMDPI_BMP();
-			if( bmp->load( file_name ) < 0 ) 
+			if( ( int )bmp->load( file_name ) < 0 ) 
 				return -1;
 			type = 0;
 			id = bmp->get_id();
@@ -298,8 +298,8 @@ typedef struct tagMMDPI_BONE_INFO
 	mmdpiMatrix				posoffset_matrix;	//	child_flag == 0 の時のみ
 
 
-	mmdpiMatrix				init_mat;		// 初期姿勢行列
-	mmdpiMatrix				offset_mat;		// ボーンオフセット行列
+	mmdpiMatrix				init_mat;		// 親ボーンから見た初期姿勢行列
+	mmdpiMatrix				offset_mat;		// 親ボーンから見たボーンオフセット行列
 	mmdpiMatrix				bone_mat;		// ボーン姿勢行列 => 親ボーンから見た姿勢行列
 	mmdpiMatrix				local_matrix;		// offsetMat に matrix を掛けた状態(実際にシェーダに渡す値)
 	mmdpiMatrix				matrix;			// 位置、姿勢行列 => 実際の空間上の行列

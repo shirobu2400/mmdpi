@@ -3,7 +3,7 @@
 
 
 //	IK
-int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index, int bone_level )
+int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
 {
 	const int	_ik_range_ = 255;
 	const float	bottom_noise = 1e-16f;
@@ -11,9 +11,6 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
 
-	//if( bone[ bone_index ].level != bone_level )
-	//	return -1;
-	
 	MMDPI_PMX_BONE_INFO_PTR		npb	= &pbone[ bone_index ];
 	MMDPI_BONE_INFO_PTR		nb	= &bone [ bone_index ];
 
@@ -115,7 +112,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 		if( rotation_distance < 1e-4f )
 			break;
 	}
-
+	
 	return 0;
 }
 

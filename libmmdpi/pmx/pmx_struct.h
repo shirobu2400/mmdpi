@@ -171,7 +171,7 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 	dword	parent_index;			//	親ボーンのボーンIndex
 	dword	level;				//	変形階層	4byte
 
-	ushort	bone_flag;		//	ボーンフラグ(16bit) 各bit 0:OFF 1:ON
+	ushort	bone_flag;			//	ボーンフラグ(16bit) 各bit 0:OFF 1:ON
 	//○ボーンフラグ
 	// 0x0001  : 接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
 	//
@@ -195,11 +195,11 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 	float	offset[ 3 ];
 
 	//	接続先:1 の場合
-	dword	child_index;		//	接続先ボーンのボーンIndex
+	dword	child_index;			//	接続先ボーンのボーンIndex
 
 	//	回転付与:1 または 移動付与:1 の場合
-	dword	tr_parent_index;			//	付与親ボーンのボーンIndex
-	float	tr_parent_rate;			//	付与率
+	dword	grant_parent_index;		//	付与親ボーンのボーンIndex
+	float	grant_parent_rate;		//	付与率
 
 	//	軸固定:1 の場合
 	float	axis_vector[ 3 ];		//	軸の方向ベクトル
@@ -209,7 +209,7 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 	float	local_axis_z[ 3 ];		//	Z軸の方向ベクトル ※フレーム軸算出方法は後述
 
 	//	外部親変形:1 の場合
-	dword	key_value;				//	Key値	4byte
+	dword	key_value;			//	Key値	4byte
 
 	//IK:1 の場合 IKデータを格納
 	dword	ik_target_bone_index;
@@ -243,8 +243,8 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 	BYTE	show_flag;		//	表示
 	BYTE	user_update_flag;	//	操作可
 	BYTE	ik_flag;		//	IK
-	BYTE	rotation_s_flag;	//	回転付与
-	BYTE	translate_s_flag;	//	移動付与
+	BYTE	rotation_grant_flag;	//	回転付与
+	BYTE	translate_grant_flag;	//	移動付与
 	BYTE	const_axis_flag;	//	軸固定
 	BYTE	local_axis_flag;	//	ローカル軸
 	BYTE	physical_update_flag;	//	物理後変形
@@ -252,6 +252,9 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 
 	tagMMDPI_PMX_BONE_INFO()
 	{
+		grant_parent_index = -1;
+		grant_parent_rate = 0;
+
 		ik_loop_num = 0;
 		offset[ 0 ] = offset[ 1 ] = offset[ 2 ] = 0;
 		child_index = ~0;
@@ -262,8 +265,8 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 		show_flag = 0;			//	表示
 		user_update_flag = 0;		//	操作可
 		ik_flag = 0;			//	IK
-		rotation_s_flag = 0;		//	回転付与
-		translate_s_flag = 0;		//	移動付与
+		rotation_grant_flag = 0;		//	回転付与
+		translate_grant_flag = 0;		//	移動付与
 		const_axis_flag = 0;		//	軸固定
 		local_axis_flag = 0;		//	ローカル軸
 		physical_update_flag = 0;	//	物理後変形

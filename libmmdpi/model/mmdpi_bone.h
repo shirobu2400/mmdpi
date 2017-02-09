@@ -41,7 +41,6 @@ protected :
 public :
 	
 	static mmdpiMatrix	get_global_matrix( MMDPI_BONE_INFO_PTR bone );
-	static mmdpiMatrix	get_global_matrix( MMDPI_BONE_INFO_PTR bone, int level );
 	
 	void			refresh_bone_mat( void );
 	void			make_local_matrix( void );
@@ -49,9 +48,8 @@ public :
 	int			set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );
 
 	int			make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset );
-	int			make_matrix( MMDPI_BONE_INFO_PTR now_bone, const mmdpiMatrix* offset, int level, int physics_after_flag );
 	int			global_matrix( void );
-	mmdpiMatrix		make_global_matrix( int index, int level, int physics_after_flag );
+	mmdpiMatrix		make_global_matrix( int index );
 	
 	int			advance_time_physical( int fps = 30 );
 

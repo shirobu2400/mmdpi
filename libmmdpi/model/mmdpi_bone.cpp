@@ -46,31 +46,11 @@ int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offs
 }
 
 //	PMX
-mmdpiMatrix mmdpiBone::make_global_matrix( int index, int level, int physics_after_flag )
+mmdpiMatrix mmdpiBone::make_global_matrix( int index )
 {
-	bone[ index ].matrix = get_global_matrix( &bone[ index ], level );
-	return bone[ index ].matrix;
-}
-
-int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset, int level, int physics_after_flag )
-{
-	if( my_bone == NULL )
-		return -1;
-
-	if( my_bone->level == level )
-	{
-		if( offset )
-			my_bone->matrix = my_bone->bone_mat * ( *offset ) * my_bone->delta_matrix;
-		else
-			my_bone->matrix = my_bone->bone_mat * my_bone->delta_matrix;
-	}
-	
-	if( my_bone->first_child )
-		make_matrix( my_bone->first_child, &my_bone->matrix, level, physics_after_flag );
-	if( my_bone->sibling )
-		make_matrix( my_bone->sibling    , offset          , level, physics_after_flag );
-
-	return 0;
+	if( bone[ index ].parent == 0x00 )
+		return bone[ index ].bone_mat * bone[ index ].delta_matrix;
+	return bone[ index ].bone_mat * bone[ index ].parent->matrix * bone[ index ].delta_matrix;
 }
 
 //	ボーンのモデル上のローカル座標系の取得
@@ -82,17 +62,6 @@ mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone )
 		return bone->bone_mat * parent_matrix;
 	}
 	return bone->bone_mat;
-}
-
-//	ボーンのモデル上のローカル座標系の取得
-mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone, int level )	
-{
-	if( bone->parent && bone->parent->level == level )	
-	{
-		mmdpiMatrix	parent_matrix = get_global_matrix( bone->parent, level );
-		return bone->bone_mat * parent_matrix;
-	}
-	return bone->matrix;
 }
 
 void mmdpiBone::refresh_bone_mat( void )

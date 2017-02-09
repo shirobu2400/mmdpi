@@ -252,18 +252,18 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		if( bone_flag & 0x0100 )	//	回転付与
 		{
-			buf->get_bin2( &tbone->tr_parent_index, sizeof( dword ), head.byte[ 5 ] );
-			buf->get_bin( &tbone->tr_parent_rate, sizeof( float ) );
+			buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
+			buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
 
-			tbone->rotation_s_flag = 1;
+			tbone->rotation_grant_flag = 1;
 		}
 
 		if( bone_flag & 0x0200 )	//	移動付与
 		{
-			buf->get_bin2( &tbone->tr_parent_index, sizeof( dword ), head.byte[ 5 ] );
-			buf->get_bin( &tbone->tr_parent_rate, sizeof( float ) );
+			buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
+			buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
 
-			tbone->translate_s_flag = 1;
+			tbone->translate_grant_flag = 1;
 		}
 
 		if( bone_flag & 0x0400 )	//	軸固定
@@ -675,7 +675,7 @@ int mmdpiPmxLoad::get_direcotory( const char *file_name )
 }
 
 // ロード
-int	mmdpiPmxLoad::load( const char *file_name )
+int mmdpiPmxLoad::load( const char *file_name )
 {
 	// ディレクトリ取得
 	get_direcotory( file_name );
