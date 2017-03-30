@@ -23,7 +23,7 @@ const int		_zoom_default_		= -1024 * 2 * 0.1f;// * 16;
 float			_y_pos_			= 11 * 0.1f;
 static mmdpi*		p;
 static mmdpix*		xfile;
-int			_fps_			= 30;
+int			_fps_			= 60 + 30;	//	+20 はラグのため
 int 			motion_flag		= 0;
 float			Zoom;
 float			Rotate;
@@ -366,7 +366,7 @@ int main( int argc, char *argv[] )
 	init( argc, argv );
 
 	//glutIdleFunc( idle );
-	glutTimerFunc( 1000.0f / 30.0f , timer, 0 );
+	glutTimerFunc( 1000.0f / 60.0f , timer, 0 );
 
 	glutMainLoop();
 

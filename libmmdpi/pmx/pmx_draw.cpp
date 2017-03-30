@@ -4,36 +4,39 @@
 
 void mmdpiPmxDraw::draw( void )
 {
-	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
-	{	
-		//	ik
-		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		{
-			MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
-			if( bp->level == level && bp->ik_flag )
-				ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
-		}
+	for( int l = 0; l < 2; l ++ )
+	{
+		for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
+		{	
+			//	ik
+			for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+			{
+				MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
+				if( bp->level == level && bp->ik_flag )
+					ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
+			}
 
-		//	付与
-		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		{
-			MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
-			if( bp->level == level && ( bp->translate_grant_flag || bp->rotation_grant_flag ) )
-				grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, &mmdpiBone::bone[ bp->grant_parent_index ] );
-		}
+			//	付与
+			for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+			{
+				MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
+				if( bp->level == level )
+					grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, &mmdpiBone::bone[ bp->grant_parent_index ] );
+			}
 
-		//	matrix
-		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		{
-			if( mmdpiPmxLoad::bone[ i ].level == level )
-				mmdpiBone::bone[ i ].matrix = make_global_matrix( i );
+			//	matrix
+			for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+			{
+				if( mmdpiPmxLoad::bone[ i ].level == level )
+					mmdpiBone::bone[ i ].matrix = make_global_matrix( i );
+			}
 		}
 	}
 	
-	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
+	//for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+	//	ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
 
-	this->global_matrix();
+	//this->global_matrix();
 	
 	//	物理演算
 	if( bullet_flag )	
@@ -65,48 +68,51 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 		target_bone->bone_mat.transelation( p.x * rate, p.y * rate, p.z * rate );
 	}
 
-	//mmdpiVector4d		v0001( 0, 0, 0, 1 );
+	//if( pbone[ bone_index ].translate_grant_flag )
+	//{
+	//	mmdpiVector4d		v0001( 0, 0, 0, 1 );
 	//
-	//mmdpiVector4d		effect_pos_base		= mmdpiBone::get_global_matrix( grant_bone  ) * v0001;
-	//mmdpiVector4d		target_pos_base		= mmdpiBone::get_global_matrix( target_bone ) * v0001;
+	//	mmdpiVector4d		effect_pos_base		= mmdpiBone::get_global_matrix( grant_bone  ) * v0001;
+	//	mmdpiVector4d		target_pos_base		= mmdpiBone::get_global_matrix( target_bone ) * v0001;
 	//	
-	//mmdpiMatrix		local_mat		= mmdpiBone::get_global_matrix( grant_bone->parent );
-	//mmdpiMatrix		inv_coord		= local_mat.get_inverse();
+	//	mmdpiMatrix		local_mat		= mmdpiBone::get_global_matrix( grant_bone->parent );
+	//	mmdpiMatrix		inv_coord		= local_mat.get_inverse();
 
-	//mmdpiVector4d		local_effect_pos;		//	Effector
-	//mmdpiVector4d		local_target_pos;		//	Target
+	//	mmdpiVector4d		local_effect_pos;		//	Effector
+	//	mmdpiVector4d		local_target_pos;		//	Target
 
-	////	ローカル座標系へ変換
-	////local_effect_pos = inv_coord * effect_pos_base;
-	////local_target_pos = inv_coord * target_pos_base;
+	//	//	ローカル座標系へ変換
+	//	//local_effect_pos = inv_coord * effect_pos_base;
+	//	//local_target_pos = inv_coord * target_pos_base;
 
-	//local_effect_pos = effect_pos_base;
-	//local_target_pos = target_pos_base;
+	//	local_effect_pos = effect_pos_base;
+	//	local_target_pos = target_pos_base;
 
-	//mmdpiVector3d		local_effect_dir( local_effect_pos.x, local_effect_pos.y, local_effect_pos.z );
-	//mmdpiVector3d		local_target_dir( local_target_pos.x, local_target_pos.y, local_target_pos.z );
+	//	mmdpiVector3d		local_effect_dir( local_effect_pos.x, local_effect_pos.y, local_effect_pos.z );
+	//	mmdpiVector3d		local_target_dir( local_target_pos.x, local_target_pos.y, local_target_pos.z );
 
-	//float			angle;
-	//mmdpiVector3d		axis;
-	//mmdpiMatrix		rotation_matrix;
+	//	float			angle;
+	//	mmdpiVector3d		axis;
+	//	mmdpiMatrix		rotation_matrix;
 
-	//local_effect_dir.normalize();
-	//local_target_dir.normalize();
+	//	local_effect_dir.normalize();
+	//	local_target_dir.normalize();
 
-	////	向かう度合
-	//float	p = local_effect_dir.dot( local_target_dir );
-	//if( 1 < p )			
-	//	return 0;	//	arccos error!
-	//angle = acos( p ) * pbone[ bone_index ].grant_parent_rate;
+	//	//	向かう度合
+	//	float	p = local_effect_dir.dot( local_target_dir );
+	//	if( 1 < p )			
+	//		return 0;	//	arccos error!
+	//	angle = acos( p ) * pbone[ bone_index ].grant_parent_rate;
 
-	//axis = local_effect_dir.cross( local_target_dir );
-	//axis.normalize();
+	//	axis = local_effect_dir.cross( local_target_dir );
+	//	axis.normalize();
 	//		
-	////	Rotation matrix create.
-	//rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
+	//	//	Rotation matrix create.
+	//	rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
 
-	//target_bone->bone_mat = rotation_matrix * target_bone->bone_mat;
-	
+	//	target_bone->bone_mat = rotation_matrix * target_bone->bone_mat;
+	//}
+
 	return 0;
 }
 
