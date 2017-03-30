@@ -88,8 +88,8 @@ void display( void )
 		glRotatef( RotationAxis[ 0 ], 1, 0, 0 );
 		glRotatef( RotationAxis[ 1 ] + 180.0f, 0, 1, 0 );
 		
-		if( xfile )
-			xfile->draw();
+		//if( xfile )
+		//	xfile->draw();
 	}
 	glPopMatrix();
 
