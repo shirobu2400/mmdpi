@@ -304,7 +304,7 @@ int mmdpiPmdLoad::get_direcotory( const char *file_name )
 }
 
 // ロード
-int	mmdpiPmdLoad::load( const char *file_name )
+int mmdpiPmdLoad::load( const char *file_name )
 {
 	// ディレクトリ取得
 	get_direcotory( file_name );

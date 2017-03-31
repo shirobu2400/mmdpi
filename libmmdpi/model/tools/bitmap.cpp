@@ -19,87 +19,93 @@
 //-----------------------------------------------------------------------------------------------------
 int MMDPI_BMP::ReadBMP( const char *filename )
 {
-    FILE*				fp;
+	FILE*			fp;
 
-    BITMAPINFOHEADER	bitmapInfoHeader;
-    BITMAPFILEHEADER	header;
-    GLubyte				temp = 0;
+	BITMAPINFOHEADER	bitmapInfoHeader;
+	BITMAPFILEHEADER	header;
+	GLubyte			temp = 0;
+	
 
-    //　ファイルを開く
-    if ( ( fp = fopen( filename, "rb" ) ) == NULL )
-    {
-        //cout << "Error : Connot open.\n";
-        //cout << "File Name : " << filename << endl;
-        return -1;
-    }
+	//　ファイルを開く
+	if ( ( fp = fopen( filename, "rb" ) ) == NULL )
+	{
+		//cout << "Error : Connot open.\n";
+		//cout << "File Name : " << filename << endl;
+		return -1;
+	}
 
-    //　ヘッダー情報の読み取り
+	//　ヘッダー情報の読み取り
 	if( fread( &header, sizeof( BITMAPFILEHEADER ), 1, fp ) == 0 )
 	{
 		fclose( fp );
 		return -1;
 	}
 
-    //　ファイルチェック
-    if( header.bfType != 0x4d42 )
-    {
-        //cout << "Error : This is not bitmap.\n";
-        fclose( fp );
-        return -1;
-    }
+	//　ファイルチェック
+	if( header.bfType != 0x4d42 )
+	{
+		//cout << "Error : This is not bitmap.\n";
+		fclose( fp );
+		return -1;
+	}
 
-    //　ヘッダー情報の読み取り
+	//　ヘッダー情報の読み取り
 	if( fread( &bitmapInfoHeader, sizeof( BITMAPINFOHEADER ), 1, fp ) == 0 )
 	{
 		fclose( fp );
 		return -1;
 	}
 
-    //　幅と高さを取得
-    width = bitmapInfoHeader.biWidth;
-    height = bitmapInfoHeader.biHeight;
+	//　幅と高さを取得
+	width = bitmapInfoHeader.biWidth;
+	height = bitmapInfoHeader.biHeight;
 
-    if( bitmapInfoHeader.biSizeImage == 0 )
-    {
-        bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * 3;
-    }
+	if( bitmapInfoHeader.biSizeImage == 0 )
+		bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * 3;
 
-    fseek(fp, header.bfOffBits, SEEK_SET);
+	fseek( fp, header.bfOffBits, SEEK_SET );
 
-    //　データサイズを決定し，メモリを確保
-    bit_size = bitmapInfoHeader.biSizeImage;
-    bits = new GLubyte[ bit_size + 1 ];
+	//　データサイズを決定し，メモリを確保
+	bit_size = bitmapInfoHeader.biSizeImage;
+	bits = new GLubyte[ bit_size + 1 ];
 
-    //　エラーチェック
-    if( bits == 0x00 )
-    {
-        //cout << "Error : Allocation error!\n";
-        delete[] bits;
-        fclose( fp );
+	//　エラーチェック
+	if( bits == 0x00 )
+	{
+		//cout << "Error : Allocation error!\n";
+		delete[] bits;
+		fclose( fp );
 
-        return -1;
-    }
+		return -1;
+	}
 
-    //　ピクセルデータの読み込み
-    if( fread( bits, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
+	//　ピクセルデータの読み込み
+	if( fread( bits, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
 	{
 		fclose( fp );
 		return -1;
 	}
 
-    //　BGR　→　RGBに変換
-    for( uint i = 0; i < bit_size; i += 3 )
-    {
-        temp = bits[ i + 0 ];
-        bits[ i + 0 ] = bits[ i + 2 ];
-        bits[ i + 2 ] = temp;
-    }
+	bitc = bitmapInfoHeader.biBitCount / 8;
 
-    //　ファイルを閉じる
-    fclose( fp );
+	//　BGR　→　RGBに変換
+	for( uint i = 0; i < bit_size; i += bitc )
+	{
+		temp = bits[ i + 0 ];
+		bits[ i + 0 ] = bits[ i + 2 ];
+		bits[ i + 2 ] = temp;
+	}
+	if( bitc == 4 )
+	{
+		for( uint i = 0; i < bit_size; i += bitc )
+			bits[ i + 3 ]  = 1;
+	}
+
+	//　ファイルを閉じる
+	fclose( fp );
 
 	//	成功
-    return 0;
+	return 0;
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -108,42 +114,45 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 //-----------------------------------------------------------------------------------------------------
 int MMDPI_BMP::load( const char *filename )
 {
-    if( ReadBMP( filename ) )
-        return -1;
+	if( ReadBMP( filename ) )
+		return -1;
 
 	internalFormat	= GL_RGB;
-	format			= GL_RGB;
+	format		= GL_RGB;
 
-    glGenTextures( 1, &texture );
+	if( bitc == 4 )
+		format = GL_RGBA;
+
+	glGenTextures( 1, &texture );
 
 	//	バインド
 	//glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, texture );
+	glBindTexture( GL_TEXTURE_2D, texture );
 
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
+	//	テクスチャの割り当て
+	//	gluBuild2DMipmaps( GL_TEXTURE_2D, internalFormat, width, height, format, GL_UNSIGNED_BYTE, bits );
+	glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, bits );  
+  
 	//	テクスチャの拡大、縮小方法
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	//glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
 	//glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 
-	//	テクスチャの割り当て
-//	gluBuild2DMipmaps( GL_TEXTURE_2D, internalFormat, width, height, format, GL_UNSIGNED_BYTE, bits );
-	glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, bits );  
-  
 #ifdef _MMDPI_BITMAP_DRAW_SWITCH_
 #else
-    if( bits )
-    {
-        delete[] bits;
-        bits = NULL;
-    }
+	if( bits )
+	{
+		delete[] bits;
+		bits = NULL;
+	}
 #endif
 
-    return texture;
+	return texture;
 }
 
 /*

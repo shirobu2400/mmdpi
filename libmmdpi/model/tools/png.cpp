@@ -1,6 +1,7 @@
 ﻿
 #include "../mmdpi_struct.h"
 
+
 GLuint MMDPI_PNG::load( const char *filename )
 {
 	// ファイルを開く

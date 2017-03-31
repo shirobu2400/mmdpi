@@ -11,11 +11,11 @@
 
 typedef struct tagBITMAPFILEHEADER 
 {
-  ushort			 bfType;
-  dword			 bfSize;
-  ushort           bfReserved1;
-  ushort           bfReserved2;
-  dword          bfOffBits;
+  ushort		bfType;
+  dword			bfSize;
+  ushort		bfReserved1;
+  ushort		bfReserved2;
+  dword			bfOffBits;
 } BITMAPFILEHEADER ;
 
 typedef struct tagBITMAPCOREHEADER
@@ -89,22 +89,23 @@ using namespace std;
 class MMDPI_BMP
 {
 protected:
-    GLuint bit_size;
-    GLubyte *bits;
-    GLenum format;
-    GLuint internalFormat;
-    GLuint width;
-    GLuint height;
-    GLuint bpp;
+	GLuint	bit_size;
+	GLubyte	*bits;
+	GLenum	format;
+	GLuint	internalFormat;
+	GLuint	width;
+	GLuint	height;
+	GLuint	bpp;
 
 	GLuint	texture;
-
+	GLubyte	bitc;
+	
 public:
 
-	virtual GLuint	get_id( void );
+	virtual GLuint		get_id( void );
 
-	int				ReadBMP( const char *filename );
-    virtual int		load( const char *filename );
+	int			ReadBMP( const char *filename );
+	virtual int		load( const char *filename );
 
 	virtual int		draw( void );
 
