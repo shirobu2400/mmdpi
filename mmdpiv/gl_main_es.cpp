@@ -18,7 +18,7 @@ extern "C"
 #endif
 
 //int 	usec = 16 * 1000;//1000 / 30 * 1000 ;	//	30 fps
-int		_fps_ = 30;
+int		_fps_ = 60;
 uint32_t	_screen_max_size_ = 0x1000;//1280;	//640;
 
 extern "C" 
