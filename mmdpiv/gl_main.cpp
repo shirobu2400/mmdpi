@@ -1,16 +1,16 @@
 ﻿
 
 #include "../libmmdpi/mmdpi.h"
-#include "../libmmdpix/mmdpix.h"
+//#include "../libmmdpix/mmdpix.h"
 //#include "../gl_xfile/gl_xfile.h"
 
 #if defined( _WIN32 )
 #	if defined( _DEBUG )
 #		pragma comment( lib, "../Debug/libmmdpi.lib" )
-#		pragma comment( lib, "../Debug/libmmdpix.lib" )
+//#		pragma comment( lib, "../Debug/libmmdpix.lib" )
 #	else
 #		pragma comment( lib, "../Release/libmmdpi.lib" )
-#		pragma comment( lib, "../Release/libmmdpix.lib" )
+//#		pragma comment( lib, "../Release/libmmdpix.lib" )
 #	endif
 #endif
 
@@ -22,7 +22,7 @@
 const int		_zoom_default_		= -1024 * 2 * 0.1f;// * 16;
 float			_y_pos_			= 11 * 0.1f;
 static mmdpi*		p;
-static mmdpix*		xfile;
+//static mmdpix*		xfile;
 int			_fps_			= 60 + 30;	//	+20 はラグのため
 int 			motion_flag		= 0;
 float			Zoom;
@@ -88,8 +88,8 @@ void display( void )
 		glRotatef( RotationAxis[ 0 ], 1, 0, 0 );
 		glRotatef( RotationAxis[ 1 ] + 180.0f, 0, 1, 0 );
 		
-		if( xfile )
-			xfile->draw();
+		//if( xfile )
+		//	xfile->draw();
 	}
 	glPopMatrix();
 
@@ -272,7 +272,7 @@ void init( int argc, char* argv[] )
 		if( p->vmd_load( vmd_name ) )
 			motion_flag = 0;
 	}
-
+/*
 	char*	xfile_name = get_command_option( "-x", argc, argv );
 	if( xfile_name )
 	{
@@ -281,7 +281,7 @@ void init( int argc, char* argv[] )
 			exit( 0 );
 		xfile->load( xfile_name );
 	}
-
+*/
 	char*	fps_name = get_command_option( "-f", argc, argv );
 	if( fps_name )
 	{
@@ -307,7 +307,7 @@ void end( void )
 {
 	delete fps;
 	delete p;
-	delete xfile;
+//	delete xfile;
 }
 
 char* get_command_option( const char* option, int argc, char* argv[] )
