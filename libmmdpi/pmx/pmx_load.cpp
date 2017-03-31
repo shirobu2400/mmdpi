@@ -699,22 +699,22 @@ int mmdpiPmxLoad::load( const char *file_name )
 
 mmdpiPmxLoad::mmdpiPmxLoad()
 {
-	head.byte = NULL;
+	head.byte		= NULL;
 // Pointer Veriables
-	head.name			= 0x00;
+	head.name		= 0x00;
 	head.name_eng		= 0x00;
 	head.comment		= 0x00;
 	head.comment_eng	= 0x00;
 
-	vertex				= NULL;
-	face				= NULL;
-	texture				= NULL;
-	material			= NULL;
-	bone				= NULL;
-	morph				= NULL;
-	show				= NULL;
-	p_rigid				= NULL;
-	p_joint				= NULL;
+	vertex			= NULL;
+	face			= NULL;
+	texture			= NULL;
+	material		= NULL;
+	bone			= NULL;
+	morph			= NULL;
+	show			= NULL;
+	p_rigid			= NULL;
+	p_joint			= NULL;
 }
 
 mmdpiPmxLoad::~mmdpiPmxLoad()

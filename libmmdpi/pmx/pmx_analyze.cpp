@@ -64,8 +64,8 @@ int mmdpiPmxAnalyze::analyze( void )
 		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
 		for( dword i = 0; i < f->material_num; i ++ )
 		{
-			MMDPI_MATERIAL_PTR		m		= f->material[ i ];
-			MMDPI_PMX_MATERIAL_PTR	mpmx	= &material[ m->pid ];
+			MMDPI_MATERIAL_PTR		m	= f->material[ i ];
+			MMDPI_PMX_MATERIAL_PTR		mpmx	= &material[ m->pid ];
 		
 			m->edge_size = mpmx->edge_size;
 
@@ -97,7 +97,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 	{
 		char*	texture_file_name;
 		char	texture_file_name_full[ 0xffff ];
-		int		j, k;	
+		int	j, k;	
 
 		texture_file_name = mmdpiPmxLoad::texture[ i ].name;
 
@@ -138,7 +138,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
 		for( dword i = 0; i < f->material_num; i ++ )
 		{
-			MMDPI_MATERIAL_PTR		m		= f->material[ i ];
+			MMDPI_MATERIAL_PTR	m	= f->material[ i ];
 			MMDPI_PMX_MATERIAL_PTR	mpmx	= &material[ m->pid ];
 		
 			//	テクスチャの関連付け
@@ -223,7 +223,7 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 		}
 	}
 
-	if( mmdpiModel::bone[ 0 ].first_child == 0x00 )
+	if( mmdpiModel::bone[ 0 ].first_child == 0x00 && 1 < mmdpiModel::bone_num )
 		mmdpiModel::bone[ 0 ].first_child = &mmdpiModel::bone[ 1 ];
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
@@ -257,9 +257,9 @@ mmdpiPmxAnalyze::mmdpiPmxAnalyze()
 	adjust_material = 0x00;
 	adjust_vertex	= 0x00;
 
-	texture			= 0x00;
+	texture		= 0x00;
 	toon_texture	= 0x00;
-	texture00		= 0x00;
+	texture00	= 0x00;
 	toon_texture00	= 0x00;
 }
 
