@@ -5,18 +5,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
 #include "bitmap.h"
-//using namespace std;
 
 
-//////////////////////////////////////////////////////////////////////////
-//　　MMDPI_BMP class
-//////////////////////////////////////////////////////////////////////////
-
-
-//-----------------------------------------------------------------------------------------------------
-//　　ReadBMP
-//　　Desc : BMPファイルの読み込み
-//-----------------------------------------------------------------------------------------------------
 int MMDPI_BMP::ReadBMP( const char *filename )
 {
 	FILE*			fp;
@@ -60,8 +50,11 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	width = bitmapInfoHeader.biWidth;
 	height = bitmapInfoHeader.biHeight;
 
+	//	bit幅
+	bitc = bitmapInfoHeader.biBitCount / 8;
+
 	if( bitmapInfoHeader.biSizeImage == 0 )
-		bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * 3;
+		bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * bitc;
 
 	fseek( fp, header.bfOffBits, SEEK_SET );
 
@@ -86,8 +79,6 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		return -1;
 	}
 
-	bitc = bitmapInfoHeader.biBitCount / 8;
-
 	//　BGR　→　RGBに変換
 	for( uint i = 0; i < bit_size; i += bitc )
 	{
@@ -108,10 +99,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	return 0;
 }
 
-//-----------------------------------------------------------------------------------------------------
-//　　Load
-//　　Desc : BMPファイルを読み込み，テクスチャを生成
-//-----------------------------------------------------------------------------------------------------
+
 int MMDPI_BMP::load( const char *filename )
 {
 	if( ReadBMP( filename ) )

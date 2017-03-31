@@ -627,7 +627,7 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 char* mmdpiPmxLoad::bin_string( GetBin* buf )
 {
 	char*			result;
-	vector<char>	_string;
+	vector<char>		_string;
 	char			c[ 8 ];
 
 	while( buf->get_bin( c, 1 ) && c[ 0 ] )

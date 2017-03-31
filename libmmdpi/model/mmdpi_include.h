@@ -25,11 +25,11 @@ using namespace std;
 
 #ifndef _MMDPI_AMD64BIT_
 	//	32bit
-	typedef long			integer;
+	typedef long		integer;
 	typedef unsigned long	dword;
 #else
 	//	64bit amd
-	typedef int				integer;
+	typedef int		integer;
 	typedef unsigned int	dword;
 #endif
 
@@ -42,7 +42,7 @@ typedef short SHORT;
 typedef unsigned int uint;
 
 //	テクスチャ
-typedef GLuint				mmdpiTexture;
+typedef GLuint			mmdpiTexture;
 
 //#pragma pack( push, 1 )	//アラインメント制御をオフる
 

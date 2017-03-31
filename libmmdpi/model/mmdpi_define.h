@@ -16,5 +16,5 @@
 //	1 マテリアルが所有することのできるボーン数
 #define _MMDPI_MATERIAL_USING_BONE_NUM_		24
 
-#define _MMDPI_BULLET_STEP_		2			//	Bullet physics step
-#define _MMDPI_BULLET_SPACE_		255			//	Bullet world size
+#define _MMDPI_BULLET_STEP_			1			//	Bullet physics step
+#define _MMDPI_BULLET_SPACE_			255			//	Bullet world size

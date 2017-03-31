@@ -56,10 +56,10 @@ void mmdpiModel::draw( void )
 	//	オプション
 	OptionEnable();
 
-	//	裏面描画
-	glEnable( GL_DEPTH_TEST );
-	glCullFace( GL_FRONT );
-	draw_main( 0 );
+	////	裏面描画
+	//glEnable( GL_DEPTH_TEST );
+	//glCullFace( GL_FRONT );
+	//draw_main( 0 );
 	
 	//	本処理
 	glEnable( GL_DEPTH_TEST );
@@ -133,7 +133,7 @@ int mmdpiModel::OptionEnable( void )
 	//glDisable( GL_CULL_FACE );		//	カリング無効
 	glEnable( GL_CULL_FACE );		//	CCWでカリング(反時計回り)
 	glFrontFace( GL_CCW );
-	glCullFace( GL_BACK );
+	glCullFace( GL_FRONT );
 
 	//glEnable( GL_DEPTH_TEST );
 	//glEnable( GL_ALPHA_TEST ); 

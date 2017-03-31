@@ -164,8 +164,11 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 
 			r->type = rigid.shape_type;
 			
-			for( int j = 0; j < 3; j ++ )
-				r->pos[ j ] = rigid.pos_pos[ j ] + bone[ r->bone_index ].bone_head_pos[ j ];
+			if( r->bone_index < bone_num )
+			{
+				for( int j = 0; j < 3; j ++ )
+					r->pos[ j ] = rigid.pos_pos[ j ] + bone[ r->bone_index ].bone_head_pos[ j ];
+			}
 			for( int j = 0; j < 3; j ++ )
 				r->rot[ j ] = rigid.pos_rot[ j ];
 

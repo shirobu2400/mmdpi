@@ -54,7 +54,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div, ( float )vp->Interpolation[ 6 ] / _interpolation_div, 
 					( float )vp->Interpolation[ 10 ] / _interpolation_div, ( float )vp->Interpolation[ 14 ] / _interpolation_div, 
 					time_f ) * ( next_vec.z - now_vec.z );
-		//radw
+		//	radw
 		radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div, ( float )vp->Interpolation[ 7 ] / _interpolation_div, 
 					( float )vp->Interpolation[ 11 ] / _interpolation_div, ( float )vp->Interpolation[ 15 ] / _interpolation_div, 
 					time_f );
