@@ -21,7 +21,7 @@ void mmdpiPmxDraw::draw( void )
 			{
 				MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
 				if( bp->level == level )
-					grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, &mmdpiBone::bone[ bp->grant_parent_index ] );
+					grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bp->grant_parent_index );
 			}
 
 			//	matrix
@@ -32,12 +32,7 @@ void mmdpiPmxDraw::draw( void )
 			}
 		}
 	}
-	
-	//for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-	//	ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
 
-	//this->global_matrix();
-	
 	//	物理演算
 	if( bullet_flag )	
 		this->advance_time_physical( mmdpiModel::get_fps() );
@@ -46,19 +41,32 @@ void mmdpiPmxDraw::draw( void )
 }
 
 //	付与親ボーン処理
-int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index, MMDPI_BONE_INFO_PTR grant_bone )
+int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index, int grant_bone_index )
 {
-	//MMDPI_BONE_INFO_PTR	grant_bone		= &bone[ pbone[ bone_index ].grant_parent_index ];
+	MMDPI_BONE_INFO_PTR	grant_bone;
 	MMDPI_BONE_INFO_PTR	target_bone		= &bone[ bone_index ];
 	float			rate			= pbone[ bone_index ].grant_parent_rate;
 
+
+	if( !( pbone[ bone_index ].rotation_grant_flag || pbone[ bone_index ].translate_grant_flag ) )
+		return 0;
+
+	grant_bone = &bone[ grant_bone_index ];
+
+	if( target_bone->level - grant_bone->level > 1 )
+		return 0;
+
+	if( rate < 0 )
+		rate = 0;
+	if( rate > 1 )
+		rate = 1;
+
 	if( pbone[ bone_index ].rotation_grant_flag )
 	{
-		mmdpiQuaternion		q = grant_bone->bone_mat.get_quaternion();
-		q.x = rate * q.x;
-		q.y = rate * q.y;
-		q.z = rate * q.z;
-		q.w = rate * q.w;
+		mmdpiQuaternion		q1 = target_bone->bone_mat.get_quaternion();
+		mmdpiQuaternion		q2 = grant_bone->bone_mat.get_quaternion();
+		mmdpiQuaternion		q;
+		q.slerp_quaternion( q1, q2, rate );
 		target_bone->bone_mat.quaternion( q );
 	}
 

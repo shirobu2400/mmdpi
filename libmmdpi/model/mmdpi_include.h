@@ -584,9 +584,9 @@ typedef struct _mmdpiMatrix_
 		r._42 = +sub_determinant( 1, 3 ) * idet;
 		r._43 = -sub_determinant( 2, 3 ) * idet;
 		r._44 = +sub_determinant( 3, 3 ) * idet;
-
+		
 		return r;
- 	}
+	}
 
 	//	サラスの行列式で扱えるよう、3x3 の行列に変換
 	inline float sub_determinant( const unsigned short x_index, const unsigned short y_index )
@@ -615,13 +615,11 @@ typedef struct _mmdpiMatrix_
 		}
 
 		sarrus		= sub_matrix[ 0 ][ 0 ] * sub_matrix[ 1 ][ 1 ] * sub_matrix[ 2 ][ 2 ]
-					+ sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 0 ]
-					+ sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 2 ]
-
-					- sub_matrix[ 0 ][ 2 ] * sub_matrix[ 1 ][ 1 ] * sub_matrix[ 2 ][ 0 ]
-					- sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 0 ]
-					- sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 2 ]
-			;
+				+ sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 0 ]
+				+ sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 2 ]
+				- sub_matrix[ 0 ][ 2 ] * sub_matrix[ 1 ][ 1 ] * sub_matrix[ 2 ][ 0 ]
+				- sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 0 ]
+				- sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 2 ];
 
 		return sarrus;
 	}
@@ -629,12 +627,10 @@ typedef struct _mmdpiMatrix_
 	//	
 	inline float determinant( void )
 	{
-		return (
-			+ _11 * sub_determinant( 0, 0 )
+		return  + _11 * sub_determinant( 0, 0 )
 			- _21 * sub_determinant( 1, 0 )
 			+ _31 * sub_determinant( 2, 0 ) 
-			- _41 * sub_determinant( 3, 0 )
-			);
+			- _41 * sub_determinant( 3, 0 );
 	}
 	
 	inline mmdpiVector3d get_transform( void )
