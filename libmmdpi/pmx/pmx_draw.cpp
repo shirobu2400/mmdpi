@@ -4,33 +4,27 @@
 
 void mmdpiPmxDraw::draw( void )
 {
-	for( int l = 0; l < 2; l ++ )
+	for( int bone_update_counter = 0; bone_update_counter < 2; bone_update_counter ++ )
 	{
 		for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
 		{	
-			//	ik
 			for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 			{
-				MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
-				if( bp->level == level && bp->ik_flag )
+				MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
+				MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
+				if( bonep->level == level )
+				{
+					//	ik
 					ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
-			}
 
-			//	付与
-			for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-			{
-				MMDPI_PMX_BONE_INFO_PTR		bp = &mmdpiPmxLoad::bone[ i ];
-				if( bp->level == level )
-					grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bp->grant_parent_index );
-			}
+					//	付与
+					grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bonep->grant_parent_index );
 
-			//	matrix
-			for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-			{
-				if( mmdpiPmxLoad::bone[ i ].level == level )
-					mmdpiBone::bone[ i ].matrix = make_global_matrix( i );
+					//	matrix
+					bone->matrix = make_global_matrix( i );
+				}
 			}
-		}
+		}		
 	}
 
 	//	物理演算
