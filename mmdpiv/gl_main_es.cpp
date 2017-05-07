@@ -64,25 +64,6 @@ mmdpiMatrix	Model_offset;
 #include <unistd.h>
 #include <termios.h>
 
-char get_keyboard( void )
-{
-	int f = open( "/dev/tty", O_RDONLY | O_NONBLOCK | O_NDELAY|O_NOCTTY );
-	char c;
-	struct termios term, default_term;
-	
-	//	non cannonical mode 
-	tcgetattr( fileno( stdin ), &default_term );
-	term.c_lflag &= ~ICANON;
-	tcsetattr( fileno( stdin ), TCSANOW, &term );
-
-	if( read( f, &c, 1 ) == 0 )
-		c = 0; 
-	
-	tcsetattr( 0x00, TCSANOW, &default_term );
-
-	close( f );
-	return c;
-}
 
 class Fps
 {
