@@ -285,7 +285,6 @@ void end()
 	delete p;
 }
 
-<<<<<<< HEAD
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -312,45 +311,6 @@ char get_keyboard( void )
 	return c;
 }
 
-EGLBoolean WinCreate(ScreenSettings *sc)
-{
-  uint32_t success = 0;
-  uint32_t width;
-  uint32_t height;
-  VC_RECT_T dst_rect;
-  VC_RECT_T src_rect;
-  DISPMANX_ELEMENT_HANDLE_T dispman_element;
-  DISPMANX_DISPLAY_HANDLE_T dispman_display;
-  DISPMANX_UPDATE_HANDLE_T dispman_update;
-  static EGL_DISPMANX_WINDOW_T nativewindow;
-  VC_DISPMANX_ALPHA_T alpha = {DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS, 255, 0};
-
-  success = graphics_get_display_size(0, &width, &height);
-  if (success < 0) return EGL_FALSE;
-  
-  if( width > _screen_max_size_ )
-	width = _screen_max_size_; 
-  if( height > _screen_max_size_ )
-	height = _screen_max_size_; 
- 
-  sc->width = width;
-  sc->height = height;
-
-  vc_dispmanx_rect_set(&dst_rect, 0, 0, sc->width, sc->height);
-  vc_dispmanx_rect_set(&src_rect, 0, 0, sc->width << 16, sc->height << 16);
-
-  dispman_display = vc_dispmanx_display_open(0);
-  dispman_update = vc_dispmanx_update_start(0);
-  dispman_element = vc_dispmanx_element_add( dispman_update, dispman_display,
-     0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, &alpha, 0, ( DISPMANX_TRANSFORM_T )0);
-
-  vc_dispmanx_update_submit_sync(dispman_update);
-  nativewindow.element = dispman_element;
-  nativewindow.width = width;
-  nativewindow.height = height;
-  sc->nativeWin = &nativewindow;
-  return EGL_TRUE;
-=======
 EGLBoolean WinCreate(ScreenSettings *sc)
 {
 	uint32_t success = 0;
@@ -394,7 +354,6 @@ EGLBoolean WinCreate(ScreenSettings *sc)
 	sc->nativeWin = &nativewindow;
 
 	return EGL_TRUE;
->>>>>>> 473bfeb5d523e65fc9ff1611c8bf8a008286ba85
 }
 
 EGLBoolean SurfaceCreate( ScreenSettings *sc )
