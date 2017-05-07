@@ -3,7 +3,7 @@
 
 
 //	matrix 分だけ変換する
-int	mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
+int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	if( mmdpiBone::bone_num <= bone_index )
 		return -1;
@@ -26,7 +26,7 @@ int mmdpiBone::global_matrix( void )
 	return make_matrix( &bone[ 0 ], 0x00 );
 }
 
-//	表示行列生成
+//	グローバル行列生成
 int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset )
 {
 	if( my_bone == NULL )
@@ -45,12 +45,20 @@ int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offs
 	return 0;
 }
 
+//	PMX
+mmdpiMatrix mmdpiBone::make_global_matrix( int index )
+{
+	if( bone[ index ].parent == 0x00 )
+		return bone[ index ].bone_mat * bone[ index ].delta_matrix;
+	return bone[ index ].bone_mat * bone[ index ].parent->matrix * bone[ index ].delta_matrix;
+}
+
 //	ボーンのモデル上のローカル座標系の取得
-mmdpiMatrix mmdpiBone::get_local_matrix( MMDPI_BONE_INFO_PTR bone )	
+mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone )	
 {
 	if( bone->parent )	
 	{
-		mmdpiMatrix		parent_matrix = get_local_matrix( bone->parent );
+		mmdpiMatrix	parent_matrix = get_global_matrix( bone->parent );
 		return bone->bone_mat * parent_matrix;
 	}
 	return bone->bone_mat;
@@ -74,6 +82,13 @@ void mmdpiBone::init_mat_calc( MMDPI_BONE_INFO_PTR my_bone, mmdpiMatrix* offset 
 		my_bone->init_mat = ( *offset ) * my_bone->init_mat;
 }
 
+mmdpiMatrix mmdpiBone::init_mat_calc_bottom( MMDPI_BONE_INFO_PTR now_bone )
+{
+	if( now_bone->parent )
+		return now_bone->parent->offset_mat * now_bone->init_mat;
+	return now_bone->init_mat;
+}
+
 //	物理演算再生
 int mmdpiBone::advance_time_physical( int fps )
 {
@@ -81,9 +96,9 @@ int mmdpiBone::advance_time_physical( int fps )
 	if( bullet_flag <= 0 )
 		return 0;
 	
-	float frametime = 1;//getFrameTime( fps );
-	//if( frametime > 10 )
-	//	frametime = 10;
+	float	frametime = getFrameTime( fps );
+	if( frametime > 10 )
+		frametime = 10;
 
 	for( dword i = 0; i < rigidbody_count; i ++ )
 	{
@@ -242,7 +257,7 @@ int mmdpiBone::create_physical_info( void )
 		}
 	}
 
-	physics_sys = new MMDPI_PHYSICAL_INFO[ rigidbody_count ];
+	physics_sys = ( rigidbody_count )? new MMDPI_PHYSICAL_INFO[ rigidbody_count ] : 0x00 ;
 	// 剛体情報
 	for( uint i = 0; i < rigidbody_count; i ++ )
 	{

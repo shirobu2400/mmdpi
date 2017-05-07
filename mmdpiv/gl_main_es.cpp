@@ -19,7 +19,7 @@ extern "C"
 
 //int 	usec = 16 * 1000;//1000 / 30 * 1000 ;	//	30 fps
 int			_fps_ = 30;
-uint32_t	_screen_max_size_ = 640;
+uint32_t	_screen_max_size_ = 0x1000;//1280;	//640;
 
 extern "C" 
 {
@@ -200,17 +200,27 @@ void end()
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <termios.h>
 
 char get_keyboard( void )
 {
-	int f = open( "/dev/tty", O_RDONLY|O_NONBLOCK );
+	int f = open( "/dev/tty", O_RDONLY|O_NONBLOCK|O_NDELAY|O_NOCTTY );
 	char c;
+	struct termios term, default_term;
+	
+	//	non cannonical mode 
+	tcgetattr( fileno( stdin ), &default_term );
+	term.c_lflag &= ~ICANON;
+	tcsetattr( fileno( stdin ), TCSANOW, &term );
 
-	if( read( f, &c, 1 ) == 1 )
-	{
-		return c;
-	} 
-	return '\0';
+	if( read( f, &c, 1 ) == 0 )
+			c = 0; 
+	close( f );
+
+	tcsetattr( 0x00, TCSANOW, &default_term );
+
+	return c;
 }
 
 EGLBoolean WinCreate(ScreenSettings *sc)
@@ -233,7 +243,7 @@ EGLBoolean WinCreate(ScreenSettings *sc)
 	width = _screen_max_size_; 
   if( height > _screen_max_size_ )
 	height = _screen_max_size_; 
-  
+ 
   sc->width = width;
   sc->height = height;
 
@@ -520,7 +530,8 @@ int main( int argc, char *argv[] )
 	while( !p->get_vmd( 0 )->is_end() || ( !vmd_file && frames < 160 ) )
 	//while( 1 )
 	{
-		Mat4 pl_matrix;
+		Mat4	pl_matrix;
+		Mat4	delta_key_mat;
 		glViewport(0, 0, g_sc.width, g_sc.height);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -531,18 +542,20 @@ int main( int argc, char *argv[] )
 
 		p->set_projection_matrix( pl_matrix.m );
 		draw();
-		/*
-		char c = get_keyboard();
 		
-		makeUnit( &delta_mat );
+		char c = get_keyboard();
+		makeUnit( &delta_key_mat );
 		switch( c )
 		{
-		case 'w':	setPosition( &delta_mat, 0, 0, +4 );	break;
-		case 's':	setPosition( &delta_mat, 0, 0, -4 );	break;
-		case 'a':	setRotationY( &delta_mat, +0.5 );	break;
-		case 'd':	setRotationY( &delta_mat, -0.5 );	break;
+		case 'w':	setPosition( &delta_key_mat, 0, 0, +1 );	break;
+		case 's':	setPosition( &delta_key_mat, 0, 0, -1 );	break;
+		case 'a':	setRotationY( &delta_key_mat, +2.0 );	break;
+		case 'd':	setRotationY( &delta_key_mat, -2.0 );	break;
 		}
-		*/
+		mulMatrix( &delta_mat , &delta_mat, &delta_key_mat );
+
+		if( c == 'q' )
+			break;		
 
 		eglSwapBuffers(g_sc.display, g_sc.surface);
 		frames ++;		

@@ -6,24 +6,24 @@
 int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
 {
 	const int	_ik_range_ = 255;
-	const float	bottom_noise = 1e-8f;
-
+	const float	bottom_noise = 1e-16f;
+	
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
-	
+
 	MMDPI_PMX_BONE_INFO_PTR		npb	= &pbone[ bone_index ];
-	MMDPI_BONE_INFO_PTR			nb	= &bone[ bone_index ];
+	MMDPI_BONE_INFO_PTR		nb	= &bone [ bone_index ];
 
-	int			ik_link_num = ( signed )npb->ik_link_num;
-	uint		_iteration_num_ = npb->ik_loop_num;	//	
+	int		ik_link_num = ( signed )npb->ik_link_num;
+	uint		iteration_num = npb->ik_loop_num;	//	
 
-	_iteration_num_ = ( _iteration_num_ > _ik_range_ )? _ik_range_ : _iteration_num_ ;
+	iteration_num = ( iteration_num > _ik_range_ )? _ik_range_ : iteration_num ;
 
-	mmdpiVector4d	v0( 0, 0, 0, 1 );
-
-	mmdpiVector4d	effect_pos_base	= mmdpiBone::get_local_matrix( nb ) * v0;	//	Effector
-
-	for( uint j = 0; j < _iteration_num_; j ++ )
+	mmdpiVector4d		v0001( 0, 0, 0, 1 );
+			
+	mmdpiVector4d		effect_pos_base	= mmdpiBone::get_global_matrix( nb ) * v0001;	//	IKの目指す目標位置	Effector
+					
+	for( uint j = 0; j < iteration_num; j ++ )
 	{
 		float	rotation_distance = 0;	//	移動した距離
 	
@@ -31,60 +31,60 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 		{		
 			mmdpiMatrix		rotation_matrix;
 
-			MMDPI_PMX_IK_INFO_PTR	my_ik = ( i < 0 )? 0x00 : &npb->ik_link[ i ];
-			dword					attention_index = ( my_ik )? my_ik->ik_bone_index : npb->ik_target_bone_index ;
+			MMDPI_PMX_IK_INFO_PTR	my_ik			= &npb->ik_link[ i ];
+			dword			attention_index		= my_ik->ik_bone_index;
 
-			MMDPI_BONE_INFO_PTR		target_bone		= &bone[ attention_index ];
-			mmdpiVector4d			target_pos_base	= mmdpiBone::get_local_matrix( &bone[ npb->ik_target_bone_index ] ) * v0;	// Target
+			MMDPI_BONE_INFO_PTR	target_bone		= &bone[ attention_index ];			//	IKで目標を目指すボーン	Target
+			MMDPI_BONE_INFO_PTR	ik_target_bone		= &bone[ npb->ik_target_bone_index ];
+			mmdpiVector4d		target_pos_base		= mmdpiBone::get_global_matrix( ik_target_bone ) * v0001;	// Target
 			
-			mmdpiMatrix		attention_localmat	= mmdpiBone::get_local_matrix( target_bone );
-			mmdpiMatrix		inv_coord			= attention_localmat.get_inverse();
+			mmdpiMatrix		local_mat		= mmdpiBone::get_global_matrix( target_bone );
+			mmdpiMatrix		inv_coord		= local_mat.get_inverse();
 
-			mmdpiVector4d	effect_pos		= effect_pos_base;		//	Effector
-			mmdpiVector4d	target_pos		= target_pos_base;		//	Target
+			mmdpiVector4d		local_effect_pos;		//	Effector
+			mmdpiVector4d		local_target_pos;		//	Target
 
-			//effect_pos.w		= 1;
-			//target_pos.w		= 1;
+			//	回転軸
+			mmdpiVector3d		axis;
 			
-			effect_pos.normalize();
-			target_pos.normalize();
+			//	ローカル座標系へ変換
+			local_effect_pos = inv_coord * effect_pos_base;
+			local_target_pos = inv_coord * target_pos_base;
 
-			effect_pos		 = inv_coord * ( effect_pos );
-			target_pos		 = inv_coord * ( target_pos );
+			//mmdpiVector4d	diff_pos = effect_pos - target_pos;
+			//if( diff_pos.dot( diff_pos ) < bottom_noise )
+			//	continue;
 
-			mmdpiVector4d	diff_pos = effect_pos - target_pos;
-			if( diff_pos.dot( diff_pos ) < bottom_noise )
-				continue;
+			mmdpiVector3d		local_effect_dir( local_effect_pos.x, local_effect_pos.y, local_effect_pos.z );
+			mmdpiVector3d		local_target_dir( local_target_pos.x, local_target_pos.y, local_target_pos.z );
+	
+			local_effect_dir.normalize();
+			local_target_dir.normalize();
 
-			mmdpiVector3d effect_dir( effect_pos.x, effect_pos.y, effect_pos.z );
-			mmdpiVector3d target_dir( target_pos.x, target_pos.y, target_pos.z );
-
-			effect_dir.normalize();
-			target_dir.normalize();
-
-			float	p = effect_dir.dot( target_dir );
-			if( 1 < p )
-				p = 1;	// arccos error!
+			//	向かう度合
+			float	p = local_effect_dir.dot( local_target_dir );
+			if( 1 < p )			
+				continue;	//	arccos error!
 
 			float	angle = acos( p );
-			if( angle > npb->ik_radius_range ) 
-				angle = npb->ik_radius_range;
+			if( angle > +npb->ik_radius_range ) 
+				angle = +npb->ik_radius_range;
 			if( angle < -npb->ik_radius_range ) 
-				angle = -npb->ik_radius_range;
+				angle = -npb->ik_radius_range;			
 
-			mmdpiVector3d	axis;
-			axis = effect_dir.cross( target_dir );
-			
-			//	回転軸制御（ボーン指定）
 			if( npb->const_axis_flag )
 			{
+				//	回転軸制御（ボーン指定）
 				for( int k = 0; k < 3; k ++ )
 					axis[ k ] = npb->axis_vector[ k ];
 			}
-			
-			if( axis.dot( axis ) < bottom_noise )	//	axis is zero vector.
-				continue;			
-			axis.normalize();
+			else
+			{
+				axis = local_effect_dir.cross( local_target_dir );
+				if( axis.dot( axis ) < bottom_noise )	//	axis is zero vector.
+					continue;
+				axis.normalize();
+			}
 			
 			//	Rotation matrix create.
 			rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
@@ -105,11 +105,11 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			rotation_distance += fabs( angle );
 		}
 
-		////	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		//if( rotation_distance < 1e-4f )
-		//	return 0;
+		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
+		if( rotation_distance < 1e-4f )
+			break;
 	}
-
+	
 	return 0;
 }
 
@@ -150,7 +150,7 @@ int mmdpiPmxIk::rotation_range( mmdpiMatrix_ptr rotation_matrix, mmdpiVector3d_p
 	//	fX = minv->x;
 	//if( fX > maxv->x )
 	//	fX = maxv->x;
-	//
+	
 	if( fX < -maxv->x )
 		fX = -maxv->x;
 	if( fX > -minv->x )

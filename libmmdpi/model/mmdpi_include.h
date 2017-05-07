@@ -25,11 +25,11 @@ using namespace std;
 
 #ifndef _MMDPI_AMD64BIT_
 	//	32bit
-	typedef long			integer;
+	typedef long		integer;
 	typedef unsigned long	dword;
 #else
 	//	64bit amd
-	typedef int				integer;
+	typedef int		integer;
 	typedef unsigned int	dword;
 #endif
 
@@ -42,7 +42,7 @@ typedef short SHORT;
 typedef unsigned int uint;
 
 //	テクスチャ
-typedef GLuint				mmdpiTexture;
+typedef GLuint			mmdpiTexture;
 
 //#pragma pack( push, 1 )	//アラインメント制御をオフる
 
@@ -202,16 +202,14 @@ typedef struct _mmdpiVector3d_
 		return c;
 	}
 
-	inline float length_sq( const _mmdpiVector3d_& v )
+	inline float length( void )
 	{
-		float	d = 0, n;
-		n = x - v.x;
-		d += n * n;
-		n = y - v.y;
-		d += n * n;
-		n = z - v.z;
-		d += n * n;
-		return d;
+		return sqrt( x * x + y * y + z * z );
+	}
+
+	inline float length_sq( void )
+	{
+		return x * x + y * y + z * z;
 	}
   
 	_mmdpiVector3d_()
@@ -342,10 +340,11 @@ typedef struct	_mmdpiVector4d_
 		float time_f
 	)
 	{
+		//	内積
 		float	qr	= q1.x * q2.x 
-					+ q1.y * q2.y
-					+ q1.z * q2.z
-					+ q1.w * q2.w;
+				+ q1.y * q2.y
+				+ q1.z * q2.z
+				+ q1.w * q2.w;
 		float	ss = 1.0f - ( qr * qr );
 			
 		*this = q1;
@@ -367,7 +366,7 @@ typedef struct	_mmdpiVector4d_
 		if( sin_ph == 0.0f )
 			return *this;
 
-		if( qr < 0.0f && 1.57079f < ph )
+		if( qr < 0.0f )
 		{	
 			qr = - q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
 			if( 1.0f < qr )
@@ -380,7 +379,7 @@ typedef struct	_mmdpiVector4d_
 			if( sin_ph == 0.0f )
 				return *this;
 			s1 = sin( ph * ( 1.0f - time_f ) ) / sin_ph;
-			s2 = sin( ph * time_f			 ) / sin_ph;
+			s2 = sin( ph *   time_f	         ) / sin_ph;
 
 			this->x = q1.x * s1 - q2.x * s2;
 			this->y = q1.y * s1 - q2.y * s2;
@@ -391,7 +390,7 @@ typedef struct	_mmdpiVector4d_
 		}
 
 		s1 = sin( ph * ( 1.0f - time_f ) ) / sin_ph;
-		s2 = sin( ph * time_f			 ) / sin_ph;
+		s2 = sin( ph *   time_f          ) / sin_ph;
 
 		this->x = q1.x * s1 + q2.x * s2;
 		this->y = q1.y * s1 + q2.y * s2;
@@ -510,9 +509,9 @@ typedef struct _mmdpiMatrix_
 		_mmdpiVector4d_	r;
 
 		r.x = this->_11 * v.x + this->_12 * v.y + this->_13 * v.z + this->_14 * v.w;			
-		r.y	= this->_21 * v.x + this->_22 * v.y + this->_23 * v.z + this->_24 * v.w;		
-		r.z	= this->_31 * v.x + this->_32 * v.y + this->_33 * v.z + this->_34 * v.w;
-		r.w	= this->_41 * v.x + this->_42 * v.y + this->_43 * v.z + this->_44 * v.w;
+		r.y = this->_21 * v.x + this->_22 * v.y + this->_23 * v.z + this->_24 * v.w;		
+		r.z = this->_31 * v.x + this->_32 * v.y + this->_33 * v.z + this->_34 * v.w;
+		r.w = this->_41 * v.x + this->_42 * v.y + this->_43 * v.z + this->_44 * v.w;
 
 		return r;
 	}
@@ -555,11 +554,64 @@ typedef struct _mmdpiMatrix_
 		return *this;
 	}
 
+	inline _mmdpiMatrix_ rotation( float x, float y, float z )
+	{
+		float	sinx = sin( x );
+		float	cosx = cos( x );
+
+		float	siny = sin( y );
+		float	cosy = cos( y );
+
+		float	sinz = sin( z );
+		float	cosz = cos( z );
+		
+		this->_11 = cosy * cosz - sinx * siny * sinz;
+		this->_12 = -cosx * sinz;
+		this->_13 = siny * cosz + sinx * cosy * sinz;
+		
+		this->_21 = cosy * sinz + sinx * siny * cosz;
+		this->_22 = cosx * cosz;
+		this->_23 = sinz * siny - sinx * cosy * cosz;
+		
+		this->_31 = -cosx * siny;
+		this->_32 = sinx;
+		this->_33 = cosx * cosy;
+		
+		return *this;
+	}
+
+	inline void get_rotation( float* angle_x, float* angle_y, float* angle_z )
+	{
+		double		threshold = 0.001;
+		const double	pi = 3.14159265358979323846;	
+
+		if( fabs( this->_32 - 1 ) < threshold )
+		{ 
+			// R(2,1) = sin(x) = 1の時
+			*angle_x = ( float )pi / 2;
+			*angle_y = ( float )0;
+			*angle_z = ( float )atan2( this->_21, this->_11 );
+		}
+		else if( fabs( this->_32 + 1 ) < threshold )
+		{
+			// R(2,1) = sin(x) = -1の時
+			*angle_x = ( float )- pi / 2;
+			*angle_y = ( float )0;
+			*angle_z = ( float )atan2( this->_21, this->_11 );
+		}
+		else
+		{
+			*angle_x = ( float )asin( this->_32 );
+			*angle_y = ( float )atan2( -this->_31, this->_33 );
+			*angle_z = ( float )atan2( -this->_12, this->_22 );	
+		}
+	}
+
 	//	サラスの行列式による逆行列解法
 	inline _mmdpiMatrix_ get_inverse( void )
 	{
-		_mmdpiMatrix_			r;
-		float					idet, det;
+		_mmdpiMatrix_		r;
+		float			idet, det;
 		det = determinant();
 		
 		if( fabs( det ) < 1e-8f )
@@ -585,9 +637,9 @@ typedef struct _mmdpiMatrix_
 		r._42 = +sub_determinant( 1, 3 ) * idet;
 		r._43 = -sub_determinant( 2, 3 ) * idet;
 		r._44 = +sub_determinant( 3, 3 ) * idet;
-
+		
 		return r;
- 	}
+	}
 
 	//	サラスの行列式で扱えるよう、3x3 の行列に変換
 	inline float sub_determinant( const unsigned short x_index, const unsigned short y_index )
@@ -596,8 +648,8 @@ typedef struct _mmdpiMatrix_
 			return 0;
  
 		float	sub_matrix[ 3 ][ 3 ];
-		int		src_y;
-		int		src_x;
+		int	src_y;
+		int	src_x;
 
 		float	sarrus;
 
@@ -616,13 +668,11 @@ typedef struct _mmdpiMatrix_
 		}
 
 		sarrus		= sub_matrix[ 0 ][ 0 ] * sub_matrix[ 1 ][ 1 ] * sub_matrix[ 2 ][ 2 ]
-					+ sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 0 ]
-					+ sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 2 ]
-
-					- sub_matrix[ 0 ][ 2 ] * sub_matrix[ 1 ][ 1 ] * sub_matrix[ 2 ][ 0 ]
-					- sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 0 ]
-					- sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 2 ]
-			;
+				+ sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 0 ]
+				+ sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 2 ]
+				- sub_matrix[ 0 ][ 2 ] * sub_matrix[ 1 ][ 1 ] * sub_matrix[ 2 ][ 0 ]
+				- sub_matrix[ 1 ][ 2 ] * sub_matrix[ 2 ][ 1 ] * sub_matrix[ 0 ][ 0 ]
+				- sub_matrix[ 0 ][ 1 ] * sub_matrix[ 1 ][ 0 ] * sub_matrix[ 2 ][ 2 ];
 
 		return sarrus;
 	}
@@ -630,12 +680,10 @@ typedef struct _mmdpiMatrix_
 	//	
 	inline float determinant( void )
 	{
-		return (
-			+ _11 * sub_determinant( 0, 0 )
+		return  + _11 * sub_determinant( 0, 0 )
 			- _21 * sub_determinant( 1, 0 )
 			+ _31 * sub_determinant( 2, 0 ) 
-			- _41 * sub_determinant( 3, 0 )
-			);
+			- _41 * sub_determinant( 3, 0 );
 	}
 	
 	inline mmdpiVector3d get_transform( void )
@@ -687,7 +735,7 @@ typedef struct _mmdpiMatrix_
 			break;
 		case 2: // z
 			q.x = ( _13 + _31 ) * s;
-			q.y = ( _23 + _23 ) * s;
+			q.y = ( _23 + _32 ) * s;
 			q.w = ( _21 - _12 ) * s;
 			break;
 		case 3: // w

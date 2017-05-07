@@ -1,0 +1,2 @@
+/mnt/f/prog/opengl/mmdpi/git/mmdpi/libmmdpi/CMakeFiles/mmdpi.dir
+/mnt/f/prog/opengl/mmdpi/git/mmdpi/mmdpiv/CMakeFiles/mmdpiv.dir

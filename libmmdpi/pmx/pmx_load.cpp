@@ -3,7 +3,7 @@
 
 
 // データ整列
-int	mmdpiPmxLoad::reader( GetBin* buf )
+int mmdpiPmxLoad::reader( GetBin* buf )
 {
 	// head
 	if( get_header( buf ) )
@@ -192,8 +192,10 @@ int	mmdpiPmxLoad::reader( GetBin* buf )
 	buf->get_bin( &bone_num, sizeof( bone_num ) );
 	bone = new MMDPI_PMX_BONE_INFO[ bone_num ];
 
-	ushort						bone_flag;
+	ushort				bone_flag;
 	MMDPI_PMX_BONE_INFO_PTR		tbone;
+	
+	bone_level_range = 1;
 	for( dword i = 0; i < bone_num; i ++ )
 	{
 		tbone = &bone[ i ];
@@ -250,18 +252,18 @@ int	mmdpiPmxLoad::reader( GetBin* buf )
 
 		if( bone_flag & 0x0100 )	//	回転付与
 		{
-			buf->get_bin2( &tbone->tr_parent_index, sizeof( dword ), head.byte[ 5 ] );
-			buf->get_bin( &tbone->tr_parent_rate, sizeof( float ) );
+			buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
+			buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
 
-			tbone->rotation_s_flag = 1;
+			tbone->rotation_grant_flag = 1;
 		}
 
 		if( bone_flag & 0x0200 )	//	移動付与
 		{
-			buf->get_bin2( &tbone->tr_parent_index, sizeof( dword ), head.byte[ 5 ] );
-			buf->get_bin( &tbone->tr_parent_rate, sizeof( float ) );
+			buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
+			buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
 
-			tbone->translate_s_flag = 1;
+			tbone->translate_grant_flag = 1;
 		}
 
 		if( bone_flag & 0x0400 )	//	軸固定
@@ -318,6 +320,9 @@ int	mmdpiPmxLoad::reader( GetBin* buf )
 		}
 		else
 			bone[ i ].ik_link = NULL;
+
+		if( bone_level_range < bone[ i ].level + 1 )
+			bone_level_range = bone[ i ].level + 1;
 	}
 
 	//	モーフ
@@ -622,7 +627,7 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 char* mmdpiPmxLoad::bin_string( GetBin* buf )
 {
 	char*			result;
-	vector<char>	_string;
+	vector<char>		_string;
 	char			c[ 8 ];
 
 	while( buf->get_bin( c, 1 ) && c[ 0 ] )
@@ -670,7 +675,7 @@ int mmdpiPmxLoad::get_direcotory( const char *file_name )
 }
 
 // ロード
-int	mmdpiPmxLoad::load( const char *file_name )
+int mmdpiPmxLoad::load( const char *file_name )
 {
 	// ディレクトリ取得
 	get_direcotory( file_name );
@@ -694,22 +699,22 @@ int	mmdpiPmxLoad::load( const char *file_name )
 
 mmdpiPmxLoad::mmdpiPmxLoad()
 {
-	head.byte = NULL;
+	head.byte		= NULL;
 // Pointer Veriables
-	head.name			= 0x00;
+	head.name		= 0x00;
 	head.name_eng		= 0x00;
 	head.comment		= 0x00;
 	head.comment_eng	= 0x00;
 
-	vertex				= NULL;
-	face				= NULL;
-	texture				= NULL;
-	material			= NULL;
-	bone				= NULL;
-	morph				= NULL;
-	show				= NULL;
-	p_rigid				= NULL;
-	p_joint				= NULL;
+	vertex			= NULL;
+	face			= NULL;
+	texture			= NULL;
+	material		= NULL;
+	bone			= NULL;
+	morph			= NULL;
+	show			= NULL;
+	p_rigid			= NULL;
+	p_joint			= NULL;
 }
 
 mmdpiPmxLoad::~mmdpiPmxLoad()

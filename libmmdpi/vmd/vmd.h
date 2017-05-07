@@ -113,51 +113,51 @@ class mmdpiVmd
 {
 protected :
 
-	MMDPI_VMD_INFO_PTR				vmd_info;
-	int								bone_num;
+	MMDPI_VMD_INFO_PTR		vmd_info;
+	int				bone_num;
 
-	MMDPI_VMD_INFO_LIST_PTR			m_list;
-	map< string, int >				bone_name_to_index;
+	MMDPI_VMD_INFO_LIST_PTR		m_list;
+	map< string, int >		bone_name_to_index;
 
 	//	モーション
-	MMDPI_VMD_INFO_LIST_PTR_PTR		motion_line;	//	モーション配列
-	MMDPI_VMD_INFO_LIST_PTR_PTR		now_motion;		//	現在のモーション
+	MMDPI_VMD_INFO_LIST_PTR_PTR	motion_line;	//	モーション配列
+	MMDPI_VMD_INFO_LIST_PTR_PTR	now_motion;		//	現在のモーション
 
 	//	表情
-	map< string, int >				skin_name_to_index;
+	map< string, int >		skin_name_to_index;
 	MMDPI_VMD_SKIN_INFO_LIST_PTR	skin_line;
 	MMDPI_VMD_SKIN_INFO_LIST_PTR	now_skin;		//	現在のスキン
-
-	int								skin_morph_num;
-	//MMDPI_PMD_SKIN_INFO_PTR			skin;
-	MMDPI_PMX_MORPH_INFO_PTR		morph;
+	
+	int				skin_morph_num;
+	//MMDPI_PMD_SKIN_INFO_PTR	skin;
+	MMDPI_PMX_MORPH_INFO_PTR	morph;
 
 
 	dword				max_frame;					
-	double				motion_time;
+	float				motion_time;
 
-	int					analyze( void );
-	int					insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_motion );
-	int					insert_skin( MMDPI_VMD_SKIN_PTR skin );
+	int				analyze( void );
+	int				insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_motion );
+	int				insert_skin( MMDPI_VMD_SKIN_PTR skin );
 
-	float				interpolate_bezier( float x1, float y1, float x2, float y2, float x );
+	float				interpolate( float x1, float y1, float x2, float y2, float x );
 
 	MMDPI_BONE_INFO_PTR	bone;
 	
 public :
 	
-	int	operator++( void )
+	int operator++( void )
 	{ 
 		return this->advance_time();
 	}
-	int	operator+=( float frame )
+	int operator+=( float frame )
 	{ 
 		if( frame < 1e-4f )
 			return 0;
 		return this->advance_time( frame );
 	}
 
-	double get_motion_time( void )
+	float get_motion_time( void )
 	{
 		return motion_time;
 	}

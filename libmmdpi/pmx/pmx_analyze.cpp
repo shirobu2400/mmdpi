@@ -64,8 +64,8 @@ int mmdpiPmxAnalyze::analyze( void )
 		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
 		for( dword i = 0; i < f->material_num; i ++ )
 		{
-			MMDPI_MATERIAL_PTR		m		= f->material[ i ];
-			MMDPI_PMX_MATERIAL_PTR	mpmx	= &material[ m->pid ];
+			MMDPI_MATERIAL_PTR		m	= f->material[ i ];
+			MMDPI_PMX_MATERIAL_PTR		mpmx	= &material[ m->pid ];
 		
 			m->edge_size = mpmx->edge_size;
 
@@ -89,15 +89,15 @@ void mmdpiPmxAnalyze::load_texture( void )
 
 	//	一時的に読み込み
 	texture			= new MMDPI_IMAGE[ get_material_num() ];
-	toon_texture	= new MMDPI_IMAGE[ get_material_num() ];
+	toon_texture		= new MMDPI_IMAGE[ get_material_num() ];
 
-	texture00			= new MMDPI_IMAGE[ texture_num ];
+	texture00		= new MMDPI_IMAGE[ texture_num ];
 	toon_texture00		= new MMDPI_IMAGE[ 10 ];
 	for( dword i = 0; i < texture_num; i ++ )
 	{
 		char*	texture_file_name;
 		char	texture_file_name_full[ 0xffff ];
-		int		j, k;	
+		int	j, k;	
 
 		texture_file_name = mmdpiPmxLoad::texture[ i ].name;
 
@@ -105,11 +105,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		for( k = 0; directory[ k ]; k ++ )
 			texture_file_name_full[ k ] = directory[ k ];
 
-		for( j = 0;
-			texture_file_name[ j ] 
-			&& texture_file_name[ j ] != '*';
-			j ++, k ++ 
-		)
+		for( j = 0; texture_file_name[ j ] && texture_file_name[ j ] != '*'; j ++, k ++ )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 
@@ -122,11 +118,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		for( k = 0; directory[ k ]; k ++ )
 			texture_file_name_full[ k ] = directory[ k ];
 
-		for( j = 0;
-			texture_file_name[ j ] 
-			&& texture_file_name[ j ] != '*';
-			j ++, k ++ 
-		)
+		for( j = 0; texture_file_name[ j ] && texture_file_name[ j ] != '*'; j ++, k ++ )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 
@@ -146,7 +138,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
 		for( dword i = 0; i < f->material_num; i ++ )
 		{
-			MMDPI_MATERIAL_PTR		m		= f->material[ i ];
+			MMDPI_MATERIAL_PTR	m	= f->material[ i ];
 			MMDPI_PMX_MATERIAL_PTR	mpmx	= &material[ m->pid ];
 		
 			//	テクスチャの関連付け
@@ -179,7 +171,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 }
 
 //	ボーン関係処理
-int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len )
+int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len )
 {
 	mmdpiModel::bone_num = pbone_len;
 	mmdpiModel::bone = new MMDPI_BONE_INFO[ mmdpiModel::bone_num ];
@@ -189,6 +181,8 @@ int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 		mmdpiModel::bone[ i ].parent		= NULL;
 		mmdpiModel::bone[ i ].first_child	= NULL;
 		mmdpiModel::bone[ i ].sibling		= NULL;
+
+		mmdpiModel::bone[ i ].level		= pbone[ i ].level;
 	}
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
@@ -204,11 +198,13 @@ int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 		mmdpiModel::bone[ i ].name = new char[ strlen( pbone[ i ].name ) + 1 ];
 		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].name );
+		mmdpiModel::bone[ i ].sjis_name = new char[ strlen( pbone[ i ].sjis_name ) + 1 ];
+		strcpy( mmdpiModel::bone[ i ].sjis_name, pbone[ i ].sjis_name );
 	}
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
-		ushort		bone_flag		= pbone[ i ].bone_flag;
+		ushort		bone_flag	= pbone[ i ].bone_flag;
 		dword		parent_index	= pbone[ i ].parent_index;
 
 		mmdpiModel::bone[ i ].child_bone = 0x00;
@@ -227,16 +223,17 @@ int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 		}
 	}
 
-	if( mmdpiModel::bone[ 0 ].first_child == 0x00 )
+	if( mmdpiModel::bone[ 0 ].first_child == 0x00 && 1 < mmdpiModel::bone_num )
 		mmdpiModel::bone[ 0 ].first_child = &mmdpiModel::bone[ 1 ];
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
 		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
 	}
-
+	
 	//	init_mat 初期化
-	init_mat_calc( &mmdpiModel::bone[ 0 ], 0x00 );
+	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+		mmdpiModel::bone[ i ].init_mat = init_mat_calc_bottom( &mmdpiModel::bone[ i ] );
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
@@ -249,7 +246,8 @@ int	mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 	//	初期設定
 	refresh_bone_mat();
-	global_matrix();
+	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+		make_global_matrix( i );
 		
 	return 0;
 }
@@ -259,9 +257,9 @@ mmdpiPmxAnalyze::mmdpiPmxAnalyze()
 	adjust_material = 0x00;
 	adjust_vertex	= 0x00;
 
-	texture			= 0x00;
+	texture		= 0x00;
 	toon_texture	= 0x00;
-	texture00		= 0x00;
+	texture00	= 0x00;
 	toon_texture00	= 0x00;
 }
 

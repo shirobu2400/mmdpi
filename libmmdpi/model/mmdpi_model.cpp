@@ -13,12 +13,10 @@ int mmdpiModel::create( void )
 	{
 		MMDPI_BLOCK_FACE_PTR	face = &get_face_block()[ i ];
 		mmdpiShader::set_vertex_buffers	( i, face->vertex, face->vertex_num );
-		mmdpiShader::set_face_buffers	( i, face->face, face->face_num );
+		mmdpiShader::set_face_buffers	( i, face->face  , face->face_num   );
 	}
 
 	//	bullet
-	//	Make bone matrix
-	this->global_matrix();
 	phy_load_flag = 0;
 	if( bullet_flag == 0 )
 		return 0;
@@ -29,13 +27,6 @@ int mmdpiModel::create( void )
 
 void mmdpiModel::draw( void )
 {
-	//	Make bone matrix
-	this->global_matrix();
-
-	//	物理演算
-	if( bullet_flag )	
-		this->advance_time_physical( fps );
-	
 	////	Morph
 	//skin_init_update();
 	//for( uint i = 0; i < morph_num; i ++ )
@@ -50,7 +41,7 @@ void mmdpiModel::draw( void )
 	this->make_local_matrix();
 	this->refresh_bone_mat();
 	
-	//	ボーン処理
+	//	ボーン行列をシェーダに送る準備
 	update_matrix( mmdpiBone::bone, mmdpiBone::bone_num );
 
 	//	Using My Shader
@@ -66,8 +57,7 @@ void mmdpiModel::draw( void )
 	OptionEnable();
 
 	//	裏面描画
-	//glDisable( GL_DEPTH_TEST );
-	glEnable( GL_DEPTH_TEST );
+	glDisable( GL_DEPTH_TEST );
 	glCullFace( GL_FRONT );
 	draw_main( 0 );
 	
@@ -78,6 +68,8 @@ void mmdpiModel::draw( void )
 
 	//	オプション
 	OptionDisable();
+
+	glDisable( GL_DEPTH_TEST );
 
 	//	Not Using My Shader
 	shader_off();
@@ -95,7 +87,7 @@ int mmdpiModel::draw_main( int cull_flag )
 		for( uint i = 0; i < face->material_num; i ++ )
 		{
 			MMDPI_MATERIAL_PTR	m = face->material[ i ];
-			uint				material_hash = m->pid;
+			uint			material_hash = m->pid;
 
 			glActiveTexture( GL_TEXTURE0 );
 			
@@ -141,7 +133,7 @@ int mmdpiModel::OptionEnable( void )
 	//glDisable( GL_CULL_FACE );		//	カリング無効
 	glEnable( GL_CULL_FACE );		//	CCWでカリング(反時計回り)
 	glFrontFace( GL_CCW );
-	glCullFace( GL_BACK );
+	glCullFace( GL_FRONT );
 
 	//glEnable( GL_DEPTH_TEST );
 	//glEnable( GL_ALPHA_TEST ); 
@@ -163,7 +155,7 @@ int mmdpiModel::OptionDisable( void )
 	glDisable( GL_TEXTURE_2D );
 	glDisable( GL_CULL_FACE );
 	
-	glDisable( GL_DEPTH_TEST );
+	//glDisable( GL_DEPTH_TEST );
 	//glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
 	
@@ -175,10 +167,16 @@ void mmdpiModel::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 	mmdpiBone::set_bone_matrix( bone_index, matrix );
 }
 
- void mmdpiModel::set_projection_matrix( const GLfloat* p_projection_matrix )
+void mmdpiModel::set_projection_matrix( const GLfloat* p_projection_matrix )
 {
 	for( int i = 0; i < 16; i ++ )
 		projection_matrix[ i ] = p_projection_matrix[ i ];
+}
+
+void mmdpiModel::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix )
+{
+	for( int i = 0; i < 16; i ++ )
+		projection_matrix[ i ] = ( *p_projection_matrix )[ i ];
 }
 
 int mmdpiModel::set_physics_engine( int type )

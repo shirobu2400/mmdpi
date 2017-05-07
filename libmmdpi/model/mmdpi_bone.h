@@ -17,39 +17,41 @@ class mmdpiBone : public mmdpiShader, public mmdpiAdjust
 protected :
 
 	uint				bone_num;	//	ボーン数 ( ushort でＯＫ )
-	MMDPI_BONE_INFO_PTR	bone;		//	ボーン
+	MMDPI_BONE_INFO_PTR		bone;		//	ボーン
 
 	//	姿勢行列合成用
-	mmdpiMatrix*		bone_comb_mat;
+	mmdpiMatrix*			bone_comb_mat;
 
 	void				init_mat_calc( MMDPI_BONE_INFO_PTR my_bone, mmdpiMatrix* offset );
+	mmdpiMatrix			init_mat_calc_bottom( MMDPI_BONE_INFO_PTR now_bone );
 
 	//	物理演算用
-	int					bullet_flag;				//	物理演算実行
-	int					phy_load_flag;				// 物理演算を読み込む
+	int				bullet_flag;				//	物理演算実行
+	int				phy_load_flag;				// 物理演算を読み込む
 	dword				rigidbody_count;			// 剛体数
-	MMDPI_PHYSICAL_RIGID_INFO_PTR		physics;	// 物理演算	// 剛体
+	MMDPI_PHYSICAL_RIGID_INFO_PTR	physics;	// 物理演算	// 剛体
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
-	MMDPI_PHYSICAL_INFO_PTR				physics_sys;	// 物理演算作業領域
+	MMDPI_PHYSICAL_INFO_PTR		physics_sys;	// 物理演算作業領域
 #endif
 	dword				joint_count;					// ジョイント数
 	MMDPI_PHYSICAL_JOINT_INFO_PTR	joint;	// 物理演算 // ジョイント
 
-	int					create_physical_info( void );
+	int				create_physical_info( void );
 
 public :
 	
-	static mmdpiMatrix	get_local_matrix( MMDPI_BONE_INFO_PTR bone );
+	static mmdpiMatrix	get_global_matrix( MMDPI_BONE_INFO_PTR bone );
 	
-	void				refresh_bone_mat( void );
-	void				make_local_matrix( void );
+	void			refresh_bone_mat( void );
+	void			make_local_matrix( void );
 
-	int					set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );
+	int			set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );
 
-	int					make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset );
-	int					global_matrix( void );
+	int			make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset );
+	int			global_matrix( void );
+	mmdpiMatrix		make_global_matrix( int index );
 	
-	int					advance_time_physical( int fps = 30 );
+	int			advance_time_physical( int fps = 30 );
 
 	dword get_bone_num( void )
 	{ 
