@@ -22,6 +22,10 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 	mmdpiVector4d		v0001( 0, 0, 0, 1 );
 			
 	mmdpiVector4d		effect_pos_base	= mmdpiBone::get_global_matrix( nb ) * v0001;	//	IKの目指す目標位置	Effector
+<<<<<<< HEAD
+=======
+	//mmdpiVector4d		effect_pos_base	= nb->matrix * v0001;	//	IKの目指す目標位置	Effector
+>>>>>>> 473bfeb5d523e65fc9ff1611c8bf8a008286ba85
 					
 	for( uint j = 0; j < iteration_num; j ++ )
 	{
@@ -37,10 +41,19 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			MMDPI_BONE_INFO_PTR	target_bone		= &bone[ attention_index ];			//	IKで目標を目指すボーン	Target
 			MMDPI_BONE_INFO_PTR	ik_target_bone		= &bone[ npb->ik_target_bone_index ];
 			mmdpiVector4d		target_pos_base		= mmdpiBone::get_global_matrix( ik_target_bone ) * v0001;	// Target
+<<<<<<< HEAD
 			
 			mmdpiMatrix		local_mat		= mmdpiBone::get_global_matrix( target_bone );
 			mmdpiMatrix		inv_coord		= local_mat.get_inverse();
 
+=======
+			//mmdpiVector4d		target_pos_base		= ik_target_bone->matrix * v0001;	// Target
+
+			mmdpiMatrix		local_mat		= mmdpiBone::get_global_matrix( target_bone );
+			//mmdpiMatrix		local_mat		= target_bone->matrix;
+			mmdpiMatrix		inv_coord		= local_mat.get_inverse();
+
+>>>>>>> 473bfeb5d523e65fc9ff1611c8bf8a008286ba85
 			mmdpiVector4d		local_effect_pos;		//	Effector
 			mmdpiVector4d		local_target_pos;		//	Target
 
