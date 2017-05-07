@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/mmdpiv.dir/gl_main.cpp.o  -o mmdpiv  -L/usr/local/lib  -L../libmmdpi -rdynamic ../libmmdpi/libmmdpi.a -lpng -lz -lz -lrt -lm -lGL -lGLU -lGLEW -lglut -lXmu -lXi -Wl,-rpath,/usr/local/lib:../libmmdpi 
