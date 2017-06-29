@@ -47,6 +47,11 @@ set(libmmdpi_src
 #	Include Directory
 set(libmmdpi_inc
 	/usr/local/include/
+	/usr/include/bullet/
+	/usr/include/bullet/BulletDynamics/
+	/usr/include/bullet/BulletSoftBody/
+	/usr/include/bullet/LinearMath/
+	/usr/include/bullet/BulletCollision/
 )
 
 #	Raspberry Pi
