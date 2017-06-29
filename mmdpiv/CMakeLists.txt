@@ -29,6 +29,11 @@ set(mmdpi_inc_path
 	/usr/local/include
 	/usr/include
 	../libmmdpi
+	/usr/include/bullet/
+	/usr/include/bullet/BulletDynamics/
+	/usr/include/bullet/BulletSoftBody/
+	/usr/include/bullet/LinearMath/
+	/usr/include/bullet/BulletCollision/
 )
 
 set(mmdpi_lib_path
