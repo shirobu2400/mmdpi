@@ -5,9 +5,11 @@
 
 #pragma once
 
-#ifndef _WINDOWS_
-
 #pragma pack( push, 1 )	//アラインメント制御をオフる
+
+#if defined( _WINDOWS_ ) || defined( _WIN32 )
+#	include <windows.h>
+#else
 
 typedef struct tagBITMAPFILEHEADER 
 {
@@ -20,11 +22,11 @@ typedef struct tagBITMAPFILEHEADER
 
 typedef struct tagBITMAPCOREHEADER
 {
-    dword          bcSize;
-    SHORT          bcWidth;
-    SHORT          bcHeight;
-    ushort           bcPlanes;
-    ushort           bcBitCount;
+    dword		bcSize;
+    SHORT		bcWidth;
+    SHORT		bcHeight;
+    ushort		bcPlanes;
+    ushort		bcBitCount;
 } BITMAPCOREHEADER ;
 
 typedef struct tagBITMAPINFOHEADER
@@ -75,9 +77,9 @@ typedef struct tagBITMAPINFOHEADER
 //    dword          biClrImporant;
 //} BITMAPINFOHEADER ;
 
-#pragma pack( pop )	//アラインメント制御エンド
-
 #endif
+
+#pragma pack( pop )	//アラインメント制御エンド
 
 #include <iostream>
 using namespace std;

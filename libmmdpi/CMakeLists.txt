@@ -1,4 +1,4 @@
-#	cmake 必要バージョン
+﻿#	cmake 必要バージョン
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
@@ -22,6 +22,7 @@ set(libmmdpi_src
 	model/tools/get_bin.cpp       
 	model/tools/bitmap.cpp        
 	model/tools/png.cpp
+	model/tools/jpg.cpp
 	model/tools/tga_image.cpp
 	
 	model/mmdpi_model.cpp   
@@ -68,6 +69,7 @@ set(libmmdpi_bullet_src
 )
 
 find_package( PNG REQUIRED )
+find_package( JPEG REQUIRED )
 find_package( GLUT )
 find_package( glut )
 find_package( freeglut )

@@ -12,7 +12,7 @@ GLuint MMDPI_PNG::load( const char *filename )
 	png_structp	pPng;
 	png_infop	pInfo;
 	dword		dwWidth, dwHeight;
-	int			pixel_depth, color_type, nInterlaceType;
+	int		pixel_depth, color_type, nInterlaceType;
 
 	// ここからファイルを読み込み
 	pPng = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
@@ -30,8 +30,9 @@ GLuint MMDPI_PNG::load( const char *filename )
 
 	uint	width = dwWidth;
 	uint	height = dwHeight;
-			// メモリ領域確保
-	int		rb = png_get_rowbytes( pPng, pInfo );
+			
+	// メモリ領域確保
+	int	rb = png_get_rowbytes( pPng, pInfo );
 	BYTE*	data = new BYTE[ height * rb ];
 	BYTE**	recv = new BYTE*[ height ];
 	BYTE	color_num = rb / width;

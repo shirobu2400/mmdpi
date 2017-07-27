@@ -321,8 +321,6 @@ void mmdpiShader::init_material( void )
 
 void mmdpiShader::draw( int buffer_id, dword fver_num_base, dword face_num )
 {
-	//if( now_buffer_id != buffer_id )
-	
 	set_buffer( buffer_id );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffers[ buffer_id ]->get_face() );
 	

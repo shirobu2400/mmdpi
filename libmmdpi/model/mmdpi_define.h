@@ -8,7 +8,7 @@
 //#define _MMDPI_PRIJECTION_MATRIX_SELF_		//	透視射影行列のセルフ設定
 #define _MMDPI_USING_PHYSICS_ENGINE_			//	物理エンジンをコンパイルから除去
 //#define _MMDPI_AMD64BIT_				//	amd x64 コンパイラ環境
-#define _MMDPI_OUTLINE_					//	輪郭処理（法線ベクトルを処理するか？）
+//#define _MMDPI_OUTLINE_				//	輪郭処理（法線ベクトルを処理するか？）
 //#define _MMDPI_USINGSKIN_				//	表情、モーフを使用
 
 #endif

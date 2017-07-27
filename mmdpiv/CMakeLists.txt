@@ -1,4 +1,4 @@
-#	cmake 必要バージョン
+﻿#	cmake 必要バージョン
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
@@ -70,6 +70,7 @@ find_package( freeglut )
 
 find_package( PNG REQUIRED )
 find_package( ZLIB REQUIRED )
+find_package( JPEG REQUIRED )
 
 if( NOT WIN32 )
 	set( mmdpi_lib ${mmdpi_lib}
@@ -80,6 +81,7 @@ endif()
 set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 	${PNG_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIRS}
+	${JPEG_INCLUDE_DIR}
 )
 
 #	Opengl Mode
@@ -130,6 +132,6 @@ add_executable( mmdpiv ${mmdpi_src} )
 target_link_libraries( mmdpiv 
 	mmdpi 
 	${m_LIBRARIES} ${rt_LIBRARIES} 
-	${PNG_LIBRARIES} ${ZLIB_LIBRARIES} 
+	${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${JPEG_LIBRARIES} 
 	${mmdpi_lib} ${RASPGL_LIBRARIES}
 )

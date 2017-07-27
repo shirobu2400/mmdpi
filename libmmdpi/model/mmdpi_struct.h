@@ -3,7 +3,7 @@
 
 #include "tools/bitmap.h"
 #include "tools/tga_image.h"
-
+#include "jpeglib.h"
 #include "png.h"
 
 
@@ -121,15 +121,38 @@ struct MMDPI_PNG
 	}
 } ;
 
+//	jpeg lib
+struct MMDPI_JPG
+{
+	//pngInfo 		info;
+	GLuint			texture;
+		
+	GLuint get_id( void )
+	{
+		return texture;
+	}
+	GLuint load( const char *filename );
+
+	MMDPI_JPG()
+	{
+		texture = 0;
+	}
+	~MMDPI_JPG()
+	{
+		glDeleteTextures( 1, &texture );
+	}
+} ;
+
 //	イメージ管理
 typedef struct tagMMDPI_IMAGE
 {
-	int			type;		//	0->bmp, 1->tga
-	int			ref;		//	参照しているか
+	int		type;		//	0->bmp, 1->tga
+	int		ref;		//	参照しているか
 
 	MMDPI_BMP*	bmp;
 	MMDPI_TGA*	tga;
 	MMDPI_PNG*	png;
+	MMDPI_JPG*	jpg;
 
 	GLint		id;
 	
@@ -161,6 +184,14 @@ typedef struct tagMMDPI_IMAGE
 				return -1;
 			type = 0;
 			id = bmp->get_id();
+		}
+		else if( strncmp( file_name + len - 4, ".jpg", 3 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 4 ) == 0 )
+		{
+			jpg = new MMDPI_JPG();
+			if( ( int )jpg->load( file_name ) < 0 ) 
+				return -1;
+			type = 0;
+			id = jpg->get_id();
 		}
 
 		return type;
@@ -230,7 +261,7 @@ typedef struct tagMMDPI_MATERIAL
 
 	MMDPI_IMAGE			texture;
 	
-	int					toon_flag;
+	int				toon_flag;
 	MMDPI_IMAGE			toon_texture;
 
 	//	不透明度
