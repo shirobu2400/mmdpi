@@ -1,4 +1,4 @@
-
+﻿
 #ifdef __cplusplus
 extern "C"
 {
@@ -575,7 +575,7 @@ int main( int argc, char *argv[] )
 	//print_mat4( &projection_matrix );
 
 	glEnable( GL_DEPTH_TEST );
-	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+	glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
 
 	Mat4	delta_mat;
 	makeUnit( &delta_mat );
