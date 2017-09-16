@@ -1,4 +1,4 @@
-﻿
+
 #pragma once 
 
 const unsigned short utf8tosjis[] = 

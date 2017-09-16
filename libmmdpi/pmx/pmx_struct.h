@@ -1,4 +1,4 @@
-﻿
+
 #include "../model/mmdpi_struct.h"
 
 #pragma once

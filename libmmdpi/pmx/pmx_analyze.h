@@ -1,4 +1,4 @@
-﻿
+
 #include "pmx_load.h"
 #include "pmx_ik.h"
 #include "../model/mmdpi_model.h"

@@ -1,4 +1,4 @@
-﻿
+
 #include "mmdpi_include.h"
 
 #include "tools/bitmap.h"

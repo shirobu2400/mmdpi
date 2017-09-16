@@ -1,4 +1,4 @@
-﻿
+
 #include "pmd.h"
 
 int mmdpiPmd::load( const char* pmd_name )

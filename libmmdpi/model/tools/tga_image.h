@@ -1,4 +1,4 @@
-﻿//
+//
 //	include
 //
 #include "../mmdpi_include.h"

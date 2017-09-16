@@ -1,4 +1,4 @@
-﻿
+
 #include "../model/mmdpi_include.h"
 #include "../model/mmdpi_bone.h"
 #include "../model/tools/get_bin.h"

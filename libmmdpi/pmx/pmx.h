@@ -1,4 +1,4 @@
-﻿
+
 #include "pmx_draw.h"
 
 class mmdpiPmx : public mmdpiPmxDraw

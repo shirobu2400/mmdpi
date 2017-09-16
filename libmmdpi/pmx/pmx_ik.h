@@ -1,4 +1,4 @@
-﻿
+
 #include "pmx_struct.h"
 #include "../model/mmdpi_bone.h"
 

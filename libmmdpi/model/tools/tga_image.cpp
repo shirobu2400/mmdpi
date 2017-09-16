@@ -1,4 +1,4 @@
-﻿#include "tga_image.h"
+#include "tga_image.h"
 
 
 int MMDPI_TGA::ReadTGA( const char *filename )

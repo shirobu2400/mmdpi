@@ -1,4 +1,4 @@
-﻿
+
 
 #include "mmdpi_shader.h"
 #include "mmdpi_adjust.h"

@@ -1,4 +1,4 @@
-﻿
+
 #include "../../h/mmdpi_include.h"
 #include "utf8tosjis.h"
 

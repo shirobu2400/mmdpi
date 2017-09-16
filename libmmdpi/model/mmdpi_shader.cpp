@@ -1,4 +1,4 @@
-﻿
+
 #include "mmdpi_shader.h"
 
 
@@ -106,7 +106,7 @@ int mmdpiShader::default_shader( void )
 	"\n"
 	"void main( void )\n"
 	"{\n"
-	"	vec4	color  = texture2D( Tex01, v_Uv.xy );\n"
+	"	vec4	color = texture2D( Tex01, v_Uv.xy );\n"
 	"	color.a = color.a * Alpha;\n"
 	"	if( TexToonFlag > 0.5 )\n"
 	"	{\n"
@@ -114,7 +114,8 @@ int mmdpiShader::default_shader( void )
 	"		tc.a = 1.0;\n"
 	"		color = color * tc;\n"
 	"	}\n"
-	"	gl_FragColor = color * ( 1.0 - v_color.a ) + v_color * v_color.a;\n"
+	//"	gl_FragColor = color * ( 1.0 - v_color.a ) + v_color * v_color.a;\n"
+	"	gl_FragColor = color;\n"
 	"}\n"
 	;
 	

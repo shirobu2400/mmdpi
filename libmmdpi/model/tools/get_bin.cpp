@@ -1,4 +1,4 @@
-﻿
+
 #include "get_bin.h"
 
 

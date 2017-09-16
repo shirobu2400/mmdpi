@@ -3,12 +3,12 @@
 
 class Fps
 {
-	static const int	sample_average	= 60;		//•½‹Ï‚ğæ‚éƒTƒ“ƒvƒ‹”
+	static const int	sample_average	= 60;		//å¹³å‡ã‚’å–ã‚‹ã‚µãƒ³ãƒ—ãƒ«æ•°
 	
-	float			start_time;         //‘ª’èŠJn
-	int			count;				//ƒJƒEƒ“ƒ^
+	float			start_time;         //æ¸¬å®šé–‹å§‹æ™‚åˆ»
+	int			count;				//ã‚«ã‚¦ãƒ³ã‚¿
 	float			m_fps;				//fps
-	int			fps;				//İ’è‚µ‚½FPS
+	int			fps;				//è¨­å®šã—ãŸFPS
 
 public:
 	
@@ -41,10 +41,10 @@ public:
 
 	bool update( void )
 	{
-		if( count == 0 )	//	1ƒtƒŒ[ƒ€–Ú‚È‚ç‚ğ‹L‰¯
+		if( count == 0 )	//	1ãƒ•ãƒ¬ãƒ¼ãƒ ç›®ãªã‚‰æ™‚åˆ»ã‚’è¨˜æ†¶
 			start_time = get_time();
 
-		if( count == sample_average )	//	60ƒtƒŒ[ƒ€–Ú‚È‚ç•½‹Ï‚ğŒvZ‚·‚é
+		if( count == sample_average )	//	60ãƒ•ãƒ¬ãƒ¼ãƒ ç›®ãªã‚‰å¹³å‡ã‚’è¨ˆç®—ã™ã‚‹
 		{ 
 			float		t = get_time();
 			if( t < 1e-8f )
@@ -74,10 +74,10 @@ public:
 
 	float get_wait_time( void )
 	{
-		float		took_time = get_time() - start_time;	//‚©‚©‚Á‚½ŠÔ
-		float		wait_time = count * 1000.0f / fps - took_time;	//‘Ò‚Â‚×‚«ŠÔ
+		float		took_time = get_time() - start_time;	//ã‹ã‹ã£ãŸæ™‚é–“
+		float		wait_time = count * 1000.0f / fps - took_time;	//å¾…ã¤ã¹ãæ™‚é–“
 		if( wait_time > 0 )
-			return wait_time / 1000.0f;	//‘Ò‹@
+			return wait_time / 1000.0f;	//å¾…æ©Ÿ
 		return 1.0f / fps;
 	}
 };

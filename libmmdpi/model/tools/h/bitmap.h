@@ -1,4 +1,4 @@
-﻿
+
 #include "../../h/mmdpi_include.h"
 
 //#define _MMDPI_BITMAP_DRAW_SWITCH_

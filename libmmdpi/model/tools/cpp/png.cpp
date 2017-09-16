@@ -1,4 +1,4 @@
-﻿
+
 #include "../../h/mmdpi_struct.h"
 
 GLuint MMDPI_PNG::load( const char *filename )

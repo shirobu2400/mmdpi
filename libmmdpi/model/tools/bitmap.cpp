@@ -1,4 +1,4 @@
-﻿
+
 //
 //　include
 //
@@ -89,7 +89,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	if( bitc == 4 )
 	{
 		for( uint i = 0; i < bit_size; i += bitc )
-			bits[ i + 3 ]  = 1;
+			bits[ i + 3 ] = 1;
 	}
 
 	//　ファイルを閉じる
@@ -109,7 +109,10 @@ int MMDPI_BMP::load( const char *filename )
 	format		= GL_RGB;
 
 	if( bitc == 4 )
-		format = GL_RGBA;
+	{
+		//internalFormat	= GL_RGBA;
+		format		= GL_RGBA;
+	}
 
 	glGenTextures( 1, &texture );
 

@@ -1,4 +1,4 @@
-﻿
+
 #include "mmdpi_model.h"
 
 
@@ -69,8 +69,6 @@ void mmdpiModel::draw( void )
 	//	オプション
 	OptionDisable();
 
-	glDisable( GL_DEPTH_TEST );
-
 	//	Not Using My Shader
 	shader_off();
 
@@ -127,6 +125,7 @@ int mmdpiModel::OptionEnable( void )
 	
 	glEnable( GL_TEXTURE_2D );	//	テクスチャ
 
+	glEnable( GL_DEPTH_TEST );
 	glDepthFunc( GL_LEQUAL );
 
 	//	カリング
@@ -135,12 +134,14 @@ int mmdpiModel::OptionEnable( void )
 	glFrontFace( GL_CCW );
 	glCullFace( GL_FRONT );
 
-	//glEnable( GL_DEPTH_TEST );
 	//glEnable( GL_ALPHA_TEST ); 
+	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_BLEND );
-	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA );
-
+	//	GL_SRC_ALPHA : (As/kA,As/kA,As/kA,As/kA)
+	//	GL_ONE_MINUS_SRC_ALPHA : (1,1,1,1)-(As/kA,As/kA,As/kA,As/kA)
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	//glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA );
+	
 	//	テクスチャワープ
 	//glEnable( GL_TEXTURE_GEN_S );
 	//glEnable( GL_TEXTURE_GEN_T );
@@ -155,9 +156,9 @@ int mmdpiModel::OptionDisable( void )
 	glDisable( GL_TEXTURE_2D );
 	glDisable( GL_CULL_FACE );
 	
-	//glDisable( GL_DEPTH_TEST );
-	//glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
+	glDisable( GL_DEPTH_TEST );
+	//glDisable( GL_ALPHA_TEST );
 	
 	return 0; 
 }

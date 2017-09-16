@@ -1,4 +1,4 @@
-﻿
+
 #include "../model/tools/get_bin.h"
 #include "pmx_struct.h"
 

@@ -1,4 +1,4 @@
-﻿
+
 #include "pmd/pmd.h"
 #include "pmx/pmx.h"
 #include "vmd/vmd.h"

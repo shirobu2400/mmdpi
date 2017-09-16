@@ -1,4 +1,4 @@
-﻿
+
 #pragma once
 #include "pmd_load.h"
 #include "../model/mmdpi_model.h"

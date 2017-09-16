@@ -1,4 +1,4 @@
-﻿
+
 #include "pmx.h"
 
 int mmdpiPmx::load( const char* pmx_name )

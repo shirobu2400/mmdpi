@@ -1,4 +1,4 @@
-﻿
+
 #include "../model/tools/bitmap.h"
 #include "../model/tools/tga_image.h"
 #include "../model/mmdpi_struct.h"

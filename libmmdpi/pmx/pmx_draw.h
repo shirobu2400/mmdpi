@@ -1,4 +1,4 @@
-﻿
+
 #include "pmx_analyze.h"
 #include "pmx_ik.h"
 
