@@ -53,13 +53,15 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
 ./mmdpiv -p[モデルファイルパス] -v[VMD ファイルパス]
 
 # mmdpi のリファレンス
-int mmdpi::load( const char* model_name ) => モデルファイル(.pmd, .pmx)の読み込み(PATH で指定)
-int mmdpi::vmd_load( const char* file_name ) => モーションファイル(.vmd)の読み込み(PATH で指定)
-void mmdpi::draw( void ) => 表示
-void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix ) => 指定されたボーンのindexと対応するボーンの姿勢行列を matrix で上書き。
-void　mmdpi::set_fps( int fps ) => モーション実行時のfps を指定。
-void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix ) => プロジェクション行列の指定。
-void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) => プロジェクション行列の指定。
+<table>
+<tr><td>int mmdpi::load( const char* model_name ) </td><td> モデルファイル(.pmd, .pmx)の読み込み(PATH で指定)</td></tr>
+<tr><td>int mmdpi::vmd_load( const char* file_name ) </td><td> モーションファイル(.vmd)の読み込み(PATH で指定)</td></tr>
+<tr><td>void mmdpi::draw( void ) </td><td> 表示</td></tr>
+<tr><td>void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix ) </td><td> 指定されたボーンのindexと対応するボーンの姿勢行列を matrix で上書き。</td></tr>
+<tr><td>void　mmdpi::set_fps( int fps ) </td><td> モーション実行時のfps を指定。</td></tr>
+<tr><td>void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
+<tr><td>void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
+</table>
 
 # その他、注意事項など
 
