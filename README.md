@@ -78,6 +78,10 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
   A.  VRAM が足りない場合があります。VRAM を増やして実行をしてみてください。<br>
       OSがRaspbianではないときはドライバを変更してみてください。 
       <br>
+  Q. make で /usr/bin/ld: cannot find -lGLESv2 .. とでて make できない。<br>
+  A. Raspberry pi 3 の raspi-config の　<br>
+  Advance option の GL driver を full を指定して再起動してください。
+  <br>
    
 # 余談  
   
