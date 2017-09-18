@@ -58,6 +58,8 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
 <tr><td>int mmdpi::vmd_load( const char* file_name ) </td><td> モーションファイル(.vmd)の読み込み(PATH で指定)</td></tr>
 <tr><td>void mmdpi::draw( void ) </td><td> 表示</td></tr>
 <tr><td>void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix ) </td><td> 指定されたボーンのindexと対応するボーンの姿勢行列を matrix で上書き。</td></tr>
+<tr><td>mmdpiVmd* mmdpi::get_vmd( int index ) </td><td> vmd情報の取得。</td></tr>
+<tr><td>( *[mmdpi 変数名]->get_vmd( 0 ) ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
 <tr><td>void　mmdpi::set_fps( int fps ) </td><td> モーション実行時のfps を指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
@@ -76,7 +78,7 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
   
   Q.  何も画面に表示されない場合。<br>
   A.  VRAM が足りない場合があります。VRAM を増やして実行をしてみてください。<br>
-      OSがRaspbianではないときはドライバを変更してみてください。 
+      またはグラフィックドライバを変更してみてください。 
       <br>
    
 # 余談  
