@@ -29,7 +29,7 @@ libpng, libjpeg がない場合には zlib, libpng, libjpeg をインストー�
 
 # コンパイル方法(Raspbian)
 <p style="padding-left:2em">
-  cmake -Dpi=on <br>
+  cmake . -Dpi=on <br>
   make  <br>
 </p>
 cmake を -Dpi=on オプションで実行してください。<br>
@@ -50,7 +50,7 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
 (ただし、正常に動作するかは一部を除いて未確認。)<br>
 
 # 実行方法
-./mmdpiv -p[モデルファイルパス] -v[VMD ファイルパス]
+./mmdpiv -p"モデルファイルパス" -v"VMD ファイルパス"
 
 # mmdpi のリファレンス
 <table>
@@ -80,6 +80,10 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
   A.  VRAM が足りない場合があります。VRAM を増やして実行をしてみてください。<br>
       またはグラフィックドライバを変更してみてください。 
       <br>
+  Q. Raspbian でOpenGL ES 関連のエラーが出る。<br>
+  A. -Dpi=on でRaspbian のLegacy Driver を使用します。<br>
+     raspi-config => Advance option => OpenGL => Legacy Driver を選択してください。
+     <br>
    
 # 余談  
   
