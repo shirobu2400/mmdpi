@@ -311,7 +311,7 @@ int mmdpiVmd::insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_mo
 }
 
 //	map で名前TOボーンインデックスを作る
-int	mmdpiVmd::create_bone_map( MMDPI_PMD_BONE_INFO_PTR bone, int bone_num )
+int mmdpiVmd::create_bone_map( MMDPI_PMD_BONE_INFO_PTR bone, int bone_num )
 {
 	this->bone_num = bone_num;
 

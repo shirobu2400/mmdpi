@@ -142,7 +142,7 @@ protected :
 
 	float				interpolate( float x1, float y1, float x2, float y2, float x );
 
-	MMDPI_BONE_INFO_PTR	bone;
+	MMDPI_BONE_INFO_PTR		bone;
 	
 public :
 	
@@ -156,14 +156,28 @@ public :
 			return 0;
 		return this->advance_time( frame );
 	}
+	mmdpiVmd* operator=( float frame )
+	{
+		if( motion_time < frame ) 
+			this->init_motion();
+		for( ; motion_time < frame; motion_time ++ )
+			this->advance_time();
+		this->advance_time( 0 );
+		return this;
+	}
 
 	float get_motion_time( void )
 	{
 		return motion_time;
 	}
 
-	int					is_end( void );								//	終了判定
-	int					init_motion( void );						//	モーション初期化
+	float get_motion_frames( void )
+	{
+		return max_frame;
+	}
+
+	int					is_end( void );					//	終了判定
+	int					init_motion( void );				//	モーション初期化
 	int					advance_time( float time_scale = 1.0f );	//	モーション再生
 
 	int					set_bone( MMDPI_BONE_INFO_PTR bone );
