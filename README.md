@@ -61,7 +61,7 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
 <tr><td>mmdpiVmd* mmdpi::get_vmd( int index ) </td><td> vmd情報の取得。</td></tr>
 <tr><td>*[mmdpi 変数名]->get_vmd( 0 ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
 <tr><td>*[mmdpi 変数名]->get_vmd( 0 ) = frame </td><td>指定されたフレームにジャンプ </td></tr>
-<tr><td>*[mmdpi 変数名]->get_vmd( 0 )->is_end() </td><td>モーションの終了判定 </td></tr>
+<tr><td>[mmdpi 変数名]->get_vmd( 0 )->is_end() </td><td>モーションの終了判定 </td></tr>
 <tr><td>void　mmdpi::set_fps( int fps ) </td><td> モーション実行時のfps を指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
