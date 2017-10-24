@@ -84,7 +84,7 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
       <br>
   Q. Raspbian でOpenGL ES 関連のエラーが出る。<br>
   A. -Dpi=on でRaspbian のLegacy Driver を使用します。<br>
-     raspi-config => Advance option => OpenGL => Legacy Driver を選択してください。
+     raspi-config => Advanced Options => GL Driver => G3 Legacy を選択してください。
      <br>
    
 # 余談  
