@@ -163,9 +163,13 @@ int mmdpiVmd::set_bone( MMDPI_BONE_INFO_PTR bone )
 int mmdpiVmd::analyze( void )
 {
 	int		bone_id;
+
 	m_list = new MMDPI_VMD_INFO_LIST[ bone_num ];
 	motion_line = new MMDPI_VMD_INFO_LIST_PTR[ bone_num ];
 	now_motion = new MMDPI_VMD_INFO_LIST_PTR[ bone_num ];
+
+	if( m_list == 0x00 || motion_line == 0x00 || now_motion == 0x00 )
+		return -1;
 
 	for( int i = 0; i < bone_num; i ++ )
 	{

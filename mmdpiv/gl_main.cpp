@@ -266,7 +266,7 @@ void init( int argc, char* argv[] )
 	}
 
 	char*	vmd_name = get_command_option( "-v", argc, argv );
-	if( vmd_name )
+	if( p && vmd_name )
 	{
 		motion_flag = 1;
 		puts( vmd_name );

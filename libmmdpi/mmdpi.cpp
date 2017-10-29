@@ -71,23 +71,27 @@ int mmdpi::vmd_load( const char *file_name )
 	mmdpiVmd*			lvmd = new mmdpiVmd();
 	MMDPI_BONE_INFO_PTR		bone = 0x00;
 
+	if( lvmd == 0x00 )
+		return -1;
+
 	if( pmx )
 	{
 		bone = pmx->get_bone();
 		lvmd->create_bone_map_pmx( pmx->get_pmx_bone(), pmx->get_bone_num() );
 		//lvmd->create_morph_map_pmx( mmdpiPmxLoad::morph, mmdpiPmxLoad::morph_num );
 	}
-	else	//if( pmd )
+	else if( pmd )
 	{
 		bone = pmd->get_bone();
 		lvmd->create_bone_map( pmd->get_pmd_bone(), pmd->get_bone_num() );
 		//lvmd->create_morph_map_pmx( mmdpiPmxLoad::morph, mmdpiPmxLoad::morph_num );
 	}
+	else
+		return -1; // error.
 	lvmd->load( file_name );
 	lvmd->set_bone( bone );
 
 	vmd.push_back( lvmd );
-
 	return 0;
 }
 
