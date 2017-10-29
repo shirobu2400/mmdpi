@@ -55,7 +55,7 @@ extern "C"
 }
 
 #include "mmdpi.h"
-mmdpi*		p;
+mmdpi*		p = 0x00;
 mmdpiMatrix	Model_offset;
 
 #include <sys/types.h>
@@ -153,6 +153,7 @@ public:
 Fps* 			fps = 0x00;
 static int		vmd_flag = 0;
 
+
 char* get_command_option( const char* option, int argc, char* argv[] )
 {
 	int			i;
@@ -180,7 +181,7 @@ void init( int argc, char *argv[] )
 	model_name = get_command_option( "-p", argc, argv );
 	//if( argc > 1 )
 	//	model_name = argv[ 1 ];
-	if( model_name )
+	if( model_name && model_name[ 0 ] )
 	{
 		p = new mmdpi();
 		if( p->load( model_name ) )
@@ -195,7 +196,7 @@ void init( int argc, char *argv[] )
 	//if( argc > 2 )
 	//	vmd_name = argv[ 2 ];
 	vmd_flag = 0;
-	if( p && vmd_name )
+	if( p && vmd_name && vmd_name[ 0 ] )
 	{
 		if( p->vmd_load( vmd_name ) )
 		{
@@ -521,8 +522,6 @@ int main( int argc, char *argv[] )
 		printf(
 			"argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
-			"argment: -f [vmd file name] \n"
-			"argment: -s [vmd file name] \n"
 			);
 		return 0;
 	}
