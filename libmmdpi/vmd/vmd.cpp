@@ -386,10 +386,7 @@ int mmdpiVmd::load( const char *filename )
 
 	vmd_info = new MMDPI_VMD_INFO;
 	if( vmd_info == 0x00 )
-	{
-		delete buf;
 		return -1;
-	}
 
 	//	ヘッダ
 	buf->get_bin( &vmd_info->header, sizeof( MMDPI_VMD_MMDPI_PMD_HEADER ) );
@@ -399,6 +396,8 @@ int mmdpiVmd::load( const char *filename )
 	//	モーション読み込み
 	buf->get_bin( &vmd_info->motion_num, sizeof( dword ) );
 	vmd_info->motion = new MMDPI_VMD_MOTION[ vmd_info->motion_num ];
+	if( vmd_info->motion == 0x00 )
+		return -1;
 	for( dword i = 0; i < vmd_info->motion_num; i ++ )
 	{
 		buf->get_bin( &vmd_info->motion[ i ], sizeof( MMDPI_VMD_MOTION ) );
@@ -407,6 +406,8 @@ int mmdpiVmd::load( const char *filename )
 	//	スキン読み込み
 	buf->get_bin( &vmd_info->skin_num, sizeof( MMDPI_VMD_SKIN_COUNT ) );
 	vmd_info->skin = new MMDPI_VMD_SKIN[ vmd_info->skin_num.Count ];
+	if( vmd_info->skin == 0x00 )
+		return -1;
 	for( dword i = 0; i < vmd_info->skin_num.Count; i ++ )
 	{
 		buf->get_bin( &vmd_info->skin[ i ], sizeof( MMDPI_VMD_SKIN ) );

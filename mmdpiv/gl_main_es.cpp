@@ -247,7 +247,7 @@ void init( int argc, char *argv[] )
 void draw()
 {
 	fps->update();
-	if( p && vmd_flag && p->get_vmd( 0 ) )
+	if( p && p->get_vmd( 0 ) )
 	{
 		float	frame = 30.0f / fps->get_mfps();
 		//	フレームを進める関数
@@ -582,7 +582,7 @@ int main( int argc, char *argv[] )
 
 	/* 1200frame / 60fps = 20sec */
 	//while( frames < 1200 )
-	while( !p->get_vmd( 0 )->is_end() || ( !vmd_flag && frames < 160 ) )
+	while( !p->get_vmd( 0 ) || !p->get_vmd( 0 )->is_end() )
 	//while( 1 )
 	{
 		Mat4	pl_matrix;
