@@ -125,7 +125,7 @@ set( mmdpi_lib
 	${freeglut_LIBRARIES}
 )
 
-#	静的ライブラリとしてビルドしたものをリンク
+#	link static library
 link_directories( ${mmdpi_lib_path} )
 include_directories( ${mmdpi_inc_path} )
 add_executable( mmdpiv ${mmdpi_src} )
@@ -135,4 +135,4 @@ target_link_libraries( mmdpiv
 	${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${JPEG_LIBRARIES}
 	${mmdpi_lib} ${RASPGL_LIBRARIES}
 )
-
+install(TARGETS mmdpiv RUNTIME DESTINATION bin)
