@@ -445,10 +445,18 @@ mmdpiVmd::~mmdpiVmd()
 {
 	if( vmd_info )
 	{
-		delete[] vmd_info->motion;
-		delete[] vmd_info->skin;
+		if( vmd_info->motion )
+		{
+			delete[] vmd_info->motion;
+			vmd_info->motion = 0x00;
+		}
+		if( vmd_info->skin )
+		{
+			delete[] vmd_info->skin;
+			vmd_info->skin = 0x00;
+		}
 
-		delete vmd_info;
+		delete vmd_info; vmd_info = 0x00;
 	}
 
 	if( motion_line )
@@ -460,12 +468,13 @@ mmdpiVmd::~mmdpiVmd()
 			{
 				MMDPI_VMD_INFO_LIST_PTR mml = ml->next;
 				delete ml;
-				ml = NULL;
+				ml = 0x00;
 				ml = mml;
 			}
-			motion_line[ i ] = NULL;
+			motion_line[ i ] = 0x00;
 		}
 		delete[] motion_line;
+		motion_line = 0x00;
 	}
 
 	if( skin_line )
@@ -482,6 +491,6 @@ mmdpiVmd::~mmdpiVmd()
 		delete skin_line;
 	}
 
-	delete[] now_motion;
-	delete[] m_list;
+	delete[] now_motion; now_motion = 0x00;
+	delete[] m_list; m_list = 0x00;
 }

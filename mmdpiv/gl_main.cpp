@@ -159,7 +159,7 @@ void timer( int value )
 	fps->draw();
 	fps->update();
 	
-	if( p && motion_flag && p->get_vmd( 0 ) )
+	if( p && p->get_vmd( 0 ) )
 	{
 		float	frame = 30.0f / fps->get_mfps();	//fps->get_dframe();
 		//	フレームを進める関数
@@ -170,7 +170,10 @@ void timer( int value )
 		//*p->get_vmd( 0 ) = 100;	// 指定したフレームで停止
 
 		if( p->get_vmd( 0 )->is_end() )
+		{
+			end();
 			exit( 0 );
+		}
 	}
 
 	mmdpiMatrix	matrix;
@@ -373,7 +376,7 @@ int main( int argc, char *argv[] )
 
 	glutMainLoop();
 
-	end();
+	//end();
 
 	return 0;
 }
