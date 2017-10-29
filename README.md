@@ -63,6 +63,7 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
 <tr><td>int mmdpi::vmd_load( const char* file_name ) </td><td> モーションファイル(.vmd)の読み込み(PATH で指定)</td></tr>
 <tr><td>void mmdpi::draw( void ) </td><td> 表示</td></tr>
 <tr><td>void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix ) </td><td> 指定されたボーンのindexと対応するボーンの姿勢行列を matrix で上書き。</td></tr>
+<tr><td>void mmdpi::set_bone_matrix( const char* bone_name, mmdpiMatrix& matrix ) </td><td> 指定されたボーンの名と対応するボーンの姿勢行列を matrix で上書き。</td></tr>
 <tr><td>mmdpiVmd* mmdpi::get_vmd( int index ) </td><td> vmd情報の取得。</td></tr>
 <tr><td>*[mmdpi 変数名]->get_vmd( 0 ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
 <tr><td>*[mmdpi 変数名]->get_vmd( 0 ) = frame </td><td>指定されたフレームにジャンプ </td></tr>
