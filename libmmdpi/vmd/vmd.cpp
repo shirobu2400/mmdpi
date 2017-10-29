@@ -384,6 +384,13 @@ int mmdpiVmd::load( const char *filename )
 	if( buf == 0x00 || buf->load( filename ) )
 		return -1;
 
+	vmd_info = new MMDPI_VMD_INFO;
+	if( vmd_info == 0x00 )
+	{
+		delete buf;
+		return -1;
+	}
+
 	//	ヘッダ
 	buf->get_bin( &vmd_info->header, sizeof( MMDPI_VMD_MMDPI_PMD_HEADER ) );
 	if( strncmp( vmd_info->header.VmdHeader, _vmd_head_, strlen( _vmd_head_ ) ) ) 
@@ -413,15 +420,15 @@ int mmdpiVmd::load( const char *filename )
 
 mmdpiVmd::mmdpiVmd()
 {
-	vmd_info = new MMDPI_VMD_INFO;
+	vmd_info = 0x00;
 	bone_num = 0;
-	m_list = NULL;
-	motion_line = NULL;
+	m_list = 0x00;
+	motion_line = 0x00;
 
 	motion_time = 0;
 	max_frame = 0;
 	now_motion = 0;
-	this->bone = NULL;
+	this->bone = 0x00;
 
 	skin_line	= 0x00;
 	//skin		= 0x00;
