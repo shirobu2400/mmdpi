@@ -21,10 +21,10 @@ extern "C"
 int		_fps_ = 60;
 uint32_t	_screen_max_size_ = 0x1000;//1280;	//640;
 
-extern "C" 
+extern "C"
 {
 
-	typedef struct 
+	typedef struct
 	{
 		EGLNativeWindowType  nativeWin;
 		EGLDisplay  display;
@@ -41,7 +41,7 @@ extern "C"
 		float m[ 16 ];
 	} Mat4;
 
-	typedef struct 
+	typedef struct
 	{
 		GLint   aPosition;
 		GLint   aTex;
@@ -68,14 +68,14 @@ mmdpiMatrix	Model_offset;
 class Fps
 {
 	static const int	sample_average	= 60;		//平均を取るサンプル数
-	
+
 	float			start_time;         //測定開始時刻
 	int			count;				//カウンタ
 	float			m_fps;				//fps
 	int			fps;				//設定したFPS
 
 public:
-	
+
 	Fps()
 	{
 		start_time = get_time();
@@ -113,7 +113,7 @@ public:
 			start_time = get_time();
 
 		if( count == sample_average )	//	60フレーム目なら平均を計算する
-		{ 
+		{
 			float		t = get_time();
 			if( t < 1e-16f )
 				m_fps = 30.0 / fps;
@@ -136,7 +136,7 @@ public:
 	{
 		if( count < 2 )
 		{
-			printf( "%f[ step ]\n", m_fps );	
+			printf( "%f[ step ]\n", m_fps );
 		}
 	}
 
@@ -153,19 +153,20 @@ public:
 Fps* 			fps = 0x00;
 static int		vmd_flag = 0;
 
-
 char* get_command_option( const char* option, int argc, char* argv[] )
 {
-	int		i;
-	size_t		option_length = strlen( option );
+	int			i;
+	size_t			option_length = strlen( option );
 
 	for( i = 0; i < argc; i ++ )
 	{
 		if( strncmp( argv[ i ], option, option_length ) == 0 )
 		{
-			char* r = argv[ i ] + option_length;
+			char*	r = argv[ i ] + option_length;
 			if( *r )
 				return r;
+			if( i + 1 < argc )
+				return argv[ i + 1 ];
 			return argv[ i ];
 		}
 	}
@@ -205,7 +206,7 @@ void init( int argc, char *argv[] )
 			vmd_flag = 1;
 	}
 
-	if( p ) 
+	if( p )
 	{
 		p->set_fps( _fps_ );
 		char*	fps_name = 0x00;
@@ -216,10 +217,10 @@ void init( int argc, char *argv[] )
 			p->set_fps( _fps_ );
 		}
 	}
-	
+
 	fps = new Fps();
 	fps->set_fps( _fps_ );
-	
+
 	char*	sound_name = 0x00;
 	sound_name = get_command_option( "-s", argc, argv );
 	if( sound_name )
@@ -233,7 +234,7 @@ void init( int argc, char *argv[] )
 		cmd_string[ length ] = ' ';
 		cmd_string[ length + 1 ] = '&';
 		cmd_string[ length + 2 ] = '\0';
-			
+
 		system( cmd_string );
 	}
 
@@ -277,14 +278,14 @@ char get_keyboard( void )
 	int f = open( "/dev/tty", O_RDONLY|O_NONBLOCK|O_NDELAY|O_NOCTTY );
 	char c;
 	struct termios term, default_term;
-	
-	//	non cannonical mode 
+
+	//	non cannonical mode
 	tcgetattr( fileno( stdin ), &default_term );
 	term.c_lflag &= ~ICANON;
 	tcsetattr( fileno( stdin ), TCSANOW, &term );
 
 	if( read( f, &c, 1 ) == 0 )
-			c = 0; 
+			c = 0;
 	close( f );
 
 	tcsetattr( 0x00, TCSANOW, &default_term );
@@ -308,13 +309,13 @@ EGLBoolean WinCreate(ScreenSettings *sc)
 	success = graphics_get_display_size(0, &width, &height);
 	if( success < 0 )
 		return EGL_FALSE;
-  
+
 	if( _screen_max_size_ > 0 )
 	{
 		if( width > _screen_max_size_ )
-			width = _screen_max_size_; 
+			width = _screen_max_size_;
 		if( height > _screen_max_size_ )
-			height = _screen_max_size_; 
+			height = _screen_max_size_;
 	}
 
 	sc->width = width;
@@ -339,7 +340,7 @@ EGLBoolean WinCreate(ScreenSettings *sc)
 
 EGLBoolean SurfaceCreate( ScreenSettings *sc )
 {
-	EGLint attrib[] = 
+	EGLint attrib[] =
 	{
 		EGL_RED_SIZE,       8,
 		EGL_GREEN_SIZE,     8,
@@ -361,10 +362,10 @@ EGLBoolean SurfaceCreate( ScreenSettings *sc )
 		return EGL_FALSE;
 
 	sc->surface = eglCreateWindowSurface( sc->display, config, sc->nativeWin, NULL );
-	if( sc->surface == EGL_NO_SURFACE ) 
+	if( sc->surface == EGL_NO_SURFACE )
 		return EGL_FALSE;
 	sc->context = eglCreateContext( sc->display, config, EGL_NO_CONTEXT, context );
-	if( sc->context == EGL_NO_CONTEXT ) 
+	if( sc->context == EGL_NO_CONTEXT )
 		return EGL_FALSE;
 	if( !eglMakeCurrent( sc->display, sc->surface, sc->surface, sc->context ) )
 		return EGL_FALSE;
@@ -404,9 +405,9 @@ void perspectiveMatrix(float left, float right,
 	float dx = right - left;
 	float dy = bottom - top;
 	float dz = far - near;
-  
+
 	GLfloat* matrix = matrix4->m;
-  
+
 	matrix[ 0] =  2.0f * near / dx;
 	matrix[ 5] =  2.0f * near / dy;
 	matrix[ 8] =  (right + left) / dx;
@@ -492,12 +493,12 @@ int print_mat4( Mat4* m )
 		"%f, %f, %f, %f\n"
 		"%f, %f, %f, %f\n"
 		,
-		m->m[ 0 ], m->m[ 1 ], m->m[ 2 ], m->m[ 3 ], 
-		m->m[ 4 ], m->m[ 5 ], m->m[ 6 ], m->m[ 7 ], 
-		m->m[ 8 ], m->m[ 9 ], m->m[ 10 ], m->m[ 11 ], 
+		m->m[ 0 ], m->m[ 1 ], m->m[ 2 ], m->m[ 3 ],
+		m->m[ 4 ], m->m[ 5 ], m->m[ 6 ], m->m[ 7 ],
+		m->m[ 8 ], m->m[ 9 ], m->m[ 10 ], m->m[ 11 ],
 		m->m[ 12 ], m->m[ 13 ], m->m[ 14 ], m->m[ 15 ]
 	);
-	
+
 	return 0;
 }
 
@@ -512,12 +513,12 @@ int main( int argc, char *argv[] )
 	Mat4		modelMat;
 	float		aspect;
 	float		dw, dh;
-	
+
 	int		debug_flag = 0;
-	
+
 	if( argc < 2 )
 	{
-		printf( 
+		printf(
 			"argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
 			"argment: -f [vmd file name] \n"
@@ -528,22 +529,22 @@ int main( int argc, char *argv[] )
 
 	bcm_host_init();
 	res = WinCreate( &g_sc );
-	if( !res ) 
+	if( !res )
 	{
 		printf( "Create window error!\n" );
 		return 0;
 	}
 	res = SurfaceCreate( &g_sc );
-	if( !res ) 
+	if( !res )
 	{
 		printf( "Create surface error!\n" );
 		return 0;
 	}
-	
+
 	makeUnit( &viewMat );
 
 	aspect = ( float )g_sc.width / ( float )g_sc.height;
-	
+
 	//makeProjectionMatrix(&g_sp.VpMatrix, 1, 65536, 53, aspect);
 	//setPosition(&viewMat, 0, -4, -24 );
 
@@ -556,9 +557,9 @@ int main( int argc, char *argv[] )
 	//print_mat4( &g_sp.VpMatrix );
 
 	mulMatrix( &g_sp.VpMatrix, &g_sp.VpMatrix, &viewMat );
-	
+
 	makeUnit( &modelMat );
-	
+
 	mulMatrix( &projection_matrix, &modelMat, &g_sp.VpMatrix );
 
 	makeUnit( &rotMat );
@@ -571,7 +572,7 @@ int main( int argc, char *argv[] )
 	//	if( strncmp( argv[ 3 ], "-D", 2 ) == 0 )
 	//		debug_flag = 1;
 	//}
-	
+
 	//print_mat4( &projection_matrix );
 
 	glEnable( GL_DEPTH_TEST );
@@ -581,14 +582,14 @@ int main( int argc, char *argv[] )
 	makeUnit( &delta_mat );
 
 	/* 1200frame / 60fps = 20sec */
-	//while( frames < 1200 ) 
+	//while( frames < 1200 )
 	while( !p->get_vmd( 0 )->is_end() || ( !vmd_flag && frames < 160 ) )
 	//while( 1 )
 	{
 		Mat4	pl_matrix;
 		Mat4	delta_key_mat;
 		glViewport(0, 0, g_sc.width, g_sc.height);
-		
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		/* X Rotation */
@@ -597,7 +598,7 @@ int main( int argc, char *argv[] )
 
 		p->set_projection_matrix( pl_matrix.m );
 		draw();
-		
+
 		char c = get_keyboard();
 		makeUnit( &delta_key_mat );
 		switch( c )
@@ -610,20 +611,20 @@ int main( int argc, char *argv[] )
 		mulMatrix( &delta_mat , &delta_mat, &delta_key_mat );
 
 		if( c == 'q' )
-			break;		
+			break;
 
 		eglSwapBuffers(g_sc.display, g_sc.surface);
-		frames ++;		
+		frames ++;
 
 		//glutTimerFunc( fps->get_wait_time() * 1000.0f, timer, 0 );
 		usleep( 1600 );
 		if( debug_flag )
 			fps->draw();
 	}
-  
+
 	printf( "Ending process!\n" );
-  
+
 	end();
-  
+
 	return 0;
 }
