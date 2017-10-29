@@ -138,8 +138,8 @@ include_directories( ${libmmdpi_inc} )
 include_directories( ${libmmdpi_inc_raspi} )
 
 # 動的ライブラリも作っておく python で使えるようにするつもり
-add_library(mmdpi SHARED ${libmmdpi_src})
+add_library(mmdpis SHARED ${libmmdpi_src})
 
 # make install
-install(TARGETS mmdpi LIBRARY DESTINATION lib/mmdpi)
+install(TARGETS mmdpis LIBRARY DESTINATION lib/mmdpi)
 install(FILES ${libmmdpi_header} DESTINATION include/mmdpi)
