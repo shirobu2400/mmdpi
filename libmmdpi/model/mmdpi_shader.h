@@ -81,18 +81,18 @@ private :
 
 	void		shader_setting( void );
 
-	int			now_buffer_id;
+	int		now_buffer_id;
 
 	dword		vertex_num;
 
 public :
 
-	int			shader_on( void );
+	int		shader_on( void );
 	void		shader_off( void );
 	
-	int			default_shader( void );
-	int			create_shader( GLuint shader_type, const GLchar* src );
-	int			link( void );
+	int		default_shader( void );
+	int		create_shader( GLuint shader_type, const GLchar* src );
+	int		link( void );
 
 	void		set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p, dword vertex_num );
 	void		set_face_buffers( int buffer_id, ushort* face_p, dword face_num );

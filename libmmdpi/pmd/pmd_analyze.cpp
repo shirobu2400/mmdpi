@@ -72,7 +72,7 @@ int mmdpiPmdAnalyze::analyze( void )
 		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
 		for( dword i = 0; i < f->material_num; i ++ )
 		{
-			MMDPI_MATERIAL_PTR		m		= f->material[ i ];
+			MMDPI_MATERIAL_PTR	m	= f->material[ i ];
 			MMDPI_PMD_MATERIAL_PTR	mpmx	= &material[ m->pid ];
 		
 			m->edge_size = mpmx->edge_flag * 0.02f;
@@ -126,7 +126,6 @@ void mmdpiPmdAnalyze::load_texture( void )
 	
 			//	テクスチャの関連付け
 			m->texture.load( texture_file_name_full );
-			//m->toon_texture.copy( toon_texture00[ mpmx->toon_texture_number ] );
 		}
 	}
 }

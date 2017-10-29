@@ -100,8 +100,8 @@ typedef struct tagMMDPI_PHYSICAL_INFO
 {
 	btTransform					offset_trans;		
 	btTransform					offset_trans_inv;	
-	int							m_bNoCopyToBone;			
-	MMDPI_BULLET_RIGID_INFO		rbInfo;
+	int						m_bNoCopyToBone;			
+	MMDPI_BULLET_RIGID_INFO				rbInfo;
 } MMDPI_PHYSICAL_INFO, *MMDPI_PHYSICAL_INFO_PTR;
 
 
@@ -110,25 +110,25 @@ class mmdpiBullet
 {
 private:
 
-	uint									rigidbody_num;
-	uint									softbody_num;
+	uint						rigidbody_num;
+	uint						softbody_num;
 
-	btSoftBodyWorldInfo						softWorldInfo;		
+	btSoftBodyWorldInfo				softWorldInfo;		
 
-	btAlignedObjectArray< btCollisionShape* >   collisionShapes;
+	btAlignedObjectArray< btCollisionShape* >	collisionShapes;
 
 	//btDefaultCollisionConfiguration*		collisionConfiguration;
-	btCollisionConfiguration*				collisionConfiguration;
+	btCollisionConfiguration*			collisionConfiguration;
 
-	btCollisionDispatcher*					dispatcher;
-	btBroadphaseInterface*					overlappingPairCache;
-	btSequentialImpulseConstraintSolver*	solver;
-	
+	btCollisionDispatcher*				dispatcher;
+	btBroadphaseInterface*				overlappingPairCache;
+	btSequentialImpulseConstraintSolver*		solver;
+
 	// bulletWorld
-	btDynamicsWorld*						dynamicsWorld;
-	//btDiscreteDynamicsWorld*				dynamicsWorld;
-	//btDynamicsWorld*						bt_world; 
-	//btTransform								groundTransform;
+	btDynamicsWorld*				dynamicsWorld;
+	//btDiscreteDynamicsWorld*			dynamicsWorld;
+	//btDynamicsWorld*				bt_world; 
+	//btTransform					groundTransform;
 
 	int createShape( btCollisionShape **pColShape, 
 		tagMMDPI_BULLET_TYPE rigidbody_type, 
@@ -142,9 +142,9 @@ private:
 		mmdpiMatrix	*m_pBoneMatrix;
 
 		btKinematicMotionState( const btTransform& startTrans, const btTransform& boneOffset, 
-								mmdpiMatrix *pBoneMatrix )
-										: m_BoneOffset( boneOffset ), m_startWorldTrans( startTrans ), 
-										m_pBoneMatrix( pBoneMatrix )
+						mmdpiMatrix *pBoneMatrix )
+						: m_BoneOffset( boneOffset ), m_startWorldTrans( startTrans ), 
+						m_pBoneMatrix( pBoneMatrix )
 		{
 		}
 
@@ -198,6 +198,7 @@ public:
 
 	// ソフト頂点
 	int get_softbody_vertex( mmdpiVector3d *vertex, int id );
+
 	// ソフト面
 	int getFaceNum( int id );
 
@@ -249,7 +250,7 @@ public:
 	{
 		///just make it a btSoftRigidDynamicsWorld please
 		///or we will add type checking
-		return ( btSoftRigidDynamicsWorld* ) dynamicsWorld;
+		return ( btSoftRigidDynamicsWorld* )dynamicsWorld;
 	}
 
 	//btTransform* getGround( void ){ return &groundTransform; }

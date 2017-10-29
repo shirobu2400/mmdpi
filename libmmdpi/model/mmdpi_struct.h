@@ -216,7 +216,7 @@ typedef struct tagMMDPI_IMAGE
 		return id = c.id;
 	}
 
-	int	get_id( void )
+	int get_id( void )
 	{
 		return id;
 	}
@@ -229,13 +229,31 @@ typedef struct tagMMDPI_IMAGE
 		tga = 0x00;
 		png = 0x00;
 		bmp = 0x00;
+		jpg = 0x00;
 	}
 
 	~tagMMDPI_IMAGE()
 	{
-		delete tga;
-		delete png;
-		delete bmp;
+		if( tga )
+		{
+			delete tga;
+			tga = 0x00;
+		}
+		if( png )
+		{
+			delete png;
+			png = 0x00;
+		}
+		if( bmp )
+		{
+			delete bmp;
+			bmp = 0x00;
+		}
+		if( jpg )
+		{
+			delete jpg;
+			jpg = 0x00;
+		}
 	}
 
 } MMDPI_IMAGE, *MMDPI_IMAGE_PTR;

@@ -241,7 +241,7 @@ int mmdpiAdjust::adjust_polygon( dword* face, dword face_num, MMDPI_BLOCK_VERTEX
 	b_vertex = new MMDPI_VERTEX[ b_vertex_num ];
 	for( uint i = 0; i < b_vertex_num; i ++ )
 	{
-		b_vertex[ i ] = *vertex_list[ i ];
+		b_vertex[ i ] = *( vertex_list[ i ] );
 				
 		delete vertex_list[ i ];
 		vertex_list[ i ] = 0x00;
@@ -443,10 +443,5 @@ mmdpiAdjust::~mmdpiAdjust()
 		}
 		delete[] b_face;
 	}
-	if( b_material )
-	{
-		for( dword i = 0; i < b_material_num; i ++ )
-			delete[] b_material[ i ].dev_flag;
-		delete[] b_material;
-	}
+	delete[] b_material;
 }

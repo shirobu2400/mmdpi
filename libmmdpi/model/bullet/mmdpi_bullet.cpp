@@ -401,10 +401,10 @@ mmdpiBullet::~mmdpiBullet()
 		delete obj;
 	}
 	for( int j = 0; j < collisionShapes.size(); j ++ )  
-    {  
-        btCollisionShape* shape = collisionShapes[ j ];
-        delete shape;  
-    }  	
+	{  
+		btCollisionShape* shape = collisionShapes[ j ];
+		delete shape;  
+	}  	
 	
 	// ジョイント
 	for( int i = 0; i < getDynamicsWorld()->getNumConstraints(); i ++ )
@@ -414,7 +414,7 @@ mmdpiBullet::~mmdpiBullet()
 		delete p2p;
 	}
 
-    collisionShapes.clear();  
+	collisionShapes.clear();  
 
 	//delete dynamics world
 	delete dynamicsWorld;
