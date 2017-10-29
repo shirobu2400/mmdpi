@@ -70,7 +70,7 @@ set(libmmdpi_header
 	pmx/pmx_ik.h
 	pmx/pmx_load.h
 	pmx/pmx_struct.h
-	
+
 	vmd/vmd.h
 )
 
@@ -141,5 +141,5 @@ include_directories( ${libmmdpi_inc_raspi} )
 add_library(mmdpi SHARED ${libmmdpi_src})
 
 # make install
-install(TARGETS mmdpi LIBLARY DESTINATION lib/mmdpi)
+install(TARGETS mmdpi LIBRARY DESTINATION lib/mmdpi)
 install(FILES ${libmmdpi_header} DESTINATION include/mmdpi)
