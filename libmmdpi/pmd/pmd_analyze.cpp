@@ -97,7 +97,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 	dword	pi = 0;
 
 	//	一時的に読み込み
-	texture			= new MMDPI_IMAGE[ get_material_num() ];
+	texture		= new MMDPI_IMAGE[ get_material_num() ];
 	toon_texture	= new MMDPI_IMAGE[ get_material_num() ];
 
 	for( dword j = 0; j < get_face_num(); j ++ )
@@ -132,7 +132,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 }
 
 //	ボーン関係処理
-int	mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len )
+int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len )
 {
 	mmdpiModel::bone_num = pbone_len;
 	mmdpiModel::bone = new MMDPI_BONE_INFO[ mmdpiModel::bone_num ];
@@ -199,7 +199,7 @@ mmdpiPmdAnalyze::mmdpiPmdAnalyze()
 	adjust_material = 0x00;
 	adjust_vertex	= 0x00;
 
-	texture			= 0x00;
+	texture		= 0x00;
 	toon_texture	= 0x00;
 }
 

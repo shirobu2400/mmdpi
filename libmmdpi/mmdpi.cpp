@@ -112,6 +112,7 @@ mmdpi::~mmdpi()
 {
 	for( unsigned int i = 0; i < vmd.size(); i ++ )
 		delete vmd[ i ];
-	delete pmx;
-	delete pmd;
+	delete pmm;
+	//delete pmx;
+	//delete pmd;
 }

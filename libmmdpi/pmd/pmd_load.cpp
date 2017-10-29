@@ -376,14 +376,14 @@ mmdpiPmdLoad::~mmdpiPmdLoad()
 	{
 		for( ushort i = 0; i < ik_num; i ++ )
 			delete[] ik[ i ].ik_child_bone_index;
+		delete[] ik;
 	}
-	delete[] ik;
 	if( skin )
 	{
 		for( ushort i = 0; i < skin_num; i ++ )
 			delete[] skin[ i ].vertex;
+		delete[] skin;
 	}
-	delete[] skin;
 	delete[] ver_skin;
 	delete[] skin_cnt;
 	delete[] bone_name;
