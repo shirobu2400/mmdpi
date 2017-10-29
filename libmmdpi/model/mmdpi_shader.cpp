@@ -244,7 +244,7 @@ int mmdpiShader::link( void )
 			char* infoLog = new char[ infoLen ];
 			glGetProgramInfoLog( program, infoLen, NULL, infoLog );
 			printf( "Error linking program:\n%s\n", infoLog );
-			delete[] ( infoLog );
+			delete[] infoLog;
 		}
 		glDeleteProgram( program );
 		return -1;

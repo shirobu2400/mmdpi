@@ -443,5 +443,10 @@ mmdpiAdjust::~mmdpiAdjust()
 		}
 		delete[] b_face;
 	}
-	delete[] b_material;
+	if( b_material )
+	{
+		for( dword i = 0; i < b_material_num; i ++ )
+			delete[] b_material[ i ].dev_flag;
+		delete[] b_material;
+	}
 }

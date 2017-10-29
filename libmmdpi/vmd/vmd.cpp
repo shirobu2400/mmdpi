@@ -425,20 +425,20 @@ int mmdpiVmd::load( const char *filename )
 
 mmdpiVmd::mmdpiVmd()
 {
-	vmd_info = 0x00;
-	bone_num = 0;
-	m_list = 0x00;
-	motion_line = 0x00;
+	vmd_info	= 0x00;
+	bone_num	= 0;
+	m_list		= 0x00;
+	motion_line	= 0x00;
 
-	motion_time = 0;
-	max_frame = 0;
-	now_motion = 0;
-	this->bone = 0x00;
+	motion_time	= 0;
+	max_frame	= 0;
+	now_motion	= 0;
+	this->bone	= 0x00;
 
 	skin_line	= 0x00;
 	//skin		= 0x00;
 	morph		= 0x00;
-	skin_morph_num = 0;
+	skin_morph_num	= 0;
 }
 
 mmdpiVmd::~mmdpiVmd()

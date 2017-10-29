@@ -17,6 +17,8 @@ int mmdpiPmxAnalyze::analyze( void )
 		adjust_material[ i ].face_num = material[ i ].fver_num;
 
 	adjust_vertex = new MMDPI_BLOCK_VERTEX();
+	if( adjust_vertex == 0x00 )
+		return -1;
 	adjust_vertex->alloc( mmdpiPmxLoad::vertex_num );
 
 	for( dword i = 0; i < mmdpiPmxLoad::vertex_num; i ++ )

@@ -82,8 +82,8 @@ typedef struct tagMMDPI_BLOCK_VERTEX
 		ver	= new mmdpiVector3d[ num ];
 		uv	= new mmdpiVector4d[ num ];
 		nor	= new mmdpiVector3d[ num ];
-		index = new mmdpiVector4d[ num ];
-		weight = new mmdpiVector4d[ num ];
+		index	= new mmdpiVector4d[ num ];
+		weight	= new mmdpiVector4d[ num ];
 		alloc_flag = 1;
 	}
 	~tagMMDPI_BLOCK_VERTEX()
