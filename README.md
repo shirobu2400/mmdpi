@@ -30,7 +30,8 @@ libpng, libjpeg がない場合には zlib, libpng, libjpeg をインストー�
 # コンパイル方法(Raspbian)
 <p>
 !!!!Raspbian かつ LegacyDriver 時のみ!!!!<br>
-LegacyDriverの設定は raspi-config => Advanced Options => GL Driver => G3 Legacy を選択してください。
+LegacyDriverの設定は raspi-config => Advanced Options => GL Driver => G3 Legacy を選択してください。<br>
+また、-lEGL, -lGLESv2 などの存在がない場合には rpi-update を実行してください。
 </p>
 <p style="padding-left:2em">
   cmake . -Dpi=on <br>
