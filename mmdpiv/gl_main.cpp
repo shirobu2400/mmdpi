@@ -1,4 +1,4 @@
-
+﻿
 
 #include "../libmmdpi/mmdpi.h"
 //#include "../libmmdpix/mmdpix.h"
@@ -165,8 +165,9 @@ void timer( int value )
 		//	フレームを進める関数
 		//（MMD は１秒間に３０フレームがデフォルト）
 		//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
-		( *p->get_vmd( 0 ) ) += frame;
-		//( *p->get_vmd( 0 ) ) ++;
+		*p->get_vmd( 0 ) += frame;
+		//*p->get_vmd( 0 ) ++;
+		//*p->get_vmd( 0 ) = 100;	// 指定したフレームで停止
 
 		if( p->get_vmd( 0 )->is_end() )
 			exit( 0 );
@@ -312,16 +313,18 @@ void end( void )
 
 char* get_command_option( const char* option, int argc, char* argv[] )
 {
-	int		i;
-	size_t		option_length = strlen( option );
+	int			i;
+	size_t			option_length = strlen( option );
 
 	for( i = 0; i < argc; i ++ )
 	{
 		if( strncmp( argv[ i ], option, option_length ) == 0 )
 		{
-			char* r = argv[ i ] + option_length;
+			char*	r = argv[ i ] + option_length;
 			if( *r )
 				return r;
+			if( i + 1 < argc )
+				return argv[ i + 1 ];
 			return argv[ i ];
 		}
 	}
@@ -336,7 +339,7 @@ int main( int argc, char *argv[] )
 		printf( 
 			"argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
-			"argment: -x [x file name] \n"
+			//"argment: -x [x file name] \n"
 			"argment: -f [fps] \n"
 			);
 		return 0;

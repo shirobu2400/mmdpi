@@ -1,4 +1,4 @@
-#	cmake 必要バージョン
+﻿#	cmake 必要バージョン
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
@@ -89,7 +89,7 @@ set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 #	OpenGL ES
 if( GLUT_FOUND OR glut_FOUND OR freeglut_FOUND )
 	set( mmdpi_lib ${mmdpi_lib} GL GLU GLEW )
-	
+
 else()
 	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
@@ -112,14 +112,14 @@ endif()
 #	Raspberry Pi
 set(mmdpi_inc_path
 	${mmdpi_inc_path}
-	/opt/vc/include/interface/vmcs_host/linux 
-	/opt/vc/include 
+	/opt/vc/include/interface/vmcs_host/linux
+	/opt/vc/include
 	/opt/vc/include/interface/vcos/pthreads
 )
 
 set( mmdpi_lib
 	${mmdpi_lib}
-	
+
 	${GLUT_LIBRARIES}
 	${glut_LIBRARIES}
 	${freeglut_LIBRARIES}
@@ -129,9 +129,10 @@ set( mmdpi_lib
 link_directories( ${mmdpi_lib_path} )
 include_directories( ${mmdpi_inc_path} )
 add_executable( mmdpiv ${mmdpi_src} )
-target_link_libraries( mmdpiv 
-	mmdpi 
-	${m_LIBRARIES} ${rt_LIBRARIES} 
-	${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${JPEG_LIBRARIES} 
+target_link_libraries( mmdpiv
+	mmdpi
+	${m_LIBRARIES} ${rt_LIBRARIES}
+	${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${JPEG_LIBRARIES}
 	${mmdpi_lib} ${RASPGL_LIBRARIES}
 )
+install(TARGETS mmdpiv RUNTIME DESTINATION bin)

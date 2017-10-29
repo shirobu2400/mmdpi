@@ -5,13 +5,13 @@
 //	頂点が範囲内で使用ボーン数が上限を超えたら 1
 //	頂点テクスチャの使えない状況でのメッシュ分割処理
 int mmdpiAdjust::vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, uint start, uint end, uint range,
-											uint bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex )
-	//										切断位置、使用ボーン数、検索範囲*2　検索上限
+						uint bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex )
+	//					切断位置、使用ボーン数、検索範囲*2　検索上限
 {
-	int*	temp_bone_list = new int[ bone_num ];	
-	dword	pos_l = 0;
+	int*		temp_bone_list = new int[ bone_num ];	
+	dword		pos_l = 0;
 	int		pos_flag = 1;
-	dword	using_bone_num_local;
+	dword		using_bone_num_local;
 
 
 	for( uint j = 0; j < bone_num; j ++ )
@@ -110,15 +110,15 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 		dev_flag_count	= j;
 		
 		while( vertex_bone_over_range( &dev_fver_num, &bone_num_temp, 
-					fver_num_base, fver_end, _MMDPI_MATERIAL_USING_BONE_NUM_,
-					bone_num, face, vertex )
+				fver_num_base, fver_end, _MMDPI_MATERIAL_USING_BONE_NUM_,
+				bone_num, face, vertex )
 			)
 		{
 			//	上限を超えていたら
 			b_material[ j ].face_num	= dev_fver_num - fver_num_base;		//	頂点数
-			b_material[ j ].pid			= i;								//	分割前のマテリアル番号
-			b_material[ j ].bone_num	= bone_num_temp;					//	必要なボーン数
-			b_material[ j ].face_top	= fver_num_base;					//	faceの開始位置
+			b_material[ j ].pid		= i;					//	分割前のマテリアル番号
+			b_material[ j ].bone_num	= bone_num_temp;			//	必要なボーン数
+			b_material[ j ].face_top	= fver_num_base;			//	faceの開始位置
 
 			//	vertex_bone_over_range での pos_l - pos_l % 3 が原因で
 			//	頂点の相互性がおかしくなるので、
@@ -131,9 +131,9 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 			j ++;
 		}
 		b_material[ j ].face_num	= dev_fver_num - fver_num_base;		//	頂点数
-		b_material[ j ].pid			= i;								//	分割前のマテリアル番号
-		b_material[ j ].bone_num	= bone_num_temp;					//	必要なボーン数
-		b_material[ j ].face_top	= fver_num_base;					//	faceの開始位置
+		b_material[ j ].pid		= i;					//	分割前のマテリアル番号
+		b_material[ j ].bone_num	= bone_num_temp;			//	必要なボーン数
+		b_material[ j ].face_top	= fver_num_base;			//	faceの開始位置
 		
 		dev_flag = j;
 		for( uint k = dev_flag_count; k < dev_flag; k ++ )
@@ -149,8 +149,8 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 //	他のマテリアルで重複していたら重複した頂点を増やし、重複を阻止
 dword mmdpiAdjust::material_booking_vertex( vector<MMDPI_VERTEX*>* new_vertex, dword v, dword* face, dword material_indext )
 {
-	int					update_flag;
-	dword				vertex_indexj;
+	int			update_flag;
+	dword			vertex_indexj;
 	MMDPI_VERTEX_PTR	add_vertex = 0x00;
 
 	update_flag = 0;
@@ -203,8 +203,8 @@ dword mmdpiAdjust::material_booking_vertex( vector<MMDPI_VERTEX*>* new_vertex, d
 int mmdpiAdjust::adjust_polygon( dword* face, dword face_num, MMDPI_BLOCK_VERTEX_PTR vertex, dword vertex_num )
 {
 	vector<MMDPI_VERTEX*>	vertex_list;
-	MMDPI_VERTEX*			new_vertex;
-	dword					fver_num_base = 0;
+	MMDPI_VERTEX*		new_vertex;
+	dword			fver_num_base = 0;
 
 	for( dword i = 0; i < vertex_num; i ++ )
 	{
@@ -254,7 +254,7 @@ int mmdpiAdjust::adjust_polygon( dword* face, dword face_num, MMDPI_BLOCK_VERTEX
 //	ushort の上限を超えた場合には分割する。
 int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 {
-	dword				vertex_range = 0xffff - 0xffff % 3;		//	65532 は 65532 mod 3 == 0 で 65536 に近い数
+	dword			vertex_range = 0xffff - 0xffff % 3;		//	65532 は 65532 mod 3 == 0 で 65536 に近い数
 	vector< dword >		new_face_pos;				//	頂点集合区切り位置
 	
 	//	分割位置と個数をカウント
@@ -371,7 +371,7 @@ int mmdpiAdjust::adjust_bone( void )
 		for( uint vi = 0; vi < b_material[ i ].face_num; vi ++ )
 		{
 			MMDPI_BLOCK_FACE_PTR	face	= &b_face[ b_material[ i ].face_id ];
-			dword					vif		= face->face[ vi + b_material[ i ].face_top ];
+			dword			vif	= face->face[ vi + b_material[ i ].face_top ];
 			
 			if( face->vertex[ vif ].update_flag )
 				continue;
@@ -416,7 +416,7 @@ void mmdpiAdjust::update_matrix( MMDPI_BONE_INFO_PTR bone, dword bone_num )
 	{
 		for( uint j = 0; j < b_material[ i ].bone_list_num; j ++ )
 		{
-			int		bone_index = ( int )b_material[ i ].bone_list[ j ];
+			int	bone_index = ( int )b_material[ i ].bone_list[ j ];
 
 			b_material[ i ].matrix[ j ] = bone[ bone_index ].local_matrix;
 		}

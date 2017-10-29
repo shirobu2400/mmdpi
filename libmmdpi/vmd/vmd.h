@@ -173,7 +173,7 @@ public :
 
 	float get_motion_frames( void )
 	{
-		return max_frame;
+		return ( float )max_frame;
 	}
 
 	int					is_end( void );					//	終了判定

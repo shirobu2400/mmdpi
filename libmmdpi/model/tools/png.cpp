@@ -7,12 +7,13 @@ GLuint MMDPI_PNG::load( const char *filename )
 	// ファイルを開く
 	FILE	*fp;
 	fp = fopen( filename, "rb" );
-	if( fp == NULL )
+	if( fp == 0x00 )
 		return -1;
 	png_structp	pPng;
 	png_infop	pInfo;
 	dword		dwWidth, dwHeight;
 	int		pixel_depth, color_type, nInterlaceType;
+
 
 	// ここからファイルを読み込み
 	pPng = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
@@ -36,7 +37,6 @@ GLuint MMDPI_PNG::load( const char *filename )
 	BYTE*	data = new BYTE[ height * rb ];
 	BYTE**	recv = new BYTE*[ height ];
 	BYTE	color_num = rb / width;
-
 
 	for( uint i = 0; i < height; i ++ )
 		recv[ i ] = &data[ ( height - i - 1 ) * rb ];

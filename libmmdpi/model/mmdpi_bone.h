@@ -16,8 +16,8 @@ class mmdpiBone : public mmdpiShader, public mmdpiAdjust
 
 protected :
 
-	uint				bone_num;	//	ボーン数 ( ushort でＯＫ )
-	MMDPI_BONE_INFO_PTR		bone;		//	ボーン
+	uint				bone_num;				//	ボーン数 ( ushort でＯＫ )
+	MMDPI_BONE_INFO_PTR		bone;					//	ボーン
 
 	//	姿勢行列合成用
 	mmdpiMatrix*			bone_comb_mat;
@@ -29,12 +29,12 @@ protected :
 	int				bullet_flag;				//	物理演算実行
 	int				phy_load_flag;				// 物理演算を読み込む
 	dword				rigidbody_count;			// 剛体数
-	MMDPI_PHYSICAL_RIGID_INFO_PTR	physics;	// 物理演算	// 剛体
+	MMDPI_PHYSICAL_RIGID_INFO_PTR	physics;				// 物理演算	// 剛体
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
-	MMDPI_PHYSICAL_INFO_PTR		physics_sys;	// 物理演算作業領域
+	MMDPI_PHYSICAL_INFO_PTR		physics_sys;				// 物理演算作業領域
 #endif
-	dword				joint_count;					// ジョイント数
-	MMDPI_PHYSICAL_JOINT_INFO_PTR	joint;	// 物理演算 // ジョイント
+	dword				joint_count;				// ジョイント数
+	MMDPI_PHYSICAL_JOINT_INFO_PTR	joint;					// 物理演算 // ジョイント
 
 	int				create_physical_info( void );
 

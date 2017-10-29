@@ -12,8 +12,8 @@ int mmdpiModel::create( void )
 	for( dword i = 0; i < mmdpiAdjust::get_face_num(); i ++ )
 	{
 		MMDPI_BLOCK_FACE_PTR	face = &get_face_block()[ i ];
-		mmdpiShader::set_vertex_buffers	( i, face->vertex, face->vertex_num );
-		mmdpiShader::set_face_buffers	( i, face->face  , face->face_num   );
+		mmdpiShader::set_vertex_buffers( i, face->vertex, face->vertex_num );
+		mmdpiShader::set_face_buffers( i, face->face, face->face_num );
 	}
 
 	//	bullet
@@ -22,6 +22,16 @@ int mmdpiModel::create( void )
 		return 0;
 
 	//	成功
+	return 0;
+}
+
+int mmdpiModel::set_bone_name2index( void )
+{
+	for( uint i = 0; i < this->bone_num; i ++ )
+	{
+		this->bone_name2index_utf8[ this->bone[ i ].name      ] = i;
+		this->bone_name2index_sjis[ this->bone[ i ].sjis_name ] = i;
+	}
 	return 0;
 }
 
@@ -54,7 +64,7 @@ void mmdpiModel::draw( void )
 	//	Input shader infomation
 	
 	//	オプション
-	OptionEnable();
+	option_enable();
 
 	//	裏面描画
 	glDisable( GL_DEPTH_TEST );
@@ -67,7 +77,7 @@ void mmdpiModel::draw( void )
 	draw_main( 1 );
 
 	//	オプション
-	OptionDisable();
+	option_disable();
 
 	//	Not Using My Shader
 	shader_off();
@@ -115,7 +125,7 @@ int mmdpiModel::draw_main( int cull_flag )
 	return 0;
 }
 
-int mmdpiModel::OptionEnable( void )
+int mmdpiModel::option_enable( void )
 {
 	//	描画処理
 	GLfloat	light_ambient[] = { 0.3f, 0.3f, 0.3f, 1 };
@@ -151,7 +161,7 @@ int mmdpiModel::OptionEnable( void )
 	return 0;
 }
 
-int mmdpiModel::OptionDisable( void )
+int mmdpiModel::option_disable( void )
 {
 	glDisable( GL_TEXTURE_2D );
 	glDisable( GL_CULL_FACE );
@@ -166,6 +176,19 @@ int mmdpiModel::OptionDisable( void )
 void mmdpiModel::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	mmdpiBone::set_bone_matrix( bone_index, matrix );
+}
+
+void mmdpiModel::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix )
+{
+	string					name( bone_name );
+	map<const string, uint>::iterator	itr;
+		
+	itr = this->bone_name2index_sjis.find( name );
+	if( itr == this->bone_name2index_sjis.end() )	// not found
+		itr = this->bone_name2index_utf8.find( name );
+	if( itr == this->bone_name2index_utf8.end() )	// not found
+		return ;
+	this->set_bone_matrix( itr->second, matrix );
 }
 
 void mmdpiModel::set_projection_matrix( const GLfloat* p_projection_matrix )

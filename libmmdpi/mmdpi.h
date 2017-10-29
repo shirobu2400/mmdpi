@@ -20,6 +20,7 @@ public :
 
 	virtual void		draw( void );
 	virtual void		set_bone_matrix( uint bone_index, mmdpiMatrix& matrix );
+	virtual void		set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix );	// set bone matrix
 	virtual void		set_fps( int fps );
 	virtual void		set_projection_matrix( const GLfloat* p_projection_matrix );	
 	virtual void		set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix );

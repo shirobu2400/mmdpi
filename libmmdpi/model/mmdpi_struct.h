@@ -30,7 +30,7 @@ typedef struct tagMMDPI_VERTEX
 	mmdpiVector3d	nor;
 
 	//	最適化済みフラグ
-	long			update_flag;
+	long		update_flag;
 
 	tagMMDPI_VERTEX()
 	{
@@ -46,7 +46,7 @@ typedef struct tagMMDPI_BLOCK_VERTEX
 {
 	//	各変数は個数が同期している。
 	//	個数を格納
-	dword				num;	
+	dword			num;	
 
 	//	頂点群
 	mmdpiVector3d_ptr	ver;
@@ -64,7 +64,7 @@ typedef struct tagMMDPI_BLOCK_VERTEX
 	mmdpiVector4d_ptr	weight;
 
 	//	メモリ自動開放フラグ
-	int					alloc_flag;
+	int			alloc_flag;
 
 	tagMMDPI_BLOCK_VERTEX()
 	{
@@ -164,32 +164,44 @@ typedef struct tagMMDPI_IMAGE
 		if( strncmp( file_name + len - 4, ".tga", 3 ) == 0 )
 		{
 			tga = new MMDPI_TGA();
-			if( ( int )tga->load( file_name ) < 0 )
+			if( tga && ( int )tga->load( file_name ) < 0 )
+			{
+				delete tga;
 				return -1;
+			}
 			type = 1;
 			id = tga->get_id();
 		}
 		else if( strncmp( file_name + len - 4, ".png", 3 ) == 0 )
 		{
 			png = new MMDPI_PNG();
-			if( ( int )png->load( file_name ) < 0 )
+			if( png && ( int )png->load( file_name ) < 0 )
+			{
+				delete png;
 				return -1;
+			}
 			type = 2;
 			id = png->get_id();
 		}
 		else if( strncmp( file_name + len - 4, ".bmp", 3 ) == 0 )
 		{
 			bmp = new MMDPI_BMP();
-			if( ( int )bmp->load( file_name ) < 0 ) 
+			if( bmp && ( int )bmp->load( file_name ) < 0 )
+			{
+				delete bmp;
 				return -1;
+			}
 			type = 0;
 			id = bmp->get_id();
 		}
 		else if( strncmp( file_name + len - 4, ".jpg", 3 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 4 ) == 0 )
 		{
 			jpg = new MMDPI_JPG();
-			if( ( int )jpg->load( file_name ) < 0 ) 
+			if( jpg && ( int )jpg->load( file_name ) < 0 ) 
+			{
+				delete jpg;
 				return -1;
+			}
 			type = 0;
 			id = jpg->get_id();
 		}
@@ -287,23 +299,23 @@ typedef struct tagMMDPI_MATERIAL
 typedef struct tagMMDPI_BLOCK_FACE
 {
 	//	面情報群
-	dword					face_num;
-	ushort*					face;
+	dword				face_num;
+	ushort*				face;
 	
 	//	バッファID
-	GLuint					buffer_id;	
+	GLuint				buffer_id;	
 		
 	//	頂点情報
-	dword					vertex_num;
+	dword				vertex_num;
 	MMDPI_VERTEX_PTR		vertex;
 	//MMDPI_BLOCK_VERTEX_PTR	vertex;
 	
 	//	マテリアル番号
-	dword					material_num;
+	dword				material_num;
 	MMDPI_MATERIAL_PTR*		material;
 
 	//	面を分解した位置
-	dword					face_divide_index;
+	dword				face_divide_index;
 
 } MMDPI_BLOCK_FACE, *MMDPI_BLOCK_FACE_PTR;
 

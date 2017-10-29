@@ -4,19 +4,28 @@
 
 int mmdpi::load( const char* model_name )
 {
+	int	result = 0;
+
 	//	読み込み済み
 	if( pmm )
 		return -1;
 
-	int		result = 0;
 	pmm = pmd = new mmdpiPmd();
-	if( pmd->load( model_name ) == 0 )
-		return 0;
-	delete pmd;
-	pmd = 0x00;
+	result = pmd->load( model_name );
 
-	pmm = pmx = new mmdpiPmx();
-	return pmx->load( model_name );
+	if( result )
+	{
+		delete pmd;
+		pmd = 0x00;
+
+		pmm = pmx = new mmdpiPmx();
+		result = pmx->load( model_name );
+	}
+
+	// bone name to bone index
+	pmm->set_bone_name2index();
+
+	return result;
 }
 
 void mmdpi::draw( void )
@@ -32,6 +41,11 @@ void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix )
 	pmm->set_bone_matrix( bone_index, matrix );
 	//pmx? pmx->set_bone_matrix( bone_index, matrix ) : pmd? pmd->set_bone_matrix( bone_index, matrix ) : 0x00 ;
 	//pmx->set_bone_matrix( bone_index, matrix );
+}
+
+void mmdpi::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix )
+{
+	pmm->set_bone_matrix( bone_name, matrix );
 }
 
 void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix )

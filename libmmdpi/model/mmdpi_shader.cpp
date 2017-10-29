@@ -29,7 +29,8 @@ void mmdpiShader::shader_off( void )
 
 int mmdpiShader::default_shader( void )
 { 
-	static GLchar vertex_shader_src[] = 
+	static GLchar vertex_shader_src[ 0x1000 ] = { 0 };
+	sprintf( vertex_shader_src, 
 #if defined( _MMDPI_OPENGL_ES_DEFINES_ ) || defined( _MMDPI_PRIJECTION_MATRIX_SELF_ )
 	"uniform   mat4		ProjectionMatrix;\n"
 #else
@@ -46,7 +47,7 @@ int mmdpiShader::default_shader( void )
 	"\n"
 	"//	Bone Info\n"
 	"//	ボーン姿勢情報\n"
-	"uniform mat4			BoneMatrix[ 24 ];\n"
+	"uniform mat4			BoneMatrix[ %d ];\n"
 	"attribute vec4			BoneIndices;	//	ボーンインデックス\n"
 	"\n"
 	"varying   vec4			v_color;\n"
@@ -90,8 +91,7 @@ int mmdpiShader::default_shader( void )
 	"		v_color = Edge_color;//vec4( 0.0, 0.0, 0.0, 1.0 );\n"
 #endif
 	"}\n"
-	"\n"
-	;
+	"\n", _MMDPI_MATERIAL_USING_BONE_NUM_ );
 
 	static GLchar fragment_shader_src[] = 
 	"//precision lowp 	float;\n"
