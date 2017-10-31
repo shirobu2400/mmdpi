@@ -177,7 +177,7 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 
 	
 		mmdpiModel::bone[ i ].name = new char[ strlen( pbone[ i ].bone_name ) + 1 ];
-		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name );
+		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name ); mmdpiModel::bone[ i ].name[ 20 ] = '\0';
 	}
 
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )

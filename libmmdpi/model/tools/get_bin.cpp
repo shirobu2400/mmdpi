@@ -2,7 +2,7 @@
 #include "get_bin.h"
 
 
-int	GetBin::change_enmark( char* _string_ )
+int GetBin::change_enmark( char* _string_ )
 {
 	int		c = 0;
 	while( *_string_ )
@@ -31,10 +31,10 @@ unsigned char* GetBin::get_bin2( void* bin, int buf_size, int next_size )
 {
 	if( ( unsigned int )( buf - buf_base + ( unsigned int )buf_size ) > ( unsigned int )buf_len )
 		return NULL;
-	
+
 	memset( bin, 0, buf_size );
 	memcpy( bin, ( void* )buf, next_size );
-	
+
 	buf += next_size;
 	return buf;
 }
@@ -57,7 +57,7 @@ int GetBin::load( const char *file_name )
 	buf_base = buf = new unsigned char[ ( unsigned int )buf_len + 2 ];
 	if( buf == NULL )
 		return -1;
-	
+
 	size_t	get_size;
 	get_size = fread( buf, sizeof( unsigned char ), ( unsigned int )buf_len, fp );
 
@@ -79,7 +79,7 @@ char* GetBin::text_buf( char byte_size, uint* length )
 	get_bin( &byte_len, 4 );
 	if( byte_len < 1 )
 		return NULL;
-	
+
 	text = new char[ byte_len + 4 ];
 	if( text == NULL )
 	{
@@ -89,7 +89,7 @@ char* GetBin::text_buf( char byte_size, uint* length )
 	memset( text, 0, byte_len + 4 );
 	get_bin( text, byte_len );
 	text[ byte_len ] = '\0';
-		
+
 	if( byte_size > 1 )
 	{
 		text[ byte_len + 1 ] = '\0';
@@ -105,7 +105,7 @@ char* GetBin::text_buf( char byte_size, uint* length )
 	return text;
 }
 
-char* GetBin::convert_sjis( char* text, uint byte_len, int text_release_flag )
+char* CharCode::convert_sjis( char* text, uint byte_len, int text_release_flag )
 {
 	if( byte_len < 1 )
 		return NULL;
@@ -120,15 +120,15 @@ char* GetBin::convert_sjis( char* text, uint byte_len, int text_release_flag )
 	return text2;
 }
 
-int GetBin::Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t src_size )
+int CharCode::Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t src_size )
 {
-	char			mb[ 2 ] = { 0 };  
+	char			mb[ 2 ] = { 0 };
 	unsigned short		wc = 0;
-	
+
 	for( uint i = 0, j = 0; src[ j ] && j < src_size; i ++, j ++ )
 	{
 		unsigned char	c = ( unsigned char )src[ j ] & 0xff;
-		
+
 		wc = 0x00;
 		if( c < 0x80 )
 			wc = c & 0xff;
@@ -138,7 +138,7 @@ int GetBin::Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t sr
 		{
 			wc = ( unsigned short )( c & 0x1f ) << 6;
 			j ++;
-			if( ( c = src[ j ] ) == 0x00 ) 
+			if( ( c = src[ j ] ) == 0x00 )
 				break;
 			wc |= c & 0x3f;
 		}
@@ -158,11 +158,11 @@ int GetBin::Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t sr
 			continue;
 
 		//c = wctomb( mb, wc );
-		mb[ 1 ] = ( char )( utf8tosjis[ wc ] & 0xff );
+		mb[ 1 ] = ( char )( ( utf8tosjis[ wc ] >> 0 ) & 0xff );
 		mb[ 0 ] = ( char )( ( utf8tosjis[ wc ] >> 8 ) & 0xff );
 
 		c = ( ( mb[ 0 ] )? 1 : 0 ) + ( ( mb[ 1 ] )? 1 : 0 );
-		if( c == 1 ) 
+		if( c == 1 )
 		{
 			dest[ i ] = mb[ 1 ];
 		}
@@ -179,18 +179,18 @@ int GetBin::Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t sr
 
 /**
  * 文字コードをUTF-16よりUTF-8へと変換。
- * 
+ *
  * @param[out] dest 出力文字列UTF-8
  * @param[in]  dest_size destのバイト数
  * @param[in]  src 入力文字列UTF-16
  * @param[in]  src_size 入力文字列の文字数
- * 
+ *
  * @return 成功時には出力文字列のバイト数を戻します。
  *         dest_size に0を指定し、こちらの関数を呼び出すと、変換された
  *         文字列を格納するのに必要なdestのバイト数を戻します。
  *         関数が失敗した場合には、FALSEを戻します。
  */
-int GetBin::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t src_size )
+int CharCode::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t src_size )
 {
 /* ビットパターン
  * ┌───────┬───────┬───────────────────────────┬──────────────────┐
@@ -216,7 +216,7 @@ int GetBin::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t 
 	char			chWork1;
 	char			chWork2;
 	char			chWork3;
-    
+
 	if( src == 0x00 )
 	{
 		/* Error : src is NULL. */
@@ -227,7 +227,7 @@ int GetBin::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t 
 		/* Error : src_size < 0. */
 		return -1;
 	}
-    
+
 	countNeedsBytes = 0;
 	for( cursor = 0; cursor < src_size; cursor ++ )
 	{
@@ -268,7 +268,7 @@ int GetBin::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t 
 				/* Error : memory is not enough for dest */
 				return countNeedsBytes;
 			}
-        
+
 			switch( sizeBytes )
 			{
 			case 1:
@@ -329,7 +329,7 @@ int GetBin::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t 
 	return countNeedsBytes;
 }
 
-char GetBin::utf8mbleb( char* src )
+char CharCode::utf8mbleb( char* src )
 {
 	/* srcより1ワードのデータを読み出し */
 	unsigned short	wcWork1 = ( unsigned short )*( ( const unsigned short* )src );
@@ -362,7 +362,7 @@ char GetBin::utf8mbleb( char* src )
 	return sizeBytes;
 }
 
-char* GetBin::convert_utf8( char* text, uint byte_len )
+char* CharCode::convert_utf8( char* text, uint byte_len, int text_release_flag )
 {
 	int	length = ( int )Utf16ToUtf8( NULL, 0, ( const short* )text, byte_len );
 	char*	text2 = new char[ length + 2 ];
@@ -373,11 +373,101 @@ char* GetBin::convert_utf8( char* text, uint byte_len )
 	}
 
 	Utf16ToUtf8( text2, length, ( const short* )text, byte_len );
-	delete[] text;
+	if( text_release_flag )
+		delete[] text;
 
 	return text2;
 }
-	//バイナリ用文字列抜き出し
+
+int cc_char_sjis_to_utf8( char* utf8, int* utf8_step, const char* sjis, int* sjis_step )
+{
+	unsigned int		sjisi = ( unsigned char )*sjis;
+	CharByte		utf8_cb;
+	int			i;
+
+	*sjis_step = 0;
+	*utf8_step = 0;
+
+	for( i = 0; i < 3 && cc_sjis_to_utf8.count( sjisi ) == 0; i ++ )
+	{
+		sjisi = ( sjisi << 8 | ( unsigned char )*sjis );
+		sjis ++;
+	}
+	if( i == 3 )
+		return 0;
+
+	utf8_cb = cc_sjis_to_utf8[ sjisi ];
+	*sjis_step = i;
+	*utf8_step = utf8_cb.len;
+	
+	for( i = 0; i < ( signed )utf8_cb.len; i ++ )
+	{
+		*utf8 = ( char )( ( utf8_cb.byte >> ( i * 8 ) ) & 0xff );
+		utf8 ++;
+	}
+
+	return 0;
+}
+
+int cc_char_utf8_to_sjis( char* sjis, int* sjis_step, const char* utf8, int* utf8_step )
+{
+	unsigned int		utf8i = ( unsigned char )*utf8;
+	CharByte		sjis_cb;
+	int			i;
+
+	*sjis_step = 0;
+	*utf8_step = 0;
+
+	for( i = 0; i < 3 && cc_utf8_to_sjis.count( utf8i ) == 0; i ++ )
+	{
+		utf8i = ( utf8i << 8 | ( unsigned char )*sjis );
+		utf8 ++;
+	}
+	if( i == 3 )
+		return 0;
+
+	sjis_cb = cc_sjis_to_utf8[ utf8i ];
+	*utf8_step = i;
+	*sjis_step = sjis_cb.len;
+	
+	for( i = 0; i < ( signed )sjis_cb.len; i ++ )
+	{
+		*sjis = ( char )( ( sjis_cb.byte >> ( i * 8 ) ) & 0xff );
+		sjis ++;
+	}
+
+	return 0;
+}
+
+int cc_create_tables( void )
+{
+	for( int i = 0; raw_table[ i ][ 0 ] && raw_table[ i ][ 1 ]; i ++ )
+	{
+		unsigned int	utf8 = raw_table[ i ][ 0 ];
+		unsigned int	sjis = raw_table[ i ][ 1 ];
+		CharByte	utf8_cb;
+		CharByte	sjis_cb;
+
+		utf8_cb.byte = utf8;
+		utf8_cb.len = 0;
+		utf8_cb.len = ( utf8 & 0x0000ff )? 1 : utf8_cb.len ;
+		utf8_cb.len = ( utf8 & 0x00ff00 )? 2 : utf8_cb.len ;
+		utf8_cb.len = ( utf8 & 0xff0000 )? 3 : utf8_cb.len ;
+
+		sjis_cb.byte = sjis;
+		sjis_cb.len = 0;
+		sjis_cb.len = ( sjis & 0x0000ff )? 1 : sjis_cb.len ;
+		sjis_cb.len = ( sjis & 0x00ff00 )? 2 : sjis_cb.len ;
+		sjis_cb.len = ( sjis & 0xff0000 )? 3 : sjis_cb.len ;
+
+		cc_utf8_to_sjis[ utf8 ] = sjis_cb;
+		cc_sjis_to_utf8[ sjis ] = utf8_cb;
+	}
+
+	return 0;
+}
+	
+//バイナリ用文字列抜き出し
 char* GetBin::bin_string( void )
 {
 	char*		result;
@@ -387,11 +477,10 @@ char* GetBin::bin_string( void )
 	while( get_bin( c, 1 ) && c[ 0 ] )
 		_string.push_back( c[ 0 ] );
 	_string.push_back( '\0' );
-
 	result = new char[ _string.size() + 1 ];
 	for( unsigned int i = 0; i < _string.size(); i ++ )
 		result[ i ] = _string[ i ];
-	
+
 	return result;
 }
 
@@ -402,14 +491,14 @@ int GetBin::get_direcotory( const char *file_name )
 	int		d_line = len - 1;
 
 	directory[ 0 ] = '\0';
-	
+
 #ifndef _WIN32
 	setlocale( LC_CTYPE, "ja_JP.UTF-8" );
 #else
 	setlocale( LC_CTYPE, "jpn" );
 #endif
 	for( i = 0; i < len; i += 1/*this->utf8mbleb( &file_name[ i ] )*/ )
-	{ 
+	{
 		if( file_name[ i ] == '/' || file_name[ i ] == '\\' )
 			d_line = i;
 	}
@@ -427,9 +516,9 @@ int GetBin::get_direcotory( const char *file_name )
 
 GetBin::GetBin()
 {
-	buf_base= 0;
-	buf	= 0x00;
-	buf_len	= 0x00;
+	buf_base	= 0;
+	buf		= 0x00;
+	buf_len		= 0x00;
 }
 
 GetBin::~GetBin()

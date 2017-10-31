@@ -54,7 +54,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div_, ( float )vp->Interpolation[ 6 ] / _interpolation_div_, 
 					( float )vp->Interpolation[ 10 ] / _interpolation_div_, ( float )vp->Interpolation[ 14 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.z - now_vec.z );
-		//	radw
+		// radw
 		radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div_, ( float )vp->Interpolation[ 7 ] / _interpolation_div_, 
 					( float )vp->Interpolation[ 11 ] / _interpolation_div_, ( float )vp->Interpolation[ 15 ] / _interpolation_div_, 
 					time_f );
@@ -65,7 +65,7 @@ int mmdpiVmd::advance_time( float time_scale )
 
 		//	クォータニオン球面線形補間
 		mmdpiQuaternion		s_qt;
-		s_qt.slerp_quaternion( now_qt, next_qt, time_f );
+		s_qt.slerp_quaternion( now_qt, next_qt, radw );
 		rot_matrix.quaternion( s_qt );
 
 		if( motion_time >= ( float )vpn->FrameNo )
@@ -128,6 +128,21 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 	float		dft = x;
 	float		dd;
 
+	////	二分法
+	//for( int i = 0; i < _loop_len_; i ++ )
+	//{
+	//	ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
+	//	if( fabs( ft ) < 1e-4f ) 
+	//		break;
+	//	if( ft < 0 )
+	//		t += 1 / ( 4 << i );
+	//	else
+	//		t -= 1 / ( 4 << i );
+	//	s = 1 - t;
+	//}
+
+	//return ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
+
 
 	//	ニュートン法のほうが収束が速いのでニュートン法でとく。
 	for( int i = 0; i < _loop_len_; i ++ )
@@ -139,12 +154,10 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 		if( fabs( dd ) < 1e-4f ) 
 			break;
 		t = t - dd;
-		s = 1 - s;
+		s = 1 - t;
 	}
 
-	t = ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
-	//t = ( t < 1 )? ( t < 0 )? 0 : t : 1 ;
-	return t;
+	return ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
 }
 
 int mmdpiVmd::set_bone( MMDPI_BONE_INFO_PTR bone )

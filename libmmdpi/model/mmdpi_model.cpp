@@ -1,13 +1,16 @@
 
 #include "mmdpi_model.h"
+#include "../model/tools/get_bin.h"
 
 
 int mmdpiModel::create( void )
 {
+	cc_create_tables();
+
 	//	シェーダの作成
 	if( mmdpiShader::default_shader() )
 		return -1;
-	
+
 	//	シェーダに設定
 	for( dword i = 0; i < mmdpiAdjust::get_face_num(); i ++ )
 	{
@@ -25,16 +28,6 @@ int mmdpiModel::create( void )
 	return 0;
 }
 
-int mmdpiModel::set_bone_name2index( void )
-{
-	for( uint i = 0; i < this->bone_num; i ++ )
-	{
-		this->bone_name2index_utf8[ this->bone[ i ].name      ] = i;
-		this->bone_name2index_sjis[ this->bone[ i ].sjis_name ] = i;
-	}
-	return 0;
-}
-
 void mmdpiModel::draw( void )
 {
 	////	Morph
@@ -45,24 +38,24 @@ void mmdpiModel::draw( void )
 	//		morph_exec( i, +1.0f );
 	//}
 	//skin_update( 0, 1 );
-	//skin_update( 0 );	
-	
+	//skin_update( 0 );
+
 	//	ローカル行列に変換
 	this->make_local_matrix();
 	this->refresh_bone_mat();
-	
+
 	//	ボーン行列をシェーダに送る準備
 	update_matrix( mmdpiBone::bone, mmdpiBone::bone_num );
 
 	//	Using My Shader
-	shader_on();	
+	shader_on();
 
 	//	ProjectioMatrix
 	mmdpiShader::set_projection_matrix( &projection_matrix );
-	
+
 	//	GLSL
 	//	Input shader infomation
-	
+
 	//	オプション
 	option_enable();
 
@@ -70,7 +63,7 @@ void mmdpiModel::draw( void )
 	glDisable( GL_DEPTH_TEST );
 	glCullFace( GL_FRONT );
 	draw_main( 0 );
-	
+
 	//	本処理
 	glEnable( GL_DEPTH_TEST );
 	glCullFace( GL_BACK );
@@ -98,7 +91,7 @@ int mmdpiModel::draw_main( int cull_flag )
 			uint			material_hash = m->pid;
 
 			glActiveTexture( GL_TEXTURE0 );
-			
+
 			init_material();
 			if( m->texture.get_id() > 0 )
 				glBindTexture( GL_TEXTURE_2D, m->texture.get_id() );
@@ -109,7 +102,7 @@ int mmdpiModel::draw_main( int cull_flag )
 			send_material_info( m );
 
 			set_alpha_for_shader( m->opacity );
-		
+
 			//	輪郭処理
 			if( cull_flag == 0 )
 			{
@@ -132,7 +125,7 @@ int mmdpiModel::option_enable( void )
 	GLfloat	light_diffuse[] = { 0.7f, 0.7f, 0.7f, 1 };
 	GLfloat	light_specular[] = { 0.2f, 0.2f, 0.2f, 1 };
 
-	
+
 	glEnable( GL_TEXTURE_2D );	//	テクスチャ
 
 	glEnable( GL_DEPTH_TEST );
@@ -144,20 +137,20 @@ int mmdpiModel::option_enable( void )
 	glFrontFace( GL_CCW );
 	glCullFace( GL_FRONT );
 
-	//glEnable( GL_ALPHA_TEST ); 
+	//glEnable( GL_ALPHA_TEST );
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_BLEND );
 	//	GL_SRC_ALPHA : (As/kA,As/kA,As/kA,As/kA)
 	//	GL_ONE_MINUS_SRC_ALPHA : (1,1,1,1)-(As/kA,As/kA,As/kA,As/kA)
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	//glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA );
-	
+
 	//	テクスチャワープ
 	//glEnable( GL_TEXTURE_GEN_S );
 	//glEnable( GL_TEXTURE_GEN_T );
 	//glEnable( GL_TEXTURE_GEN_R );
 	//glEnable( GL_TEXTURE_GEN_Q );
-	
+
 	return 0;
 }
 
@@ -165,12 +158,12 @@ int mmdpiModel::option_disable( void )
 {
 	glDisable( GL_TEXTURE_2D );
 	glDisable( GL_CULL_FACE );
-	
+
 	glDisable( GL_BLEND );
 	glDisable( GL_DEPTH_TEST );
 	//glDisable( GL_ALPHA_TEST );
-	
-	return 0; 
+
+	return 0;
 }
 
 void mmdpiModel::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
@@ -182,7 +175,7 @@ void mmdpiModel::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matr
 {
 	string					name( bone_name );
 	map<const string, uint>::iterator	itr;
-		
+
 	itr = this->bone_name2index_sjis.find( name );
 	if( itr == this->bone_name2index_sjis.end() )	// not found
 		itr = this->bone_name2index_utf8.find( name );
@@ -203,6 +196,40 @@ void mmdpiModel::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matri
 		projection_matrix[ i ] = ( *p_projection_matrix )[ i ];
 }
 
+void mmdpiModel::set_pmx( void )
+{
+	this->is_pmd = 0;
+}
+
+int mmdpiModel::set_bone_name2index( void )
+{
+	if( is_pmd )
+	{
+		for( uint i = 0; i < this->bone_num; i ++ )
+		{
+			char	tempc[ 32 ] = { 0 };
+
+			this->bone_name2index_sjis[ this->bone[ i ].name ] = i;
+
+			int	step_utf8 = 1;
+			int	step_sjis = 1;
+			for( int j = 0, k = 0; step_utf8 && step_sjis; j += step_utf8, k += step_sjis )
+				cc_char_sjis_to_utf8( tempc + j, &step_utf8, this->bone[ i ].name + k, &step_sjis );
+			this->bone_name2index_utf8[ tempc ] = i;
+		}
+
+		return 0;
+	}
+
+	// pmx
+	for( uint i = 0; i < this->bone_num; i ++ )
+	{
+		this->bone_name2index_utf8[ this->bone[ i ].name      ] = i;
+		this->bone_name2index_sjis[ this->bone[ i ].sjis_name ] = i;
+	}
+	return 0;
+}
+
 int mmdpiModel::set_physics_engine( int type )
 {
 	return bullet_flag = type;
@@ -220,4 +247,5 @@ int mmdpiModel::get_fps( void )
 mmdpiModel::mmdpiModel()
 {
 	fps = 30;
+	is_pmd = 1;
 }

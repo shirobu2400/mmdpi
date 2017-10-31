@@ -7,7 +7,7 @@
 class mmdpiModel : public mmdpiBone
 {
 private :
-	
+	int				is_pmd;
 	int				fps;
 
 	int				option_enable( void );
@@ -33,6 +33,8 @@ public :
 	virtual void			set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix );
 
 	virtual int			set_physics_engine( int type );
+
+	virtual void			set_pmx( void );
 
 	virtual int			set_fps( int fps );
 	virtual int			get_fps( void );
