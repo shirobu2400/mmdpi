@@ -14,7 +14,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		if( now_motion[ i ] == NULL )
 			continue;
 
-		//いまのモーションポインタ
+		//	いまのモーションポインタ
 		MMDPI_VMD_MOTION_PTR vp = now_motion[ i ]->motion;	
 		if( vp == NULL )	// 親ボーン座標系に変換
 			continue;
@@ -31,32 +31,32 @@ int mmdpiVmd::advance_time( float time_scale )
 		mmdpiQuaternion	now_qt( vp->qx, vp->qy, vp->qz, vp->qw );
 		mmdpiVector3d	now_vec( vp->vx, vp->vy, vp->vz );
 		
-		float		time_f = 0;
-		if( vpn->FrameNo > 0 && vpn->FrameNo > vp->FrameNo ) 
-			time_f = ( ( float ) motion_time - ( float )vp->FrameNo ) / ( float )( vpn->FrameNo - vp->FrameNo ); 
+		float		time_f = 0.5f;
+		if( 0 <= vp->FrameNo && vp->FrameNo <= vpn->FrameNo ) 
+			time_f = ( motion_time - ( float )vp->FrameNo ) / ( float )( vpn->FrameNo - vp->FrameNo ); 
 		
 		int		interInde = 0;
-		const float	_interpolation_div = 127.0f;
+		const float	_interpolation_div_ = 127.0f;
 		mmdpiVector3d	s_vec;
 		float		radw;
 
 		// 高度な補間
 
 		// x
-		s_vec.x = interpolate( ( float )vp->Interpolation[ 0 ] / _interpolation_div, ( float )vp->Interpolation[ 4 ] / _interpolation_div, 
-					( float )vp->Interpolation[ 8 ] / _interpolation_div, ( float )vp->Interpolation[ 12 ] / _interpolation_div, 
+		s_vec.x = interpolate( ( float )vp->Interpolation[ 0 ] / _interpolation_div_, ( float )vp->Interpolation[ 4 ] / _interpolation_div_, 
+					( float )vp->Interpolation[ 8 ] / _interpolation_div_, ( float )vp->Interpolation[ 12 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.x - now_vec.x );
 		// y
-		s_vec.y = interpolate( ( float )vp->Interpolation[ 1 ] / _interpolation_div, ( float )vp->Interpolation[ 5 ] / _interpolation_div, 
-					( float )vp->Interpolation[ 9 ] / _interpolation_div, ( float )vp->Interpolation[ 13 ] / _interpolation_div, 
+		s_vec.y = interpolate( ( float )vp->Interpolation[ 1 ] / _interpolation_div_, ( float )vp->Interpolation[ 5 ] / _interpolation_div_, 
+					( float )vp->Interpolation[ 9 ] / _interpolation_div_, ( float )vp->Interpolation[ 13 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.y - now_vec.y );
 		// z
-		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div, ( float )vp->Interpolation[ 6 ] / _interpolation_div, 
-					( float )vp->Interpolation[ 10 ] / _interpolation_div, ( float )vp->Interpolation[ 14 ] / _interpolation_div, 
+		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div_, ( float )vp->Interpolation[ 6 ] / _interpolation_div_, 
+					( float )vp->Interpolation[ 10 ] / _interpolation_div_, ( float )vp->Interpolation[ 14 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.z - now_vec.z );
 		//	radw
-		radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div, ( float )vp->Interpolation[ 7 ] / _interpolation_div, 
-					( float )vp->Interpolation[ 11 ] / _interpolation_div, ( float )vp->Interpolation[ 15 ] / _interpolation_div, 
+		radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div_, ( float )vp->Interpolation[ 7 ] / _interpolation_div_, 
+					( float )vp->Interpolation[ 11 ] / _interpolation_div_, ( float )vp->Interpolation[ 15 ] / _interpolation_div_, 
 					time_f );
 		s_vec = s_vec + now_vec;
 
@@ -116,41 +116,35 @@ int mmdpiVmd::init_motion( void )
 	return 0;
 }
 
-//	ベイズ補間
+//	ベジエ曲線
 float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 {
-	//	ベジェ曲線を利用して補間する。
-	////	3次方程式は2分法を利用。
+	//	ベジエ曲線を利用して補間する。
+	//	3次方程式は2分法を利用。
 	const int	_loop_len_ = 16;
-	float		s = 0.5f, t = 0.5f;
-	float		r;
-	float		ft, ftd, d;
+	float		s = 0.5f;
+	float		t = 0.5f;
+	float		ft = x;
+	float		dft = x;
+	float		dd;
 
-	//for( int i = 0; i < _loop_len_; i ++ )
-	//{
-	//	ft = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
-	//	if( fbreak; // Math.abs(ft) < 0.00001 でもいいかも
-	//	if( ft > 0 )
-	//	  t -= 1.0f / ( float )( 4 << i );
-	//	else // ft < 0
-	//	  t += 1.0f / ( float )( 4 << i );
-	//}
 
 	//	ニュートン法のほうが収束が速いのでニュートン法でとく。
 	for( int i = 0; i < _loop_len_; i ++ )
 	{
-		ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
-		ftd = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;
+		ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;	// f(t)
+		dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
 
-		d = ft / ftd;
-		if( fabs( d ) < 1e-8f ) 
+		dd = ft / dft;
+		if( fabs( dd ) < 1e-4f ) 
 			break;
-		t = t - d;
+		t = t - dd;
+		s = 1 - s;
 	}
 
-	r = ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
-	//r = ( r < 0 )? 0 : ( 1 < r )? 1 : r ;
-	return r;
+	t = ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
+	//t = ( t < 1 )? ( t < 0 )? 0 : t : 1 ;
+	return t;
 }
 
 int mmdpiVmd::set_bone( MMDPI_BONE_INFO_PTR bone )
