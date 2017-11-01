@@ -97,7 +97,7 @@ char* GetBin::text_buf( char byte_size, uint* length )
 	if( byte_size > 1 )
 	{
 		text1[ byte_len + 1 ] = '\0';
-		text2 = new char[ cconv_utf16_to_utf8( 0x00, ( const short* )text1 ) * 2 + 1 ];
+		text2 = new char[ cconv_utf16_to_utf8( 0x00, ( const short* )text1 ) * 2 + 2 ];
 		byte_len = cconv_utf16_to_utf8( text2, ( const short* )text1 );
 		delete[] text1;
 		text1 = text2;

@@ -123,7 +123,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	{
 		uint		buf_len;
 		texture[ i ].name = text_buf( buf, &buf_len );
-		texture[ i ].sjis_name = new char[ cconv_utf8_to_sjis( 0x00, texture[ i ].name ) ];
+		texture[ i ].sjis_name = new char[ cconv_utf8_to_sjis( 0x00, texture[ i ].name ) + 2 ];
 		cconv_utf8_to_sjis( texture[ i ].sjis_name, texture[ i ].name );
 	}
 
@@ -204,7 +204,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		//	Name
 		uint		buf_len;
 		tbone->name = text_buf( buf, &buf_len );
-		tbone->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, tbone->name ) ];
+		tbone->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, tbone->name ) + 2 ];
 		cconv_utf8_to_sjis( tbone->sjis_name, tbone->name );
 
 		//	English name
@@ -337,7 +337,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		m->name = text_buf( buf );
 		m->eng_name = text_buf( buf );
 
-		m->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, m->name ) ];
+		m->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, m->name ) + 2 ];
 		cconv_utf8_to_sjis( m->sjis_name, m->name );
 
 		buf->get_bin( &m->panel, sizeof( BYTE ) );
@@ -547,28 +547,28 @@ int mmdpiPmxLoad::get_header( GetBin* buf )
 #ifdef _WIN32
 	if( head.name )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name ) ];		//	モデルネーム
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name ) + 2 ];		//	モデルネーム
 		cconv_utf8_to_sjis( temp_name, head.name );
 		delete[] head.name;
 		head.name = temp_name;
 	}
 	if( head.name_eng )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name_eng ) ];	//	英モデルネーム
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name_eng ) + 2 ];	//	英モデルネーム
 		cconv_utf8_to_sjis( temp_name, head.name_eng );
 		delete[] head.name_eng;
 		head.name_eng = temp_name;
 	}
 	if( head.comment )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment ) ];	//	コメント
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment ) + 2 ];	//	コメント
 		cconv_utf8_to_sjis( temp_name, head.comment );
 		delete[] head.comment;
 		head.comment = temp_name;
 	}
 	if( head.comment_eng )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment_eng ) ];	//	英コメント
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment_eng ) + 2 ];	//	英コメント
 		cconv_utf8_to_sjis( temp_name, head.comment_eng );
 		delete[] head.comment_eng;
 		head.comment_eng = temp_name;
