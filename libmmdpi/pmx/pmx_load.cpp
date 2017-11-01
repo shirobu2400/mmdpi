@@ -123,7 +123,8 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	{
 		uint		buf_len;
 		texture[ i ].name = text_buf( buf, &buf_len );
-		texture[ i ].sjis_name = buf->convert_sjis( texture[ i ].name, buf_len );
+		texture[ i ].sjis_name = new char[ cconv_utf8_to_sjis( 0x00, texture[ i ].name ) ];
+		cconv_utf8_to_sjis( texture[ i ].sjis_name, texture[ i ].name );
 	}
 
 	//	Material
@@ -203,7 +204,8 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		//	Name
 		uint		buf_len;
 		tbone->name = text_buf( buf, &buf_len );
-		tbone->sjis_name = buf->convert_sjis( tbone->name, buf_len );
+		tbone->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, tbone->name ) ];
+		cconv_utf8_to_sjis( tbone->sjis_name, tbone->name );
 
 		//	English name
 		tbone->eng_name = text_buf( buf );
@@ -335,7 +337,8 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		m->name = text_buf( buf );
 		m->eng_name = text_buf( buf );
 
-		m->sjis_name = buf->convert_sjis( m->name, strlen( m->name ) );
+		m->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, m->name ) ];
+		cconv_utf8_to_sjis( m->sjis_name, m->name );
 
 		buf->get_bin( &m->panel, sizeof( BYTE ) );
 		buf->get_bin( &m->type, sizeof( BYTE ) );
@@ -451,10 +454,9 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	for( uint i = 0; i < p_rigid_num; i ++ )
 	{
 		MMDPI_PHYSICAL_RIGID_INFO_PTR	rigid = &p_rigid[ i ];
-		
-		uint		name_length;
+		uint				name_length;
+
 		rigid->name = text_buf( buf, &name_length );
-		rigid->name = buf->convert_sjis( rigid->name, name_length );
 		rigid->eng_name = text_buf( buf );
 		
 		buf->get_bin2( &rigid->bone_index, sizeof( dword ), head.byte[ 5 ] );
@@ -484,10 +486,9 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	for( uint i = 0; i < p_joint_num; i ++ )
 	{
 		MMDPI_PHYSICAL_JOINT_INFO_PTR	joint = &p_joint[ i ];
+		uint				name_length;
 
-		uint		name_length;
 		joint->name = text_buf( buf, &name_length );
-		joint->name = buf->convert_sjis( joint->name, name_length );
 		joint->eng_name = text_buf( buf );
 		
 		buf->get_bin( &joint->type, sizeof( BYTE ) );
@@ -539,22 +540,39 @@ int mmdpiPmxLoad::get_header( GetBin* buf )
 	//setlocale( LC_CTYPE, "ja_JP.UTF-8" );
 
 	head.name = text_buf( buf, &name_length );			//	モデルネーム
-
 	head.name_eng = text_buf( buf, &name_eng_length );		//	英モデルネーム
-
-	head.comment = text_buf( buf, &comment_length );			//	コメント
-	
-	head.comment_eng = text_buf( buf, &comment_eng_length );		//	英コメント
+	head.comment = text_buf( buf, &comment_length );		//	コメント
+	head.comment_eng = text_buf( buf, &comment_eng_length );	//	英コメント
 
 #ifdef _WIN32
 	if( head.name )
-		head.name = buf->convert_sjis( head.name, name_length, 1 );			//	モデルネーム
+	{
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name ) ];		//	モデルネーム
+		cconv_utf8_to_sjis( temp_name, head.name );
+		delete[] head.name;
+		head.name = temp_name;
+	}
 	if( head.name_eng )
-		head.name_eng = buf->convert_sjis( head.name_eng, name_eng_length, 1 );		//	英モデルネーム
+	{
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name_eng ) ];	//	英モデルネーム
+		cconv_utf8_to_sjis( temp_name, head.name_eng );
+		delete[] head.name_eng;
+		head.name_eng = temp_name;
+	}
 	if( head.comment )
-		head.comment = buf->convert_sjis( head.comment, comment_length, 1 );			//	コメント
+	{
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment ) ];	//	コメント
+		cconv_utf8_to_sjis( temp_name, head.comment );
+		delete[] head.comment;
+		head.comment = temp_name;
+	}
 	if( head.comment_eng )
-		head.comment_eng = buf->convert_sjis( head.comment_eng, comment_eng_length, 1 );		//	英コメント
+	{
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment_eng ) ];	//	英コメント
+		cconv_utf8_to_sjis( temp_name, head.comment_eng );
+		delete[] head.comment_eng;
+		head.comment_eng = temp_name;
+	}
 #endif
 
 	if( head.name )
@@ -586,7 +604,8 @@ int mmdpiPmxLoad::get_header( GetBin* buf )
 
 char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 {
-	char*	text	 = NULL;
+	char*	text1	 = 0x00;
+	char*	text2	 = 0x00;
 	long	byte_len = 0;
 
 	if( length )
@@ -594,33 +613,35 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 
 	buf->get_bin( &byte_len, 4 );
 	if( byte_len < 1 )
-		return NULL;
+		return 0x00;
 	
-	text = new char[ byte_len + 4 ];
-	if( text == NULL )
+	text1 = new char[ byte_len + 4 ];
+	if( text1 == 0x00 )
 	{
 		puts( "Text buf cannot Allocation." );
 		return NULL;
 	}
-	memset( text, 0, byte_len + 4 );
-	buf->get_bin( text, byte_len );
-	text[ byte_len ] = '\0';
+	memset( text1, 0, byte_len + 4 );
+	buf->get_bin( text1, byte_len );
+	text1[ byte_len ] = '\0';
 		
 	if( head.byte[ 0 ] )
 		;
 	else
 	{
-		text[ byte_len + 1 ] = '\0';
-		text = buf->convert_utf8( text, byte_len / byte_one_length + 1 );
-		byte_len = strlen( text );
+		byte_len = cconv_utf16_to_utf8( 0x00, ( const short* )text1 );
+		text2 = new char[ byte_len * 2 + 1 ];
+		byte_len = cconv_utf16_to_utf8( text2, ( const short* )text1 );
+		delete[] text1;
+		text1 = text2;	
 	}
 
-	buf->change_enmark( text );
+	buf->change_enmark( text1 );
 
 	if( length )
 		*length = byte_len;
 	//
-	return text;
+	return text1;
 }
 
 	//バイナリ用文字列抜き出し

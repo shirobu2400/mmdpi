@@ -5,8 +5,6 @@
 
 int mmdpiModel::create( void )
 {
-	cc_create_tables();
-
 	//	シェーダの作成
 	if( mmdpiShader::default_shader() )
 		return -1;
@@ -210,11 +208,7 @@ int mmdpiModel::set_bone_name2index( void )
 			char	tempc[ 32 ] = { 0 };
 
 			this->bone_name2index_sjis[ this->bone[ i ].name ] = i;
-
-			int	step_utf8 = 1;
-			int	step_sjis = 1;
-			for( int j = 0, k = 0; step_utf8 && step_sjis; j += step_utf8, k += step_sjis )
-				cc_char_sjis_to_utf8( tempc + j, &step_utf8, this->bone[ i ].name + k, &step_sjis );
+			cconv_sjis_to_utf8( tempc, this->bone[ i ].name );			
 			this->bone_name2index_utf8[ tempc ] = i;
 		}
 

@@ -9,7 +9,8 @@ int mmdpi::load( const char* model_name )
 	//	読み込み済み
 	if( pmm )
 		return -1;
-
+	cc_create_tables();
+	
 	pmm = pmd = new mmdpiPmd();
 	result = pmd->load( model_name );
 

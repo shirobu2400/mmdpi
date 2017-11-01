@@ -1,4 +1,4 @@
-#	cmake 必要バージョン
+﻿#	cmake 必要バージョン
 cmake_minimum_required(VERSION 2.6)
 
 #	プロジェクト名	と 言語(C=C, CXX=C++)
@@ -19,12 +19,14 @@ set(SERIAL "1.00.00")
 #	Source
 set(libmmdpi_src
 	mmdpi.cpp
+	
 	model/tools/get_bin.cpp
 	model/tools/bitmap.cpp
 	model/tools/png.cpp
 	model/tools/jpg.cpp
 	model/tools/tga_image.cpp
-
+	model/tools/utf8_sjis.cpp
+	
 	model/mmdpi_model.cpp
 	model/mmdpi_shader.cpp
 	model/mmdpi_adjust.cpp
@@ -57,6 +59,14 @@ set(libmmdpi_header
 	model/mmdpi_shader.h
 	model/mmdpi_struct.h
 
+	model/tools/bitmap.h  
+	model/tools/get_bin.h  
+	model/tools/raw_table.h  
+	model/tools/tga_image.h  
+	model/tools/utf8_sjis.h
+
+	model/bullet/mmdpi_bullet.h
+	
 	pmd/pmd.h
 	pmd/pmd_analyze.h
 	pmd/pmd_draw.h

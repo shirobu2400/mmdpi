@@ -1,7 +1,6 @@
 
 #include "../mmdpi_include.h"
-#include "utf8tosjis.h"
-#include "raw_table.h"
+#include "utf8_sjis.h"
 
 
 typedef unsigned int uint;
@@ -9,33 +8,7 @@ typedef unsigned int uint;
 #pragma once
 
 
-typedef struct tagCharByte
-{
-	unsigned int	len;
-	unsigned int	byte;
-} CharByte;
-
-
-static map<unsigned int, CharByte>	cc_sjis_to_utf8;
-static map<unsigned int, CharByte>	cc_utf8_to_sjis;
-int					cc_char_sjis_to_utf8( char* utf8, int* utf8_step, const char* sjis, int* sjis_step );
-int					cc_char_utf8_to_sjis( char* sjis, int* sjis_step, const char* utf8, int* utf8_step );
-int					cc_create_tables( void );
-
-class CharCode
-{
-public:
-	static char*	convert_sjis( char* text, uint byte_len, int text_release_flag = 0 );
-	static char*	convert_utf8( char* text, uint byte_len, int text_release_flag = 0 );
-	
-	static int	Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t src_size );
-	static int	Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t src_size );
-	static char	utf8mbleb( char* src );
-
-	static int	char_byte( char* _string );
-} ;
-
-class GetBin: public CharCode
+class GetBin
 {
 
 public :

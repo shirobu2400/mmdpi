@@ -8,7 +8,10 @@ int GetBin::change_enmark( char* _string_ )
 	while( *_string_ )
 	{
 		if( *_string_ == '\\' )
+		{
 			*_string_ = '/';
+			c ++;
+		}
 		_string_ ++;
 	}
 	return c;
@@ -70,7 +73,8 @@ int GetBin::load( const char *file_name )
 
 char* GetBin::text_buf( char byte_size, uint* length )
 {
-	char*	text	 = NULL;
+	char*	text1	 = 0x00;
+	char*	text2	 = 0x00;
 	long	byte_len = 0;
 
 	if( length )
@@ -78,395 +82,35 @@ char* GetBin::text_buf( char byte_size, uint* length )
 
 	get_bin( &byte_len, 4 );
 	if( byte_len < 1 )
-		return NULL;
+		return 0x00;
 
-	text = new char[ byte_len + 4 ];
-	if( text == NULL )
+	text1 = new char[ byte_len + 4 ];
+	if( text1 == 0x00 )
 	{
 		puts( "Text buf cannot Allocation." );
-		return NULL;
+		return 0x00;
 	}
-	memset( text, 0, byte_len + 4 );
-	get_bin( text, byte_len );
-	text[ byte_len ] = '\0';
+	memset( text1, 0, byte_len + 4 );
+	get_bin( text1, byte_len );
+	text1[ byte_len ] = '\0';
 
 	if( byte_size > 1 )
 	{
-		text[ byte_len + 1 ] = '\0';
-		text = convert_utf8( text, byte_len / byte_size + 1 );
-		byte_len = strlen( text );
+		text1[ byte_len + 1 ] = '\0';
+		text2 = new char[ cconv_utf16_to_utf8( 0x00, ( const short* )text1 ) * 2 + 1 ];
+		byte_len = cconv_utf16_to_utf8( text2, ( const short* )text1 );
+		delete[] text1;
+		text1 = text2;
 	}
 
-	change_enmark( text );
+	change_enmark( text1 );
 
 	if( length )
 		*length = byte_len;
 	//
-	return text;
+	return text1;
 }
 
-char* CharCode::convert_sjis( char* text, uint byte_len, int text_release_flag )
-{
-	if( byte_len < 1 )
-		return NULL;
-
-	char*		text2 = new char[ byte_len + 4 ];
-	memset( text2, 0, byte_len + 2 );
-	Utf8toSJIS( text2, byte_len, ( const char * )text, byte_len );
-
-	if( text_release_flag )
-		delete[] text;
-
-	return text2;
-}
-
-int CharCode::Utf8toSJIS( char *dest, size_t dest_size, const char *src, size_t src_size )
-{
-	char			mb[ 2 ] = { 0 };
-	unsigned short		wc = 0;
-
-	for( uint i = 0, j = 0; src[ j ] && j < src_size; i ++, j ++ )
-	{
-		unsigned char	c = ( unsigned char )src[ j ] & 0xff;
-
-		wc = 0x00;
-		if( c < 0x80 )
-			wc = c & 0xff;
-		else if( c < 0xc0 )
-			continue;
-		else if( c < 0xe0 )
-		{
-			wc = ( unsigned short )( c & 0x1f ) << 6;
-			j ++;
-			if( ( c = src[ j ] ) == 0x00 )
-				break;
-			wc |= c & 0x3f;
-		}
-		else if( c < 0xf0 )
-		{
-			wc = ( unsigned short )( src[ j ] & 0x0f ) << 12;
-			j ++;
-			if( ( c = src[ j ] ) == 0x00 )
-				break;
-			wc |= ( unsigned short )( c & 0x3f ) << 6;
-			j ++;
-			if( ( c = src[ j ] ) == 0x00 )
-				break;
-			wc |= c & 0x3f;
-		}
-		else
-			continue;
-
-		//c = wctomb( mb, wc );
-		mb[ 1 ] = ( char )( ( utf8tosjis[ wc ] >> 0 ) & 0xff );
-		mb[ 0 ] = ( char )( ( utf8tosjis[ wc ] >> 8 ) & 0xff );
-
-		c = ( ( mb[ 0 ] )? 1 : 0 ) + ( ( mb[ 1 ] )? 1 : 0 );
-		if( c == 1 )
-		{
-			dest[ i ] = mb[ 1 ];
-		}
-		else if( c > 1 )
-		{
-			dest[ i ] = mb[ 0 ];
-			i ++;
-			dest[ i ] = mb[ 1 ];
-		}
-	}
-
-	return 0;
-}
-
-/**
- * 文字コードをUTF-16よりUTF-8へと変換。
- *
- * @param[out] dest 出力文字列UTF-8
- * @param[in]  dest_size destのバイト数
- * @param[in]  src 入力文字列UTF-16
- * @param[in]  src_size 入力文字列の文字数
- *
- * @return 成功時には出力文字列のバイト数を戻します。
- *         dest_size に0を指定し、こちらの関数を呼び出すと、変換された
- *         文字列を格納するのに必要なdestのバイト数を戻します。
- *         関数が失敗した場合には、FALSEを戻します。
- */
-int CharCode::Utf16ToUtf8( char *dest, size_t dest_size, const short *src, size_t src_size )
-{
-/* ビットパターン
- * ┌───────┬───────┬───────────────────────────┬──────────────────┐
- * │フォーマット  │Unicode       │UTF-8ビット列                                         │Unicodeビット列                     │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │1バイトコード │\u0～\u7f     │0aaabbbb                                              │00000000 0aaabbbb                   │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │2バイトコード │\u80～\u7ff   │110aaabb 10bbcccc                                     │00000aaa bbbbcccc                   │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │3バイトコード │\u800～\uffff │1110aaaa 10bbbbcc 10ccdddd                            │aaaabbbb ccccdddd                   │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │4バイトコード │--------------│11110??? 10?????? 10?????? 10??????                   │未対応                              │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │5バイトコード │--------------│111110?? 10?????? 10?????? 10?????? 10??????          │未対応                              │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │6バイトコード │--------------│1111110? 10?????? 10?????? 10?????? 10?????? 10?????? │未対応                              │
- * └───────┴───────┴───────────────────────────┴──────────────────┘
- */
-	long			countNeedsBytes;
-	unsigned long		cursor;
-	unsigned short		wcWork1;
-	long			sizeBytes;
-	char			chWork1;
-	char			chWork2;
-	char			chWork3;
-
-	if( src == 0x00 )
-	{
-		/* Error : src is NULL. */
-		return -1;
-	}
-	if( src_size < 0 )
-	{
-		/* Error : src_size < 0. */
-		return -1;
-	}
-
-	countNeedsBytes = 0;
-	for( cursor = 0; cursor < src_size; cursor ++ )
-	{
-		/* srcより1ワードのデータを読み出し */
-		if( *( unsigned char* )src + cursor == ( unsigned char )0x00 )
-			break;
-
-		wcWork1 = ( unsigned short )*( ( const unsigned short* )src + cursor );
-		if( wcWork1 <= ( unsigned short )0x007f )
-		{
-			/* 0x0000 to 0x007f */
-			sizeBytes = 1;
-		}
-		else if( ( unsigned short )0x0080 <= wcWork1 && wcWork1 <= ( unsigned short )0x07ff )
-		{
-			/* 0x0080 to 0x07ff */
-			sizeBytes = 2;
-		}
-		else if( ( unsigned short )0x0800 <= wcWork1 )
-		{
-			/* 0x0800 to 0xffff */
-			sizeBytes = 3;
-		}
-		else
-		{
-			/* Error : unknown code */
-			return -1;
-		}
-
-		/* sizeBytes毎に処理を分岐 */
-		if( 0 < dest_size && dest )
-		{
-			/*
-				* dest_size をチェック
-				*/
-			if( dest_size < ( unsigned )( countNeedsBytes + sizeBytes ) )
-			{
-				/* Error : memory is not enough for dest */
-				return countNeedsBytes;
-			}
-
-			switch( sizeBytes )
-			{
-			case 1:
-				/*
-					* ビット列
-					* (0aaabbbb)UTF-8 ... (00000000 0aaabbbb)UTF-16
-					*/
-
-				*dest = ( char )wcWork1;              /* 0aaabbbb */
-				dest ++;
-				break;
-			case 2:
-				/*
-					* ビット列
-					* (110aaabb 10bbcccc)UTF-8 ... (00000aaa bbbbcccc)UTF-16
-					*/
-				chWork1 =  ( char )( wcWork1 >> 6 );     /* 000aaabb */
-				chWork1 |= ( char )0xc0;              /* 110aaabb */
-				chWork2 =  ( char )wcWork1 & 0xff;            /* bbbbcccc */
-				chWork2 &= ( char )0x3f;              /* 00bbcccc */
-				chWork2 |= ( char )0x80;              /* 10bbcccc */
-
-				*dest = chWork1;
-				dest++;
-				*dest = chWork2;
-				dest++;
-				break;
-			case 3:
-				/*
-					* ビット列
-					* (1110aaaa 10bbbbcc 10ccdddd)UTF-8 ... (aaaabbbb ccccdddd)UTF-16
-					*/
-				chWork1 =  ( char )( wcWork1 >> 12 );    /* ????aaaa */
-				chWork1 &= ( char )0x0f;              /* 0000aaaa */
-				chWork1 |= ( char )0xe0;              /* 1110aaaa */
-				chWork2 =  ( char )( wcWork1 >> 6 );     /* aabbbbcc */
-				chWork2 &= ( char )0x3f;              /* 00bbbbcc */
-				chWork2 |= ( char )0x80;              /* 10bbbbcc */
-				chWork3 =  ( char )wcWork1 & 0xff;            /* ccccdddd */
-				chWork3 &= ( char )0x3f;              /* 00ccdddd */
-				chWork3 |= ( char )0x80;              /* 10ccdddd */
-
-				*dest = chWork1;
-				dest++;
-				*dest = chWork2;
-				dest++;
-				*dest = chWork3;
-				dest++;
-				break;
-			default:
-				break;
-			}
-		}
-
-		countNeedsBytes += sizeBytes;
-	}
-
-	return countNeedsBytes;
-}
-
-char CharCode::utf8mbleb( char* src )
-{
-	/* srcより1ワードのデータを読み出し */
-	unsigned short	wcWork1 = ( unsigned short )*( ( const unsigned short* )src );
-	char		sizeBytes = 1;
-
-	//if( wcWork1 == ( unsigned short )0x0000 )
-	//	break;
-
-	if( ( wcWork1 <= ( ( unsigned short )0x007f ) ) )
-	{
-		/* 0x0000 to 0x007f */
-		sizeBytes = 1;
-	}
-	else if( ( ( ( unsigned short )0x0080 ) <= wcWork1 ) && ( wcWork1 <= ( ( unsigned short )0x07ff ) ) )
-	{
-		/* 0x0080 to 0x07ff */
-		sizeBytes = 2;
-	}
-	else if ( ( ( ( unsigned short )0x0800 ) <= wcWork1 ) )
-	{
-		/* 0x0800 to 0xffff */
-		sizeBytes = 3;
-	}
-	else
-	{
-		/* Error : unknown code */
-		return 1;
-	}
-
-	return sizeBytes;
-}
-
-char* CharCode::convert_utf8( char* text, uint byte_len, int text_release_flag )
-{
-	int	length = ( int )Utf16ToUtf8( NULL, 0, ( const short* )text, byte_len );
-	char*	text2 = new char[ length + 2 ];
-	if( text2 == NULL )
-	{
-		printf( "Text buf cannot Allocation. : %d length.\n", length );
-		return NULL;
-	}
-
-	Utf16ToUtf8( text2, length, ( const short* )text, byte_len );
-	if( text_release_flag )
-		delete[] text;
-
-	return text2;
-}
-
-int cc_char_sjis_to_utf8( char* utf8, int* utf8_step, const char* sjis, int* sjis_step )
-{
-	unsigned int		sjisi = ( unsigned char )*sjis;
-	CharByte		utf8_cb;
-	int			i;
-
-	*sjis_step = 0;
-	*utf8_step = 0;
-
-	for( i = 0; i < 3 && cc_sjis_to_utf8.count( sjisi ) == 0; i ++ )
-	{
-		sjisi = ( sjisi << 8 | ( unsigned char )*sjis );
-		sjis ++;
-	}
-	if( i == 3 )
-		return 0;
-
-	utf8_cb = cc_sjis_to_utf8[ sjisi ];
-	*sjis_step = i;
-	*utf8_step = utf8_cb.len;
-	
-	for( i = 0; i < ( signed )utf8_cb.len; i ++ )
-	{
-		*utf8 = ( char )( ( utf8_cb.byte >> ( i * 8 ) ) & 0xff );
-		utf8 ++;
-	}
-
-	return 0;
-}
-
-int cc_char_utf8_to_sjis( char* sjis, int* sjis_step, const char* utf8, int* utf8_step )
-{
-	unsigned int		utf8i = ( unsigned char )*utf8;
-	CharByte		sjis_cb;
-	int			i;
-
-	*sjis_step = 0;
-	*utf8_step = 0;
-
-	for( i = 0; i < 3 && cc_utf8_to_sjis.count( utf8i ) == 0; i ++ )
-	{
-		utf8i = ( utf8i << 8 | ( unsigned char )*sjis );
-		utf8 ++;
-	}
-	if( i == 3 )
-		return 0;
-
-	sjis_cb = cc_sjis_to_utf8[ utf8i ];
-	*utf8_step = i;
-	*sjis_step = sjis_cb.len;
-	
-	for( i = 0; i < ( signed )sjis_cb.len; i ++ )
-	{
-		*sjis = ( char )( ( sjis_cb.byte >> ( i * 8 ) ) & 0xff );
-		sjis ++;
-	}
-
-	return 0;
-}
-
-int cc_create_tables( void )
-{
-	for( int i = 0; raw_table[ i ][ 0 ] && raw_table[ i ][ 1 ]; i ++ )
-	{
-		unsigned int	utf8 = raw_table[ i ][ 0 ];
-		unsigned int	sjis = raw_table[ i ][ 1 ];
-		CharByte	utf8_cb;
-		CharByte	sjis_cb;
-
-		utf8_cb.byte = utf8;
-		utf8_cb.len = 0;
-		utf8_cb.len = ( utf8 & 0x0000ff )? 1 : utf8_cb.len ;
-		utf8_cb.len = ( utf8 & 0x00ff00 )? 2 : utf8_cb.len ;
-		utf8_cb.len = ( utf8 & 0xff0000 )? 3 : utf8_cb.len ;
-
-		sjis_cb.byte = sjis;
-		sjis_cb.len = 0;
-		sjis_cb.len = ( sjis & 0x0000ff )? 1 : sjis_cb.len ;
-		sjis_cb.len = ( sjis & 0x00ff00 )? 2 : sjis_cb.len ;
-		sjis_cb.len = ( sjis & 0xff0000 )? 3 : sjis_cb.len ;
-
-		cc_utf8_to_sjis[ utf8 ] = sjis_cb;
-		cc_sjis_to_utf8[ sjis ] = utf8_cb;
-	}
-
-	return 0;
-}
-	
 //バイナリ用文字列抜き出し
 char* GetBin::bin_string( void )
 {
