@@ -1,4 +1,4 @@
-﻿# cmake version
+# cmake version
 cmake_minimum_required(VERSION 2.6)
 
 # project name and language option(C=C, CXX=C++)
