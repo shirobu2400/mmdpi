@@ -1,30 +1,29 @@
-#	cmake 必要バージョン
+# cmake version
 cmake_minimum_required(VERSION 2.6)
 
-#	プロジェクト名	と 言語(C=C, CXX=C++)
+# project name option(C=C, CXX=C++)
 project(mmdpiv CXX)
 
-#	リリースオプション
+# Release option
 set(CMAKE_CXX_FLAG_RELEASE "-Wall -Os")
 
-#	デバックオプション
+# Debug option
 set(CMAKE_CXX_FLAG_DEBUG "-g")
 
-#	コンパイルオプション
+# compile type
 set(CMAKE_BUILD_TYPE Release)
 
-#	バージョン
+# mmdpiv version
 set(SERIAL "1.00.00")
 
-#	Source
-
+# source
 if(NOT pi)
 	set(mmdpi_src ${mmdpi_src} gl_main.cpp )
 else()
 	set(mmdpi_src ${mmdpi_src} gl_main_es.cpp )
 endif()
 
-#	Include Directory
+# Include Directory
 set(mmdpi_inc_path
 	/usr/local/include
 	/usr/include
@@ -44,7 +43,7 @@ set(mmdpi_lib_path
 
 set( mmdpi_lib )
 
-#	Bullet
+# Bullet 
 #find_package( Bullet )
 #if( bullet AND Bullet_FOUND )
 if( bullet )
@@ -53,8 +52,8 @@ if( bullet )
 	set( mmdpi_lib ${mmdpi_lib} BulletDynamics BulletCollision BulletSoftBody LinearMath )
 endif()
 
-#	Outline
-#	It needs a lot of VRAM.
+# Outline
+# It needs a lot of VRAM.
 if( outline )
 	add_definitions( -D_MMDPI_OUTLINE_ )
 endif()
@@ -66,7 +65,7 @@ find_package( freeglut )
 
 #find_package( GLESv2 )
 #find_package( EGL )
-#find_package( bcm_host )	#	Raspberry pi graphics driver
+#find_package( bcm_host )	# Raspberry pi graphics driver
 
 find_package( PNG REQUIRED )
 find_package( ZLIB REQUIRED )
@@ -78,7 +77,7 @@ if( NOT WIN32 )
 	)
 endif()
 
-set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
+set(mmdpi_inc_path ${mmdpi_inc_path}
 	${PNG_INCLUDE_DIRS}
 	${ZLIB_INCLUDE_DIRS}
 	${JPEG_INCLUDE_DIR}
