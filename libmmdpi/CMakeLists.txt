@@ -1,22 +1,22 @@
-﻿#	cmake 必要バージョン
+﻿# cmake version
 cmake_minimum_required(VERSION 2.6)
 
-#	プロジェクト名	と 言語(C=C, CXX=C++)
+# project name and language option(C=C, CXX=C++)
 project(mmdpi C CXX)
 
-#	リリースオプション
+# Release options
 set(CMAKE_CXX_FLAG_RELEASE "-Wall -Os")
 
-#	デバックオプション
+# Debug options
 set(CMAKE_CXX_FLAG_DEBUG "-g")
 
-#	コンパイルオプション
+# compile option
 set(CMAKE_BUILD_TYPE Release)
 
-#	バージョン
+# this version
 set(SERIAL "1.00.00")
 
-#	Source
+# sources
 set(libmmdpi_src
 	mmdpi.cpp
 	
@@ -47,7 +47,7 @@ set(libmmdpi_src
 	vmd/vmd.cpp
 )
 
-# header
+# headers
 set(libmmdpi_header
 	mmdpi.h
 
@@ -142,12 +142,12 @@ else()
 	set( CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} -m32 )
 endif()
 
-# 静的ライブラリとしてビルド
+# static library
 add_library(mmdpi STATIC ${libmmdpi_src})
 include_directories( ${libmmdpi_inc} )
 include_directories( ${libmmdpi_inc_raspi} )
 
-# 動的ライブラリも作っておく python で使えるようにするつもり
+# dynamic library
 add_library(mmdpis SHARED ${libmmdpi_src})
 
 # make install
