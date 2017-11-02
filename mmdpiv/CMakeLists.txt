@@ -63,6 +63,7 @@ endif()
 find_package( GLUT )
 find_package( glut )
 find_package( freeglut )
+find_package( freeglut3 )
 
 #find_package( GLESv2 )
 #find_package( EGL )
@@ -87,7 +88,7 @@ set(mmdpi_inc_path ${mmdpi_inc_path}	#	命名に両方の可能性
 #	Opengl Mode
 
 #	OpenGL ES
-if( GLUT_FOUND OR glut_FOUND OR freeglut_FOUND )
+if( GLUT_FOUND OR glut_FOUND OR freeglut_FOUND OR freeglut3_FOUND )
 	set( mmdpi_lib ${mmdpi_lib} GL GLU GLEW )
 
 else()
@@ -123,6 +124,7 @@ set( mmdpi_lib
 	${GLUT_LIBRARIES}
 	${glut_LIBRARIES}
 	${freeglut_LIBRARIES}
+	${freeglut3_LIBRARIES}
 )
 
 #	link static library
