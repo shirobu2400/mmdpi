@@ -8,7 +8,7 @@ int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 	if( mmdpiBone::bone_num <= bone_index )
 		return -1;
 
-	bone[ bone_index ].delta_matrix = bone[ bone_index ].delta_matrix * matrix;
+	bone[ bone_index ].delta_matrix = matrix;
 
 	return 0;
 }
@@ -17,10 +17,7 @@ int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 void mmdpiBone::make_local_matrix( void )
 {
 	for( uint i = 0; i < mmdpiBone::bone_num; i ++ )
-	{
 		bone[ i ].local_matrix = bone[ i ].offset_mat * bone[ i ].matrix;
-		bone[ i ].delta_matrix.initialize();
-	}
 }
 
 //	マトリックス生成
