@@ -105,9 +105,9 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			rotation_distance += fabs( angle );
 		}
 
-		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 1e-2f )
-			break;
+		////	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
+		//if( rotation_distance < 1e-2f )
+		//	break;
 	}
 	
 	return 0;
