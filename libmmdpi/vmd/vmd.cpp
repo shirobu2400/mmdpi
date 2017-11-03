@@ -121,7 +121,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 {
 	//	ベジエ曲線を利用して補間する。
 	//	3次方程式は2分法を利用。
-	const int	_loop_len_ = 16;
+	const int	_loop_len_ = 8;
 	float		s = 0.5f;
 	float		t = 0.5f;
 	float		ft = x;
@@ -151,7 +151,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 		dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
 
 		dd = ft / dft;
-		if( fabs( dd ) < 1e-4f ) 
+		if( fabs( dd ) < 1e-3f ) 
 			break;
 		t = t - dd;
 		s = 1 - t;
