@@ -154,7 +154,6 @@ set_property(TARGET mmdpis PROPERTY POSITION_INDEPENDENT_CODE ON)
 # make install
 install(TARGETS mmdpi ARCHIVE DESTINATION lib/mmdpi)
 install(TARGETS mmdpis LIBRARY DESTINATION lib/mmdpi)
-install(TARGETS mmdpis_pic LIBRARY DESTINATION lib/mmdpi)
 
 install(FILES mmdpi.h DESTINATION include/mmdpi)
 install(FILES 
