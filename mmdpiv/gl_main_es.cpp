@@ -562,7 +562,7 @@ int main( int argc, char *argv[] )
 
 	init( argc, argv );
 
-	if( get_command_option( "-d", argc, argv ); )
+	if( get_command_option( "-d", argc, argv ) )
 		debug_flag = 1;
 
 	//print_mat4( &projection_matrix );
