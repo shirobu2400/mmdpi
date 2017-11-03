@@ -39,7 +39,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			target_pos			= inv_coord * target_pos;
 
 			mmdpiVector4d	diff_pos = ( effect_pos - target_pos );
-			if( diff_pos.dot( diff_pos ) < 1e-8f )
+			if( diff_pos.dot( diff_pos ) < 1e-4f )
 				return 0;
 
 			mmdpiVector3d effect_dir		( effect_pos.x, effect_pos.y, effect_pos.z );
@@ -63,7 +63,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 				p = 1;	// arccos error!
 
 			float	angle = acos( p );
-			if( fabs( angle ) < 1e-8f )
+			if( fabs( angle ) < 1e-4f )
 				continue;
 			if( angle > 4.0f * ik_one->control_weight ) 
 				angle = 4.0f * ik_one->control_weight;
@@ -100,7 +100,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 1e-1f )
+		if( rotation_distance < 1e-2f )
 			return 0;
 	}
 
