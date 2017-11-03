@@ -14,7 +14,6 @@ class GetBin
 public :
 
 	unsigned char	*buf, *buf_base;
-	//unsigned int	buf_len;
 	unsigned long	buf_len;
 	
 	char*		text_buf( char byte_size, uint* length = 0 );

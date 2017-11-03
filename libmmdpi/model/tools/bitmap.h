@@ -13,35 +13,35 @@
 
 typedef struct tagBITMAPFILEHEADER 
 {
-  ushort		bfType;
-  dword			bfSize;
-  ushort		bfReserved1;
-  ushort		bfReserved2;
-  dword			bfOffBits;
+	ushort		bfType;
+	dword		bfSize;
+	ushort		bfReserved1;
+	ushort		bfReserved2;
+	dword		bfOffBits;
 } BITMAPFILEHEADER ;
 
 typedef struct tagBITMAPCOREHEADER
 {
-    dword		bcSize;
-    SHORT		bcWidth;
-    SHORT		bcHeight;
-    ushort		bcPlanes;
-    ushort		bcBitCount;
+	dword		bcSize;
+	SHORT		bcWidth;
+	SHORT		bcHeight;
+	ushort		bcPlanes;
+	ushort		bcBitCount;
 } BITMAPCOREHEADER ;
 
 typedef struct tagBITMAPINFOHEADER
 {
-    dword          biSize;
-    INTEGER        biWidth;
-    INTEGER        biHeight;
-    ushort           biPlanes;
-    ushort           biBitCount;
-    dword          biCompression;
-    dword          biSizeImage;
-    INTEGER        biXPixPerMeter;
-    INTEGER        biYPixPerMeter;
-    dword          biClrUsed;
-    dword          biClrImporant;
+	dword		biSize;
+	INTEGER		biWidth;
+	INTEGER		biHeight;
+	ushort		biPlanes;
+	ushort		biBitCount;
+	dword		biCompression;
+	dword		biSizeImage;
+	INTEGER		biXPixPerMeter;
+	INTEGER		biYPixPerMeter;
+	dword		biClrUsed;
+	dword		biClrImporant;
 } BITMAPINFOHEADER ;
 
 //typedef struct tagBITMAPFILEHEADER 

@@ -237,7 +237,7 @@ typedef struct _mmdpiVector3d_
 
 
 // 4D Vector
-typedef struct	_mmdpiVector4d_
+typedef struct _mmdpiVector4d_
 {
 	float		x, y, z, w;
 	inline float& operator[]( int i )

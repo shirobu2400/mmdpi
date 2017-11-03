@@ -8,7 +8,7 @@ int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 	if( mmdpiBone::bone_num <= bone_index )
 		return -1;
 
-	bone[ bone_index ].delta_matrix = matrix;
+	bone[ bone_index ].delta_matrix = bone[ bone_index ].delta_matrix * matrix;
 
 	return 0;
 }
