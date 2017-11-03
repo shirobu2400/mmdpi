@@ -86,7 +86,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			{
 				mmdpiMatrix		inv_matrix = bone[ attention_index ].init_mat.get_inverse();
 				mmdpiMatrix		def_matrix = rotation_matrix * bone[ attention_index ].bone_mat * inv_matrix;
-				mmdpiVector4d	t_vec( 0, 0, 1, 1 );
+				mmdpiVector4d		t_vec( 0, 0, 1, 1 );
 				t_vec = def_matrix * ( t_vec );
 				if( t_vec.y < 0.1f )
 					rotation_matrix.rotation( axis.x, axis.y, axis.z, -angle );

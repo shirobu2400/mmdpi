@@ -63,7 +63,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 			//	向かう度合
 			float	p = local_effect_dir.dot( local_target_dir );
-			if( 1 < p )			
+			if( 1 - bottom_noise < p )			
 				continue;	//	arccos error!
 
 			float	angle = acos( p );
