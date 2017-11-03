@@ -7,9 +7,7 @@ int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	if( mmdpiBone::bone_num <= bone_index )
 		return -1;
-
-	bone[ bone_index ].delta_matrix = matrix;
-
+	bone[ bone_index ].delta_matrix = bone[ bone_index ].delta_matrix * matrix;
 	return 0;
 }
 
@@ -68,7 +66,10 @@ void mmdpiBone::refresh_bone_mat( void )
 {
 	//	初期化
 	for( uint i = 0; i < bone_num; i ++ )
+	{
 		bone[ i ].bone_mat = bone[ i ].init_mat;
+		bone[ i ].delta_matrix.initialize();
+	}
 }
 
 void mmdpiBone::init_mat_calc( MMDPI_BONE_INFO_PTR my_bone, mmdpiMatrix* offset )
