@@ -153,4 +153,44 @@ add_library(mmdpis SHARED ${libmmdpi_src})
 # make install
 install(TARGETS mmdpi ARCHIVE DESTINATION lib/mmdpi)
 install(TARGETS mmdpis LIBRARY DESTINATION lib/mmdpi)
-install(FILES ${libmmdpi_header} DESTINATION include/mmdpi)
+
+install(FILES mmdpi.h DESTINATION include/mmdpi)
+install(FILES 
+	model/mmdpi_bone.h
+	model/mmdpi_adjust.h
+	model/mmdpi_define.h
+	model/mmdpi_include.h
+	model/mmdpi_model.h
+	model/mmdpi_shader.h
+	model/mmdpi_struct.h
+DESTINATION include/mmdpi/model)
+install(FILES 
+	model/tools/bitmap.h  
+	model/tools/get_bin.h  
+	model/tools/raw_table.h  
+	model/tools/tga_image.h  
+	model/tools/utf8_sjis.h
+DESTINATION include/mmdpi/model/tools)
+install(FILES 
+	model/bullet/mmdpi_bullet.h
+DESTINATION include/mmdpi/model/bullet)
+install(FILES 
+	pmd/pmd.h
+	pmd/pmd_analyze.h
+	pmd/pmd_draw.h
+	pmd/pmd_ik.h
+	pmd/pmd_load.h
+	pmd/pmd_struct.h
+DESTINATION include/mmdpi/pmd)
+install(FILES 
+	pmx/pmx.h
+	pmx/pmx_analyze.h
+	pmx/pmx_draw.h
+	pmx/pmx_ik.h
+	pmx/pmx_load.h
+	pmx/pmx_struct.h
+DESTINATION include/mmdpi/pmx)
+install(FILES 
+	vmd/vmd.h
+DESTINATION include/mmdpi/vmd)
+
