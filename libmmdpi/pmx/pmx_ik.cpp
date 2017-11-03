@@ -6,7 +6,7 @@
 int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
 {
 	const int	_ik_range_ = 255;
-	const float	bottom_noise = 1e-4f;
+	const float	bottom_noise = 1e-6f;
 	
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
@@ -51,9 +51,9 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			local_effect_pos = inv_coord * effect_pos_base;
 			local_target_pos = inv_coord * target_pos_base;
 
-			//mmdpiVector4d	diff_pos = effect_pos - target_pos;
-			//if( diff_pos.dot( diff_pos ) < bottom_noise )
-			//	continue;
+			mmdpiVector4d	diff_pos = local_effect_pos - local_target_pos;
+			if( diff_pos.dot( diff_pos ) < bottom_noise )
+				continue;
 
 			mmdpiVector3d		local_effect_dir( local_effect_pos.x, local_effect_pos.y, local_effect_pos.z );
 			mmdpiVector3d		local_target_dir( local_target_pos.x, local_target_pos.y, local_target_pos.z );
@@ -105,9 +105,9 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			rotation_distance += fabs( angle );
 		}
 
-		////	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		//if( rotation_distance < 1e-2f )
-		//	break;
+		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
+		if( rotation_distance < 1e-3f )
+			break;
 	}
 	
 	return 0;
