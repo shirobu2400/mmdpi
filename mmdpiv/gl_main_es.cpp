@@ -179,8 +179,6 @@ void init( int argc, char *argv[] )
 {
 	char*	model_name = 0x00;
 	model_name = get_command_option( "-p", argc, argv );
-	//if( argc > 1 )
-	//	model_name = argv[ 1 ];
 	if( model_name && model_name[ 0 ] )
 	{
 		p = new mmdpi();
@@ -193,8 +191,6 @@ void init( int argc, char *argv[] )
 
 	char*	vmd_name = 0x00;
 	vmd_name = get_command_option( "-v", argc, argv );
-	//if( argc > 2 )
-	//	vmd_name = argv[ 2 ];
 	vmd_flag = 0;
 	if( p && vmd_name && vmd_name[ 0 ] )
 	{
@@ -247,17 +243,16 @@ void init( int argc, char *argv[] )
 void draw()
 {
 	fps->update();
-	if( p && p->get_vmd( 0 ) )
-	{
-		float	frame = 30.0f / fps->get_mfps();
-		//	フレームを進める関数
-		//（MMD は１秒間に３０フレームがデフォルト）
-		//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
-		( *p->get_vmd( 0 ) ) += frame;
-		//++ ( *p->get_vmd( 0 ) );
-	}
 	if( p )
 	{
+		if( p->get_vmd( 0 ) )
+		{
+			float	frame = 30.0f / fps->get_mfps();
+			//	フレームを進める関数
+			//（MMD は１秒間に３０フレームがデフォルト）
+			//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
+			( *p->get_vmd( 0 ) ) += frame;
+		}
 		p->set_bone_matrix( 0, Model_offset );
 		p->draw();
 	}
@@ -520,9 +515,10 @@ int main( int argc, char *argv[] )
 	if( argc < 2 )
 	{
 		printf(
-			"argment: -p [pmd or pmx file name] \n"
-			"argment: -v [vmd file name] \n"
-			);
+			"argment: -p [pmd or pmx file name] 	\n"
+			"argment: -v [vmd file name] 		\n"
+			"argment: -d				\n"
+		);
 		return 0;
 	}
 
@@ -566,11 +562,8 @@ int main( int argc, char *argv[] )
 
 	init( argc, argv );
 
-	//if( argc > 3 && argv[ 3 ] )
-	//{
-	//	if( strncmp( argv[ 3 ], "-D", 2 ) == 0 )
-	//		debug_flag = 1;
-	//}
+	if( get_command_option( "-d", argc, argv ); )
+		debug_flag = 1;
 
 	//print_mat4( &projection_matrix );
 
@@ -580,14 +573,14 @@ int main( int argc, char *argv[] )
 	Mat4	delta_mat;
 	makeUnit( &delta_mat );
 
+	glViewport(0, 0, g_sc.width, g_sc.height);
+
 	/* 1200frame / 60fps = 20sec */
-	//while( frames < 1200 )
 	while( !p->get_vmd( 0 ) || !p->get_vmd( 0 )->is_end() )
-	//while( 1 )
 	{
 		Mat4	pl_matrix;
 		Mat4	delta_key_mat;
-		glViewport(0, 0, g_sc.width, g_sc.height);
+		int	key_matrix_flag = 0;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -602,12 +595,13 @@ int main( int argc, char *argv[] )
 		makeUnit( &delta_key_mat );
 		switch( c )
 		{
-		case 'w':	setPosition( &delta_key_mat, 0, 0, +1 );	break;
-		case 's':	setPosition( &delta_key_mat, 0, 0, -1 );	break;
-		case 'a':	setRotationY( &delta_key_mat, +2.0 );	break;
-		case 'd':	setRotationY( &delta_key_mat, -2.0 );	break;
+		case 'w':	setPosition( &delta_key_mat, 0, 0, +1 ); key_matrix_flag = 1;	break;
+		case 's':	setPosition( &delta_key_mat, 0, 0, -1 ); key_matrix_flag = 1;	break;
+		case 'a':	setRotationY( &delta_key_mat, +2.0 ); key_matrix_flag = 1;	break;
+		case 'd':	setRotationY( &delta_key_mat, -2.0 ); key_matrix_flag = 1;	break;
 		}
-		mulMatrix( &delta_mat , &delta_mat, &delta_key_mat );
+		if( key_matrix_flag )
+			mulMatrix( &delta_mat, &delta_mat, &delta_key_mat );
 
 		if( c == 'q' )
 			break;
