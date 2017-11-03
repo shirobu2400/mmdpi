@@ -46,7 +46,7 @@ cmake を -Dpi=on オプションで実行してください。<br>
 </p>
 bullet オプションで Bullet Physics インストール済みの場合に物理演算が可能です。<br>
 
-make で ./mmdpiv に実行ファイル mmdpiv ができます。<br>
+make で mmdpiv/ に実行ファイル mmdpiv ができます。<br>
 実行ファイル mmdpiv は　ビューアプログラムです。<br>
 GL, GLU, GLUT, GLEWが必要です。<br>
 Bullet Physics インストール済みおよび、-Dbullet=on オプションを付けるとBullet Physics による物理演算を行えます。<br>
@@ -91,6 +91,7 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
   Q. Raspbian でOpenGL ES 関連のエラーが出る。<br>
   A. -Dpi=on でRaspbian のLegacy Driver を使用します。<br>
      raspi-config => Advanced Options => GL Driver => G3 Legacy を選択してください。
+     また、-lEGL, -lGLESv2 などの存在がない場合には rpi-update を実行してください。
      <br>
    
 # 余談  
