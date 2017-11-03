@@ -17,7 +17,10 @@ int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 void mmdpiBone::make_local_matrix( void )
 {
 	for( uint i = 0; i < mmdpiBone::bone_num; i ++ )
+	{
 		bone[ i ].local_matrix = bone[ i ].offset_mat * bone[ i ].matrix;
+		bone[ i ].delta_matrix.initialize();
+	}
 }
 
 //	マトリックス生成
