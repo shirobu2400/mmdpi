@@ -129,41 +129,39 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 	float		dft = x;
 	float		dd;
 
-	////	二分法
-	//for( int i = 0; i < _loop_len_; i ++ )
-	//{
-	//	ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
-	//	if( fabs( ft ) < 1e-4f ) 
-	//		break;
-	//	if( ft < 0 )
-	//		t += 1 / ( 4 << i );
-	//	else
-	//		t -= 1 / ( 4 << i );
-	//	s = 1 - t;
-	//}
-
-	//return ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
-
-
-	//	ニュートン法のほうが収束が速いのでニュートン法でとく。
+	//	二分法
 	for( int i = 0; i < _loop_len_; i ++ )
 	{
-		ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;	// f(t)
-		dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
-		
-		if( fabs( dft ) < 1e-6f ) 
+		ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
+		if( fabs( ft ) < 1e-4f ) 
 			break;
-
-		dd = ft / dft;
-
-		t = t - dd;
+		if( ft < 0 )
+			t += 1.0f / ( 4 << i );
+		else
+			t -= 1.0f / ( 4 << i );
 		s = 1 - t;
-
-		if( fabs( dd ) < 1e-6f ) 
-			break;
 	}
-
 	return ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
+
+
+	////	ニュートン法のほうが収束が速いのでニュートン法でとく。
+	//for( int i = 0; i < _loop_len_; i ++ )
+	//{
+	//	ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;	// f(t)
+	//	dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
+	//	
+	//	if( fabs( dft ) < 1e-6f ) 
+	//		break;
+
+	//	dd = ft / dft;
+
+	//	t = t - dd;
+	//	s = 1 - t;
+
+	//	if( fabs( dd ) < 1e-6f ) 
+	//		break;
+	//}
+	//return ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );
 }
 
 int mmdpiVmd::set_bone( MMDPI_BONE_INFO_PTR bone )
