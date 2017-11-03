@@ -6,7 +6,7 @@
 int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
 {
 	const int	_ik_range_ = 255;
-	const float	bottom_noise = 1e-4f;
+	const float	bottom_noise = 1e-6f;
 	
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
