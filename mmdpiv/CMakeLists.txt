@@ -5,10 +5,10 @@ cmake_minimum_required(VERSION 2.6)
 project(mmdpiv CXX)
 
 # Release option
-set(CMAKE_CXX_FLAG_RELEASE "-Wall -Os")
+set(CMAKE_CXX_FLAG_RELEASE "-Wall -O2")
 
 # Debug option
-set(CMAKE_CXX_FLAG_DEBUG "-g")
+# set(CMAKE_CXX_FLAG_DEBUG "-g")
 
 # compile type
 set(CMAKE_BUILD_TYPE Release)

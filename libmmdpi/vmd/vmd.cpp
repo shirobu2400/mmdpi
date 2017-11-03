@@ -4,23 +4,23 @@
 
 int mmdpiVmd::advance_time( float time_scale )
 { 
-	if( bone == NULL || now_motion == NULL )
+	if( bone == 0x00 || now_motion == 0x00 )
 		return -1;
 
 	motion_time += time_scale; 
 
 	for( int i = 0; i < bone_num; i ++ )	//	ボーンごとにモーションを見る
 	{
-		if( now_motion[ i ] == NULL )
+		if( now_motion[ i ] == 0x00 )
 			continue;
 
 		//	いまのモーションポインタ
 		MMDPI_VMD_MOTION_PTR vp = now_motion[ i ]->motion;	
-		if( vp == NULL )	// 親ボーン座標系に変換
+		if( vp == 0x00 )	// 親ボーン座標系に変換
 			continue;
 	
-		MMDPI_VMD_MOTION_PTR vpn = ( now_motion[ i ]->next )? now_motion[ i ]->next->motion : NULL;
-		if( vpn == NULL )	// これ以上モーションがない -> 番兵に当たった
+		MMDPI_VMD_MOTION_PTR vpn = ( now_motion[ i ]->next )? now_motion[ i ]->next->motion : 0x00;
+		if( vpn == 0x00 )	// これ以上モーションがない -> 番兵に当たった
 			continue;
 
 		mmdpiMatrix	now_matrix, rot_matrix, pos_matrix;
@@ -58,6 +58,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		//radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div_, ( float )vp->Interpolation[ 7 ] / _interpolation_div_, 
 		//			( float )vp->Interpolation[ 11 ] / _interpolation_div_, ( float )vp->Interpolation[ 15 ] / _interpolation_div_, 
 		//			time_f );
+
 		s_vec = s_vec + now_vec;
 
 		//	平行移動
@@ -121,7 +122,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 {
 	//	ベジエ曲線を利用して補間する。
 	//	3次方程式は2分法を利用。
-	const int	_loop_len_ = 8;
+	const int	_loop_len_ = 16;
 	float		s = 0.5f;
 	float		t = 0.5f;
 	float		ft = x;
@@ -151,7 +152,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 		dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
 
 		dd = ft / dft;
-		if( fabs( dd ) < 1e-2f ) 
+		if( fabs( dd ) < 1e-4f ) 
 			break;
 		t = t - dd;
 		s = 1 - t;

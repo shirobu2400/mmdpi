@@ -106,7 +106,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 1e-2f * ik_link_num )
+		if( rotation_distance < 1e-2f )
 			break;
 	}
 	
@@ -123,7 +123,7 @@ int mmdpiPmxIk::rotation_range( mmdpiMatrix_ptr rotation_matrix, mmdpiVector3d_p
 	/////
 
 	// X軸回り
-	float fXLimit = 80.0f / 180.0f * 3.14159f;
+	float fXLimit	= 80.0f / 180.0f * 3.14159f;
 	float fSX	= -rotation_matrix->_32;    // sin(θx)
 	float fX	= ( float )asin( fSX );   // X軸回り決定
 	float fCX	= ( float )cos( fX );
@@ -132,13 +132,13 @@ int mmdpiPmxIk::rotation_range( mmdpiMatrix_ptr rotation_matrix, mmdpiVector3d_p
 	if( fabs( fX ) > fXLimit )
 	{
 		fX	= ( fX < 0 )? -fXLimit : fXLimit;
-		fCX = ( float )cos( fX );
+		fCX	= ( float )cos( fX );
 	}
 
 	// Y軸回り
-	float fSY = rotation_matrix->_31 / fCX;
-	float fCY = rotation_matrix->_33 / fCX;
-	float fY = ( float )atan2( fSY, fCY );   // Y軸回り決定
+	float fSY	= rotation_matrix->_31 / fCX;
+	float fCY	= rotation_matrix->_33 / fCX;
+	float fY	= ( float )atan2( fSY, fCY );   // Y軸回り決定
 
 	// Z軸回り
 	float fSZ	= rotation_matrix->_12 / fCX;

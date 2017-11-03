@@ -2,7 +2,6 @@
 
 #include "../libmmdpi/mmdpi.h"
 //#include "../libmmdpix/mmdpix.h"
-//#include "../gl_xfile/gl_xfile.h"
 
 #if defined( _WIN32 )
 #	if defined( _DEBUG )
@@ -14,7 +13,6 @@
 #	endif
 #endif
 
-
 #include <iostream>
 #include "GL/glut.h"
 
@@ -23,6 +21,7 @@ const int		_zoom_default_		= -1024 * 2 * 0.1f;// * 16;
 float			_y_pos_			= 11 * 0.1f;
 static mmdpi*		p;
 //static mmdpix*		xfile;
+
 int			_fps_			= 60 + 10;	//	+a はラグのため
 int 			motion_flag		= 0;
 float			Zoom;
@@ -34,6 +33,7 @@ int			screen_width, screen_height;
 
 int			Argc;
 char**			Argv;
+
 
 #include "fps.h"
 
@@ -309,9 +309,12 @@ void init( int argc, char* argv[] )
 
 void end( void )
 {
-	delete fps;
-	delete p;
-	//delete xfile;
+	if( fps )
+		delete fps;
+	if( p )
+		delete p;
+	//if( xfile )
+	//	delete xfile;
 }
 
 char* get_command_option( const char* option, int argc, char* argv[] )
