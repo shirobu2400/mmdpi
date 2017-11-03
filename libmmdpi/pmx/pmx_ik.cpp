@@ -6,7 +6,7 @@
 int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
 {
 	const int	_ik_range_ = 255;
-	const float	bottom_noise = 1e-16f;
+	const float	bottom_noise = 1e-4f;
 	
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
@@ -106,7 +106,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 1e-2f )
+		if( rotation_distance < 1e-2f * ik_link_num )
 			break;
 	}
 	

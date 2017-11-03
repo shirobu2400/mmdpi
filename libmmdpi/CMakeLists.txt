@@ -19,14 +19,14 @@ set(SERIAL "1.00.00")
 # sources
 set(libmmdpi_src
 	mmdpi.cpp
-	
+
 	model/tools/get_bin.cpp
 	model/tools/bitmap.cpp
 	model/tools/png.cpp
 	model/tools/jpg.cpp
 	model/tools/tga_image.cpp
 	model/tools/utf8_sjis.cpp
-	
+
 	model/mmdpi_model.cpp
 	model/mmdpi_shader.cpp
 	model/mmdpi_adjust.cpp
@@ -59,14 +59,14 @@ set(libmmdpi_header
 	model/mmdpi_shader.h
 	model/mmdpi_struct.h
 
-	model/tools/bitmap.h  
-	model/tools/get_bin.h  
-	model/tools/raw_table.h  
-	model/tools/tga_image.h  
+	model/tools/bitmap.h
+	model/tools/get_bin.h
+	model/tools/raw_table.h
+	model/tools/tga_image.h
 	model/tools/utf8_sjis.h
 
 	model/bullet/mmdpi_bullet.h
-	
+
 	pmd/pmd.h
 	pmd/pmd_analyze.h
 	pmd/pmd_draw.h
@@ -156,7 +156,7 @@ install(TARGETS mmdpi ARCHIVE DESTINATION lib/mmdpi)
 install(TARGETS mmdpis LIBRARY DESTINATION lib/mmdpi)
 
 install(FILES mmdpi.h DESTINATION include/mmdpi)
-install(FILES 
+install(FILES
 	model/mmdpi_bone.h
 	model/mmdpi_adjust.h
 	model/mmdpi_define.h
@@ -165,17 +165,17 @@ install(FILES
 	model/mmdpi_shader.h
 	model/mmdpi_struct.h
 DESTINATION include/mmdpi/model)
-install(FILES 
-	model/tools/bitmap.h  
-	model/tools/get_bin.h  
-	model/tools/raw_table.h  
-	model/tools/tga_image.h  
+install(FILES
+	model/tools/bitmap.h
+	model/tools/get_bin.h
+	model/tools/raw_table.h
+	model/tools/tga_image.h
 	model/tools/utf8_sjis.h
 DESTINATION include/mmdpi/model/tools)
-install(FILES 
+install(FILES
 	model/bullet/mmdpi_bullet.h
 DESTINATION include/mmdpi/model/bullet)
-install(FILES 
+install(FILES
 	pmd/pmd.h
 	pmd/pmd_analyze.h
 	pmd/pmd_draw.h
@@ -183,7 +183,7 @@ install(FILES
 	pmd/pmd_load.h
 	pmd/pmd_struct.h
 DESTINATION include/mmdpi/pmd)
-install(FILES 
+install(FILES
 	pmx/pmx.h
 	pmx/pmx_analyze.h
 	pmx/pmx_draw.h
@@ -191,7 +191,7 @@ install(FILES
 	pmx/pmx_load.h
 	pmx/pmx_struct.h
 DESTINATION include/mmdpi/pmx)
-install(FILES 
+install(FILES
 	vmd/vmd.h
 DESTINATION include/mmdpi/vmd)
 

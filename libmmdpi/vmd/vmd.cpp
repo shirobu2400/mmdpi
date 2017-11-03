@@ -151,7 +151,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 		dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
 
 		dd = ft / dft;
-		if( fabs( dd ) < 1e-3f ) 
+		if( fabs( dd ) < 1e-2f ) 
 			break;
 		t = t - dd;
 		s = 1 - t;
