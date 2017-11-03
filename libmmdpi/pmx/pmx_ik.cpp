@@ -81,7 +81,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			else
 			{
 				axis = local_effect_dir.cross( local_target_dir );
-				if( axis.dot( axis ) < bottom_noise )	//	axis is zero vector.
+				if( axis.dot( axis ) < 1e-16f )	//	axis is zero vector.
 					continue;
 				axis.normalize();
 			}
