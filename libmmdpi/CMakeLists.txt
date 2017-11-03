@@ -149,8 +149,7 @@ include_directories( ${libmmdpi_inc_raspi} )
 
 # dynamic library
 add_library(mmdpis SHARED ${libmmdpi_src})
-add_library(mmdpis_pic SHARED ${libmmdpi_src})
-set_property(TARGET mmdpis_pic PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET mmdpis PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 # make install
 install(TARGETS mmdpi ARCHIVE DESTINATION lib/mmdpi)
