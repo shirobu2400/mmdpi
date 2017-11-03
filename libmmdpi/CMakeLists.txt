@@ -151,5 +151,6 @@ include_directories( ${libmmdpi_inc_raspi} )
 add_library(mmdpis SHARED ${libmmdpi_src})
 
 # make install
-install(TARGETS mmdpis mmdpi LIBRARY DESTINATION lib/mmdpi)
+install(TARGETS mmdpi ARCHIVE DESTINATION lib/mmdpi)
+install(TARGETS mmdpis LIBRARY DESTINATION lib/mmdpi)
 install(FILES ${libmmdpi_header} DESTINATION include/mmdpi)
