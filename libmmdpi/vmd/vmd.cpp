@@ -150,12 +150,13 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 	{
 		ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;	// f(t)
 		dft = ( 3.0f * s * s * x1 ) + ( 3.0f * 2.0f * t * x2 ) + ( 3.0f * t * t ) - x;		// d f(t) / dt
+		dd = ft / ( dft + 1e-8f );
 
-		dd = ft / dft;
-		if( fabs( dd ) < 1e-4f ) 
-			break;
 		t = t - dd;
 		s = 1 - t;
+
+		if( fabs( dd ) < 1e-4f ) 
+			break;
 	}
 
 	return ( 3.0f * s * s * t * y1 ) + ( 3.0f * s * t * t * y2 ) + ( t * t * t );

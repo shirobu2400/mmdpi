@@ -52,7 +52,7 @@ public :
 	mmdpiMatrix		make_global_matrix( int index );
 	
 	int			advance_time_physical( int fps = 30 );
-
+	
 	dword get_bone_num( void )
 	{ 
 		return bone_num;
