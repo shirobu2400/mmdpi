@@ -145,7 +145,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 
 
 	////	ニュートン法のほうが収束が速いのでニュートン法でとく。
-	////	が、おそらく、この数式はおかしい。
+	////	が、おそらく、この数式はおかしい。実装のミス
 	//for( int i = 0; i < _loop_len_; i ++ )
 	//{
 	//	ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;	// f(t)
