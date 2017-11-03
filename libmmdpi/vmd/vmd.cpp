@@ -38,7 +38,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		int		interInde = 0;
 		const float	_interpolation_div_ = 127.0f;
 		mmdpiVector3d	s_vec;
-		float		radw;
+		//float		radw;
 
 		// 高度な補間
 
@@ -54,10 +54,10 @@ int mmdpiVmd::advance_time( float time_scale )
 		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div_, ( float )vp->Interpolation[ 6 ] / _interpolation_div_, 
 					( float )vp->Interpolation[ 10 ] / _interpolation_div_, ( float )vp->Interpolation[ 14 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.z - now_vec.z );
-		// radw
-		radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div_, ( float )vp->Interpolation[ 7 ] / _interpolation_div_, 
-					( float )vp->Interpolation[ 11 ] / _interpolation_div_, ( float )vp->Interpolation[ 15 ] / _interpolation_div_, 
-					time_f );
+		//// radw
+		//radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div_, ( float )vp->Interpolation[ 7 ] / _interpolation_div_, 
+		//			( float )vp->Interpolation[ 11 ] / _interpolation_div_, ( float )vp->Interpolation[ 15 ] / _interpolation_div_, 
+		//			time_f );
 		s_vec = s_vec + now_vec;
 
 		//	平行移動
@@ -65,7 +65,7 @@ int mmdpiVmd::advance_time( float time_scale )
 
 		//	クォータニオン球面線形補間
 		mmdpiQuaternion		s_qt;
-		s_qt.slerp_quaternion( now_qt, next_qt, radw );
+		s_qt.slerp_quaternion( now_qt, next_qt, time_f );
 		rot_matrix.quaternion( s_qt );
 
 		if( motion_time >= ( float )vpn->FrameNo )
