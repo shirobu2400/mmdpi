@@ -10,8 +10,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 	
 	if( pbone[ bone_index ].ik_flag == 0 )
 		return -1;
-	return -1;
-
+	
 	MMDPI_PMX_BONE_INFO_PTR		npb	= &pbone[ bone_index ];
 	MMDPI_BONE_INFO_PTR		nb	= &bone [ bone_index ];
 

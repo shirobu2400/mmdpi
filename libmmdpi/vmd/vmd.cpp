@@ -32,7 +32,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		mmdpiVector3d	now_vec( vp->vx, vp->vy, vp->vz );
 		
 		float		time_f = 0.5f;
-		if( 0 <= vp->FrameNo && vp->FrameNo <= vpn->FrameNo ) 
+		if( 0 <= vp->FrameNo && vp->FrameNo <= vpn->FrameNo && vp->FrameNo <= ( dword )motion_time && ( dword )motion_time <= vpn->FrameNo ) 
 			time_f = ( motion_time - ( float )vp->FrameNo ) / ( float )( vpn->FrameNo - vp->FrameNo ); 
 		
 		int		interInde = 0;
