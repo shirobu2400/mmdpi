@@ -616,7 +616,7 @@ int main( int argc, char *argv[] )
 		frames ++;
 
 		//glutTimerFunc( fps->get_wait_time() * 1000.0f, timer, 0 );
-		usleep( 1600 );
+		usleep( 1700 );
 		if( debug_flag )
 			fps->draw();
 	}

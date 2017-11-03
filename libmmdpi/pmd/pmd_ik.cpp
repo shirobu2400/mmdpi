@@ -70,7 +70,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 
 			mmdpiVector3d	axis;
 			axis = effect_dir.cross( target_dir );
-			if( axis.dot( axis ) < 1e-8f )	//	axis is zero vector.
+			if( axis.dot( axis ) < 1e-4f )	//	axis is zero vector.
 				continue;
 			axis.normalize();
 			mmdpiMatrix		rotation_matrix;
@@ -100,7 +100,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 1e-2f )
+		if( rotation_distance < 1e-1f )
 			return 0;
 	}
 
