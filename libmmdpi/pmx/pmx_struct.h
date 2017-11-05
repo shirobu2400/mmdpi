@@ -265,8 +265,8 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 		show_flag = 0;			//	表示
 		user_update_flag = 0;		//	操作可
 		ik_flag = 0;			//	IK
-		rotation_grant_flag = 0;		//	回転付与
-		translate_grant_flag = 0;		//	移動付与
+		rotation_grant_flag = 0;	//	回転付与
+		translate_grant_flag = 0;	//	移動付与
 		const_axis_flag = 0;		//	軸固定
 		local_axis_flag = 0;		//	ローカル軸
 		physical_update_flag = 0;	//	物理後変形

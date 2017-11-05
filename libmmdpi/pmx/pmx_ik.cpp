@@ -46,7 +46,9 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 			//	回転軸
 			mmdpiVector3d		axis;
-			
+			float			radius_range = 1;
+
+
 			//	ローカル座標系へ変換
 			local_effect_pos = inv_coord * effect_pos_base;
 			local_target_pos = inv_coord * target_pos_base;
@@ -68,9 +70,9 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 			float	angle = acos( p );
 			if( angle > +npb->ik_radius_range ) 
-				angle = +npb->ik_radius_range;
+				angle = +npb->ik_radius_range, radius_range = 0;
 			if( angle < -npb->ik_radius_range ) 
-				angle = -npb->ik_radius_range;			
+				angle = -npb->ik_radius_range, radius_range = 0;		
 
 			if( npb->const_axis_flag )
 			{
@@ -82,7 +84,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			{
 				axis = local_effect_dir.cross( local_target_dir );
 				if( axis.dot( axis ) < 1e-16f )	//	axis is zero vector.
-					continue;
+					break;
 				axis.normalize();
 			}
 			
@@ -102,11 +104,11 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			target_bone->bone_mat = rotation_matrix * target_bone->bone_mat;
 			
 			//	移動した距離を計算
-			rotation_distance += fabs( angle );
+			rotation_distance += fabs( angle ) * radius_range;
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 5 * 1e-2f )
+		if( rotation_distance < 1e-4f )
 			break;
 	}
 	

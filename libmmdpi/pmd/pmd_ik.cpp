@@ -23,15 +23,18 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 	
 		for( uint i = 0; i < ik_one->ik_chain_length; i ++ )
 		{		
-			ushort			attention_index = ik_one->ik_child_bone_index[ i ];
+			ushort		attention_index		= ik_one->ik_child_bone_index[ i ];
 
-			mmdpiVector4d	target_pos_base	= mmdpiBone::get_global_matrix( &bone[ ik_one->ik_target_bone_index ] )	* ( v1 );	// Target
+			mmdpiVector4d	target_pos_base		= mmdpiBone::get_global_matrix( &bone[ ik_one->ik_target_bone_index ] )	* ( v1 );	// Target
 		
-			mmdpiMatrix		attention_localmat	= mmdpiBone::get_global_matrix( &bone[ attention_index ] );
-			mmdpiMatrix		inv_coord		= attention_localmat.get_inverse();
+			mmdpiMatrix	attention_localmat	= mmdpiBone::get_global_matrix( &bone[ attention_index ] );
+			mmdpiMatrix	inv_coord		= attention_localmat.get_inverse();
 
-			mmdpiVector4d	effect_pos			= effect_pos_base;		// Effector
-			mmdpiVector4d	target_pos			= target_pos_base;		// Target
+			mmdpiVector4d	effect_pos		= effect_pos_base;		// Effector
+			mmdpiVector4d	target_pos		= target_pos_base;		// Target
+
+			float		radius_range		= 1;
+
 
 			effect_pos.w			= 1;
 			target_pos.w			= 1;
@@ -66,12 +69,12 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			if( fabs( angle ) < 1e-4f )
 				continue;
 			if( angle > 4.0f * ik_one->control_weight ) 
-				angle = 4.0f * ik_one->control_weight;
+				angle = 4.0f * ik_one->control_weight, radius_range = 0;
 
 			mmdpiVector3d	axis;
 			axis = effect_dir.cross( target_dir );
 			if( axis.dot( axis ) < 1e-6f )	//	axis is zero vector.
-				continue;
+				break;
 			axis.normalize();
 			mmdpiMatrix		rotation_matrix;
 
@@ -96,12 +99,12 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			bone[ attention_index ].bone_mat = rotation_matrix * bone[ attention_index ].bone_mat;
 
 			//	移動した距離を計算
-			rotation_distance += fabs( angle );
+			rotation_distance += fabs( angle ) * radius_range;
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
-		if( rotation_distance < 5 * 1e-2f )
-			return 0;
+		if( rotation_distance < 1e-4f )
+			break;
 	}
 
 	return 0;
