@@ -20,6 +20,7 @@ private :
 	
 	map<const string, uint>		bone_name2index_sjis;		// bone 名 to index
 	map<const string, uint>		bone_name2index_utf8;		// bone 名 to index
+	string*				bone_name;
 	
 public :
 	virtual int			create( void );
@@ -28,6 +29,9 @@ public :
 	virtual void			draw( void );
 	virtual void			set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );		// set bone matrix
 	virtual void			set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix );	// set bone matrix
+
+	virtual	int			get_bone_num( void );
+	virtual	char*			get_bone_name( int index, int coding_is_sjis = 0 );
 
 	virtual void			set_projection_matrix( const GLfloat* p_projection_matrix );	
 	virtual void			set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix );
@@ -40,4 +44,5 @@ public :
 	virtual int			get_fps( void );
 
 	mmdpiModel();
+	~mmdpiModel();
 } ;

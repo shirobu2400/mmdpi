@@ -182,6 +182,22 @@ void mmdpiModel::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matr
 	this->set_bone_matrix( itr->second, matrix );
 }
 
+int mmdpiModel::get_bone_num( void )
+{
+	return ( signed int )bone_num;
+}
+
+char* mmdpiModel::get_bone_name( int index, int coding_is_sjis )
+{
+	if( index < 0 || ( signed )bone_num <= index )
+		return 0x00;
+
+	MMDPI_BONE_INFO_PTR	this_bone = &mmdpiBone::bone[ index ];
+	if( coding_is_sjis )
+		return this_bone->sjis_name;
+	return this_bone->name;
+}
+
 void mmdpiModel::set_projection_matrix( const GLfloat* p_projection_matrix )
 {
 	for( int i = 0; i < 16; i ++ )
@@ -240,6 +256,13 @@ int mmdpiModel::get_fps( void )
 
 mmdpiModel::mmdpiModel()
 {
+	bone_name = 0x00;
 	fps = 30;
 	is_pmd = 1;
+}
+
+mmdpiModel::~mmdpiModel()
+{
+	if( bone_name )
+		delete[] bone_name;
 }

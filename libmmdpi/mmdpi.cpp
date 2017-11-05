@@ -55,6 +55,15 @@ void mmdpi::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix )
 	pmm->set_bone_matrix( bone_name, matrix );
 }
 
+int mmdpi::get_bone_num( void )
+{
+	return pmm->get_bone_num();
+}
+
+char* mmdpi::get_bone_name( int index, int coding_is_sjis )
+{
+	return pmm->get_bone_name( index, coding_is_sjis );
+}
 void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix )
 {
 	pmm->set_projection_matrix( p_projection_matrix );
