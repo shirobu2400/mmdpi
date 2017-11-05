@@ -60,16 +60,16 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 	grant_bone	= &bone[ grant_bone_index ];
 	rate		= pbone[ bone_index ].grant_parent_rate;
 
-	if( pbone[ bone_index ].rotation_grant_flag )
-	{
-		mmdpiVector3d			rotatev;
-		mmdpiVector3d			rotate2;
-		mmdpiMatrix			rotatem;
-		grant_bone->bone_mat.get_rotation ( &rotate2.x, &rotate2.y, &rotate2.z );
-		rotatev = rotate2 * rate;
-		rotatem.rotation( rotatev.x, rotatev.y, rotatev.z );
-		target_bone->bone_mat = rotatem * target_bone->bone_mat;
-	}
+	//if( pbone[ bone_index ].rotation_grant_flag )
+	//{
+	//	mmdpiVector3d			rotatev;
+	//	mmdpiVector3d			rotate2;
+	//	mmdpiMatrix			rotatem;
+	//	grant_bone->bone_mat.get_rotation( &rotate2.x, &rotate2.y, &rotate2.z );
+	//	rotatev = rotate2 * rate;
+	//	rotatem.rotation( rotatev.x, rotatev.y, rotatev.z );
+	//	target_bone->bone_mat = rotatem * target_bone->bone_mat;
+	//}
 
 	if( pbone[ bone_index ].translate_grant_flag )
 	{
