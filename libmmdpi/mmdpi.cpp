@@ -21,8 +21,12 @@ int mmdpi::load( const char* model_name )
 
 		pmm = pmx = new mmdpiPmx();
 		result = pmx->load( model_name );
-		if( result == 0 )
-			pmx->set_pmx();
+		if( result )
+		{
+			delete pmx;
+			return -1;	// error.
+		}
+		pmx->set_pmx();
 	}
 
 	// bone name to bone index

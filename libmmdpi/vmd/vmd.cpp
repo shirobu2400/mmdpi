@@ -32,7 +32,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		mmdpiVector3d	now_vec( vp->vx, vp->vy, vp->vz );
 		
 		float		time_f = 0.5f;
-		if( 0 <= vp->FrameNo && vp->FrameNo <= vpn->FrameNo && vp->FrameNo <= ( dword )motion_time && ( dword )motion_time <= vpn->FrameNo ) 
+		if( 0 <= vp->FrameNo && vp->FrameNo <= vpn->FrameNo ) 
 			time_f = ( motion_time - ( float )vp->FrameNo ) / ( float )( vpn->FrameNo - vp->FrameNo ); 
 		
 		int		interInde = 0;
@@ -122,7 +122,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 {
 	//	ベジエ曲線を利用して補間する。
 	//	3次方程式は2分法を利用。
-	const int	_loop_len_ = 16;
+	const int	_loop_len_ = 8;
 	float		s = 0.5f;
 	float		t = 0.5f;
 	float		ft = x;
@@ -132,7 +132,7 @@ float mmdpiVmd::interpolate( float x1, float y1, float x2, float y2, float x )
 	//	二分法
 	for( int i = 0; i < _loop_len_; i ++ )
 	{
-		ft  = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
+		ft = ( 3.0f * s * s * t * x1 ) + ( 3.0f * s * t * t * x2 ) + ( t * t * t ) - x;
 		if( fabs( ft ) < 1e-4f ) 
 			break;
 		if( ft < 0 )
