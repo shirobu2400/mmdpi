@@ -4,39 +4,39 @@
 
 void mmdpiPmxDraw::draw( void )
 {
-	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
-	{	
-		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		{
-			MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
-			MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
-			if( bonep->level == level )
-			{
-				//	ik
-				ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
+	//for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
+	//{	
+	//	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+	//	{
+	//		MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
+	//		MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
+	//		if( bonep->level == level )
+	//		{
+	//			//	ik
+	//			ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
 
-				//	付与
-				grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bonep->grant_parent_index );
-			}
-		}
-	}		
+	//			//	付与
+	//			grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bonep->grant_parent_index );
+	//		}
+	//	}
+	//}		
 
-	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
-	{	
-		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		{
-			MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
-			MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
-			if( bonep->level == level )
-			{
-				//	ik
-				ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
+	//for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
+	//{	
+	//	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
+	//	{
+	//		MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
+	//		MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
+	//		if( bonep->level == level )
+	//		{
+	//			//	ik
+	//			ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
 
-				//	matrix
-				bone->matrix = make_global_matrix( i );
-			}
-		}
-	}
+	//			//	matrix
+	//			bone->matrix = make_global_matrix( i );
+	//		}
+	//	}
+	//}
 
 	//	物理演算
 	if( bullet_flag )	
