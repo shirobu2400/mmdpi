@@ -147,7 +147,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		buf->get_bin( &material[ i ].Specular_scale, sizeof( float ) );
 		buf->get_bin( material[ i ].Ambient, sizeof( float ) * 3 );
 		
-		buf->get_bin( &material[ i ].bitFlag, sizeof( BYTE ) );
+		buf->get_bin( &material[ i ].bit_flag, sizeof( BYTE ) );
 		buf->get_bin( material[ i ].edge_color, sizeof( float ) * 4 );
 		buf->get_bin( &material[ i ].edge_size, sizeof( float ) );
 

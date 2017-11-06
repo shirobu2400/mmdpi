@@ -3,6 +3,7 @@
 
 #pragma once
 
+
 class mmdpiShaderBuffer
 {
 private:
@@ -96,7 +97,7 @@ public :
 	int		link( void );
 
 	void		set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p, dword vertex_num );
-	void		set_face_buffers( int buffer_id, ushort* face_p, dword face_num );
+	void		set_face_buffers( int buffer_id, mmdpiShaderIndex* face_p, dword face_num );
 		
 	void		set_edge_size( float edge );
 	void		set_edge_color( float* edge_cloor );

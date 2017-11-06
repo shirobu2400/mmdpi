@@ -4,7 +4,7 @@
 
 //	頂点が範囲内で使用ボーン数が上限を超えたら 1
 //	頂点テクスチャの使えない状況でのメッシュ分割処理
-int mmdpiAdjust::vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, uint start, uint end, uint range,
+int mmdpiAdjust::vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, uint start, uint end, uint bone_range,
 						uint bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex )
 	//					切断位置、使用ボーン数、検索範囲*2　検索上限
 {
@@ -25,6 +25,7 @@ int mmdpiAdjust::vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, ui
 		uint	v = face[ i ];
 		for( int k = 0; k < 4; k ++ )
 		{
+			//	頂点が所属するボーンが登録済みか
 			if( temp_bone_list[ ( int )vertex->index[ v ][ k ] ] == 0 )
 			{
 				using_bone_num_local ++;
@@ -33,7 +34,7 @@ int mmdpiAdjust::vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, ui
 		}	
 
 		//	頂点数が上限である
-		if( using_bone_num_local >= range )
+		if( using_bone_num_local >= bone_range )
 		{
 			pos_l = i - i % 3;
 			pos_flag = 0;
@@ -63,7 +64,9 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 	//	マテリアルごとの使用ボーンが_MMDPI_MATERIAL_USING_BONE_NUM_ - 1 以下までにする
 	//	マテリアルで使用するボーンをカウント
 	//	使用ボーンカウント
-	dword	fver_num_base	= 0;
+	dword	fver_num_base = 0;
+
+	//	分割後のマテリアル数をカウント
 	b_material_num = 0;
 	for( dword i = 0; i < material_num; i ++ )
 	{
@@ -84,11 +87,15 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 		fver_num_base = dev_fver_num;
 	}
 
-	//	確保
+	//	重複確認領域の確保
 	b_material = new MMDPI_MATERIAL[ b_material_num ];
 	for( dword i = 0; i < b_material_num; i ++ )
 	{
 		b_material[ i ].dev_flag = new int[ b_material_num ];
+		if( b_material[ i ].dev_flag == 0x00 )
+			return -1;
+
+		//	重複判定リスト
 		for( dword j = 0; j < b_material_num; j ++ )
 			b_material[ i ].dev_flag[ j ] = 0;
 	}
@@ -106,12 +113,14 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 	
 		uint	dev_flag;
 
-		dev_flag_count	= j;
+
+		//	操作中の最初のマテリアルの位置を保存
+		dev_flag_count = j;
 		
 		while( vertex_bone_over_range( &dev_fver_num, &bone_num_temp, 
 				fver_num_base, fver_end, _MMDPI_MATERIAL_USING_BONE_NUM_,
 				bone_num, face, vertex )
-			)
+		)
 		{
 			//	上限を超えていたら
 			b_material[ j ].face_num	= dev_fver_num - fver_num_base;		//	頂点数
@@ -121,8 +130,8 @@ int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR ma
 
 			//	vertex_bone_over_range での pos_l - pos_l % 3 が原因で
 			//	頂点の相互性がおかしくなるので、
-			//	pos_l % 3 > 0 のときのみ、自分（頂）をコピーする
-			dev_flag = j + ( ( fver_end > dev_fver_num )? 1 : 0 );
+			//	pos_l % 3 > 0 のときのみ、自分（頂点）をコピーする
+			dev_flag = j + ( fver_end > dev_fver_num );
 			for( uint k = dev_flag_count; k < dev_flag; k ++ )
 				b_material[ j ].dev_flag[ k ] = 1;
 			
@@ -151,7 +160,8 @@ dword mmdpiAdjust::material_booking_vertex( vector<MMDPI_VERTEX*>* new_vertex, d
 	int			update_flag;
 	dword			vertex_indexj;
 	MMDPI_VERTEX_PTR	add_vertex = 0x00;
-
+	dword			vertex_range = 0xffff - 0xffff % 3;	//	65532 は 65532 mod 3 == 0 で 65536 に近い数
+	
 	update_flag = 0;
 
 	//	重複マテリアルあり判定
@@ -165,17 +175,23 @@ dword mmdpiAdjust::material_booking_vertex( vector<MMDPI_VERTEX*>* new_vertex, d
 	vertex_indexj = 0;
 	for( dword j = 0; j < material_indext && update_flag == 0; j ++ )
 	{
-		if( b_material[ material_indext ].dev_flag[ j ] )
+		if( b_material[ material_indext ].dev_flag[ j ] ) // マテリアルでの重複
 		{
 			for( uint k = 0; k < b_material[ j ].face_num && update_flag == 0; k ++ )
 			{
+				//	重複あり
 				if( face[ v ] == face[ vertex_indexj ] )
-					update_flag = 1;	//	重複あり
+					update_flag = 1;
+
+				//	重複ではないが頂点インデックスがポリゴン内で遠い (ushort に収まらない)
+				if( face[ v ] / vertex_range != face[ vertex_indexj ] / vertex_range )
+					update_flag = 1;
+
 				vertex_indexj ++;
 			}
 		}
 		else
-			vertex_indexj += b_material[ j ].face_num;
+			vertex_indexj += b_material[ j ].face_num;	// 重複してないのでジャンプ
 	}
 	
 	//	重複なし
@@ -188,12 +204,9 @@ dword mmdpiAdjust::material_booking_vertex( vector<MMDPI_VERTEX*>* new_vertex, d
 	add_vertex = new MMDPI_VERTEX();
 	*add_vertex = *( *new_vertex )[ face[ v ] ];
 	new_vertex->push_back( add_vertex );
-	//add_vertex = ( *new_vertex )[ face[ v ] ];
-	//new_vertex->push_back( add_vertex );
 	
 	//	インデックス更新
 	face[ v ] = new_vertex->size() - 1;
-
 	return new_vertex->size();
 }
 
@@ -253,15 +266,18 @@ int mmdpiAdjust::adjust_polygon( dword* face, dword face_num, MMDPI_BLOCK_VERTEX
 //	ushort の上限を超えた場合には分割する。
 int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 {
-	dword			vertex_range = 0xffff - 0xffff % 3;		//	65532 は 65532 mod 3 == 0 で 65536 に近い数
+	dword			vertex_range = 0xffff - 0xffff % 3;	//	65532 は 65532 mod 3 == 0 で 65536 に近い数
 	vector< dword >		new_face_pos;				//	頂点集合区切り位置
+
 	
 	//	分割位置と個数をカウント
+	int	prev_face_pos = 0;
 	new_face_pos.push_back( 0 );
+	int	fmin_vid = face[ 0 ];
 	for( dword k = 0; k < b_material_num; k ++ )
 	{		
 		dword	face_pos = b_material[ k ].face_top;
-
+		
 		for( dword j = 0; j < b_material[ k ].face_num; j += 3 )
 		{
 			int		bid[ 3 ];
@@ -269,14 +285,31 @@ int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 
 			//	所属する頂点集合を計算
 			for( int i = 0; i < 3; i ++ )
+			{
 				bid[ i ] = face[ jp + i ] / vertex_range;
+				if( ( unsigned )fmin_vid > face[ jp + i ] )
+					fmin_vid = face[ jp + i ];
+			}
 
 			if( bid[ 0 ] == bid[ 1 ] && bid[ 0 ] == bid[ 2 ] )
 				;
 			else	//	頂点集合が違う３対が来たら頂点集合区切り位置を増やす
 			{
 				new_face_pos.push_back( face_pos );
+				prev_face_pos = face_pos;
 				break;
+			}
+
+			//	face[ index ]のindexは 0xffff よりは大きくなれないので
+			//	0xffff を超えようとしたら境界である。
+			for( int i = 0; i < 3; i ++ )
+			{
+				if( face[ jp + i ] - fmin_vid >= vertex_range )
+				{
+					new_face_pos.push_back( jp );
+					prev_face_pos = face_pos;
+					fmin_vid = face[ jp + i ];
+				}
 			}
 		}
 		
@@ -286,7 +319,7 @@ int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 
 	//	インデックス設定
 	b_face_num = new_face_pos.size() - 1;
-	b_face = new MMDPI_BLOCK_FACE[ b_face_num ];
+	b_face = new MMDPI_BLOCK_FACE[ b_face_num + 1 ];
 	for( dword j = 0; j < b_face_num; j ++ )
 	{
 		//	使用するシェーダバッファ保存
@@ -296,7 +329,9 @@ int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 		dword	s_face_pos = new_face_pos[ j + 0 ];
 		dword	e_face_pos = new_face_pos[ j + 1 ];
 	
-		dword	max_vid = 0, min_vid = vertex_num;
+		dword	max_vid = face[ s_face_pos ], min_vid = face[ s_face_pos ];
+
+		//	頂点の最大indexと最小indexを算出
 		for( dword i = s_face_pos; i < e_face_pos; i ++ )
 		{
 			dword	f = face[ i ];
@@ -306,10 +341,14 @@ int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 				min_vid = f;
 		}
 
+		//	エラー
+		if( max_vid - min_vid > 0xffff )
+			return -1;
+
 		b_face[ j ].face_num = e_face_pos - s_face_pos;
-		b_face[ j ].face = new ushort[ b_face[ j ].face_num ];
+		b_face[ j ].face = new mmdpiShaderIndex[ b_face[ j ].face_num ];
 		for( dword i = s_face_pos, c = 0; c < b_face[ j ].face_num; i ++, c ++ )
-			b_face[ j ].face[ c ] = ( ushort )( face[ i ] - min_vid );
+			b_face[ j ].face[ c ] = ( mmdpiShaderIndex )( face[ i ] - min_vid );
 
 		b_face[ j ].vertex_num = max_vid - min_vid + 1;
 		b_face[ j ].vertex = new MMDPI_VERTEX[ b_face[ j ].vertex_num ];
@@ -378,7 +417,7 @@ int mmdpiAdjust::adjust_bone( void )
 			for( int k = 0; k < 4; k ++ )
 			{
 				int		index = -1;
-				long	vertex_index;
+				long		vertex_index;
 				
 				vertex_index = ( long )face->vertex[ vif ].index[ k ];
 

@@ -24,7 +24,7 @@ private :
 	dword				b_material_num;
 	MMDPI_MATERIAL_PTR		b_material;
 
-	int				vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, uint start, uint end, uint range,
+	int				vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, uint start, uint end, uint bone_range,
 								uint bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex );
 
 	dword				material_booking_vertex( vector<MMDPI_VERTEX*>* new_vertex, dword v, dword* face, dword material_index );

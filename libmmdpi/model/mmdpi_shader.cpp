@@ -286,11 +286,11 @@ void mmdpiShader::set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p
 }
 
 //	シェーダバッファに面データを設定
-void mmdpiShader::set_face_buffers( int buffer_id, ushort* face_p, dword face_num )
+void mmdpiShader::set_face_buffers( int buffer_id, mmdpiShaderIndex* face_p, dword face_num )
 {
 	//	Face
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffers[ buffer_id ]->get_face() );
-	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( ushort ) * face_num, face_p, GL_STATIC_DRAW );
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( mmdpiShaderIndex ) * face_num, face_p, GL_STATIC_DRAW );
 }
 
 //	シェーダバッファにデータ領域を設定
@@ -338,7 +338,8 @@ void mmdpiShader::draw( int buffer_id, dword fver_num_base, dword face_num )
 	
 	now_buffer_id = buffer_id;
 
-	glDrawElements( GL_TRIANGLES, face_num, GL_UNSIGNED_SHORT, ( const void * )( sizeof( ushort ) * fver_num_base ) );
+	glDrawElements( GL_TRIANGLES, face_num, GL_UNSIGNED_SHORT, ( const void * )( sizeof( mmdpiShaderIndex ) * fver_num_base ) );
+	//glDrawElements( GL_TRIANGLES, face_num, GL_UNSIGNED_INT, ( const void * )( sizeof( mmdpiShaderIndex ) * fver_num_base ) );
 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }

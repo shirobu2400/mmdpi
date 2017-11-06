@@ -9,6 +9,8 @@
 
 #pragma once
 
+typedef		ushort	mmdpiShaderIndex;
+
 //#pragma pack( push, 1 )	//アラインメント制御をオフる
 
 //	頂点データ型
@@ -321,7 +323,7 @@ typedef struct tagMMDPI_BLOCK_FACE
 {
 	//	面情報群
 	dword				face_num;
-	ushort*				face;
+	mmdpiShaderIndex*		face;
 	
 	//	バッファID
 	GLuint				buffer_id;	

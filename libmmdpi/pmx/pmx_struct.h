@@ -104,7 +104,7 @@ typedef struct tagMMDPI_PMX_MATERIAL
 	float	Specular_scale;			//	Specular係数
 	float	Ambient[ 3 ];			//
 
-	BYTE	bitFlag;			
+	BYTE	bit_flag;			
 	//描画フラグ(8bit) - 各bit 0:OFF 1:ON
 	//0x01:両面描画, 0x02:地面影, 0x04:セルフシャドウマップへの描画, 0x08:セルフシャドウの描画, 
 	//0x10:エッジ描画
