@@ -57,10 +57,10 @@ void mmdpiModel::draw( void )
 	//	オプション
 	option_enable();
 
-	//	裏面描画
-	glDisable( GL_DEPTH_TEST );
-	glCullFace( GL_FRONT );
-	draw_main( 0 );
+	////	裏面描画
+	//glDisable( GL_DEPTH_TEST );
+	//glCullFace( GL_FRONT );
+	//draw_main( 0 );
 
 	//	本処理
 	glEnable( GL_DEPTH_TEST );
