@@ -19,8 +19,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 	iteration_num = ( iteration_num > _ik_range_ )? _ik_range_ : iteration_num ;
 
-	mmdpiVector4d		v0001( 0, 0, 0, 1 );
-			
+	mmdpiVector4d		v0001( 0, 0, 0, 1 );		
 	mmdpiVector4d		effect_pos_base	= mmdpiBone::get_global_matrix( nb ) * v0001;	//	IKの目指す目標位置	Effector
 					
 	for( uint j = 0; j < iteration_num; j ++ )
@@ -65,8 +64,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 
 			//	向かう度合
 			float	p = local_effect_dir.dot( local_target_dir );
-			if( 1 < p )			
-				p = 1;	//	arccos error!
+			p = ( p > 1 )? 1 : p ;	//	arccos error!
 
 			float	angle = acos( p );
 			if( angle > +npb->ik_radius_range ) 

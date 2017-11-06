@@ -193,7 +193,7 @@ char* mmdpiModel::get_bone_name( int index, int coding_is_sjis )
 		return 0x00;
 
 	MMDPI_BONE_INFO_PTR	this_bone = &mmdpiBone::bone[ index ];
-	if( coding_is_sjis )
+	if( coding_is_sjis && !is_pmd )
 		return this_bone->sjis_name;
 	return this_bone->name;
 }

@@ -62,8 +62,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			target_dir.normalize();
 
 			float	p = effect_dir.dot( target_dir );
-			if( 1 < p )
-				p = 1;	// arccos error!
+			p = ( p > 1 )? 1 : p ;	// arccos error!
 
 			float	angle = acos( p );
 			if( fabs( angle ) < 1e-4f )
