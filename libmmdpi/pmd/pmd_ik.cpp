@@ -5,11 +5,10 @@
 //	IK
 int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, MMDPI_PMD_BONE_INFO_PTR pbone )
 {
-	const int _ik_range_ = 16;	// 255 // MMDの仕様では255
-	
-	MMDPI_PMD_IK_INFO_PTR ik_one = ik;
+	const int		_ik_range_ = 255;	// 255 // MMDの仕様では255
+	MMDPI_PMD_IK_INFO_PTR	ik_one = ik;
 
-	uint		_iteration_num_ = ik_one->iterations;	//	
+	uint			_iteration_num_ = ik_one->iterations;	//	
 
 	_iteration_num_ = ( _iteration_num_ > _ik_range_ )? _ik_range_ : _iteration_num_ ;
 	mmdpiVector4d	v0( 0, 0, 0, 1 ), v1( 0, 0, 0, 1 );

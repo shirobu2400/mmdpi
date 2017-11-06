@@ -5,7 +5,7 @@
 //	IK
 int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index )
 {
-	const int	_ik_range_ = 16;	// 255 // MMDの仕様では255
+	const int	_ik_range_ = 255;	// 255 // MMDの仕様では255
 	const float	bottom_noise = 1e-6f;
 	
 	if( pbone[ bone_index ].ik_flag == 0 )
@@ -82,7 +82,7 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			else
 			{
 				axis = local_effect_dir.cross( local_target_dir );
-				if( axis.dot( axis ) < 1e-16f )	//	axis is zero vector.
+				if( axis.dot( axis ) < 1e-4f )	//	axis is zero vector.
 					break;
 				axis.normalize();
 			}
