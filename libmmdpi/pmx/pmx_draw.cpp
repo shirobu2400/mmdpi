@@ -38,11 +38,11 @@ void mmdpiPmxDraw::draw( void )
 		}
 	}
 
-	////	物理演算
-	//if( bullet_flag )	
-	//	this->advance_time_physical( mmdpiModel::get_fps() );
+	//	物理演算
+	if( bullet_flag )	
+		this->advance_time_physical( mmdpiModel::get_fps() );
 	
-	mmdpiModel::draw();
+	//mmdpiModel::draw();
 }
 
 //	付与親ボーン処理
