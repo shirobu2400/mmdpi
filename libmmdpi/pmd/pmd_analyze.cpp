@@ -87,7 +87,7 @@ int mmdpiPmdAnalyze::analyze( void )
 			m->color.r = mpmx->diffuse_color[ 0 ];
 			m->color.g = mpmx->diffuse_color[ 1 ];
 			m->color.b = mpmx->diffuse_color[ 2 ];
-			m->color.a = 1 - m->opacity;
+			m->color.a = 0;
 		}
 	}
 	
