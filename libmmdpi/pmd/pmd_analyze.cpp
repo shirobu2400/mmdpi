@@ -85,7 +85,7 @@ int mmdpiPmdAnalyze::analyze( void )
 			m->opacity = mpmx->alpha;
 		}
 	}
-
+	
 	return 0;
 }
 
@@ -176,10 +176,11 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 		mmdpiModel::bone[ i ].length = 0;
 
 	
-		mmdpiModel::bone[ i ].name = new char[ strlen( pbone[ i ].bone_name ) + 1 ];
-		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name ); mmdpiModel::bone[ i ].name[ 20 ] = '\0';
+		mmdpiModel::bone[ i ].name = new char[ 32 ];
+		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name ); 
+		mmdpiModel::bone[ i ].name[ 20 ] = '\0';
 	}
-
+	
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )
 		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
 

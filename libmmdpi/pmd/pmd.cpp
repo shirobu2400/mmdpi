@@ -8,9 +8,9 @@ int mmdpiPmd::load( const char* pmd_name )
 		return -1;
 
 	mmdpiModel::create();
-	
+
 	mmdpiPmdAnalyze::create_bone( mmdpiPmdLoad::bone, mmdpiPmdLoad::bone_num );
-		
+	
 	//	bullet
 	//	Make bone matrix
 	this->global_matrix();
