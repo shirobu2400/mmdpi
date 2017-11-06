@@ -48,6 +48,45 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 			float			radius_range = 1;
 			float			angle = 0;
 
+			
+			//	ローカル座標系へ変換
+			local_effect_pos = inv_coord * effect_pos_base;
+			local_target_pos = inv_coord * target_pos_base;
+	
+			mmdpiVector3d		local_effect_dir( local_effect_pos.x, local_effect_pos.y, local_effect_pos.z );
+			mmdpiVector3d		local_target_dir( local_target_pos.x, local_target_pos.y, local_target_pos.z );
+	
+			local_effect_dir.normalize();
+			local_target_dir.normalize();
+
+			//	向かう度合
+			float	p = local_effect_dir.dot( local_target_dir );
+			if( p > 1 )
+				break;	//	arccos error!
+
+			angle = acos( p );
+			if( angle > +npb->ik_radius_range ) 
+				angle = +npb->ik_radius_range, radius_range = 0;
+			if( angle < -npb->ik_radius_range ) 
+				angle = -npb->ik_radius_range, radius_range = 0;		
+
+			if( npb->const_axis_flag )
+			{
+				//	回転軸制御（ボーン指定）
+				for( int k = 0; k < 3; k ++ )
+					axis[ k ] = npb->axis_vector[ k ];
+			}
+			else
+			{
+				axis = local_effect_dir.cross( local_target_dir );
+				if( axis.dot( axis ) < 1e-4f )	//	axis is zero vector.
+					break;
+				axis.normalize();
+			}
+			
+			//	Rotation matrix create.
+			rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
+						
 					
 			//	回転軸制御（IK上限）
 			if( my_ik && my_ik->rotate_limit_flag )
@@ -56,46 +95,6 @@ int mmdpiPmxIk::ik_execute( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pb
 					( mmdpiVector3d_ptr )my_ik->top, 
 					( mmdpiVector3d_ptr )my_ik->bottom,
 					npb->ik_radius_range );
-			}
-			else
-			{
-				//	ローカル座標系へ変換
-				local_effect_pos = inv_coord * effect_pos_base;
-				local_target_pos = inv_coord * target_pos_base;
-	
-				mmdpiVector3d		local_effect_dir( local_effect_pos.x, local_effect_pos.y, local_effect_pos.z );
-				mmdpiVector3d		local_target_dir( local_target_pos.x, local_target_pos.y, local_target_pos.z );
-	
-				local_effect_dir.normalize();
-				local_target_dir.normalize();
-
-				//	向かう度合
-				float	p = local_effect_dir.dot( local_target_dir );
-				if( p > 1 )
-					break;	//	arccos error!
-
-				angle = acos( p );
-				if( angle > +npb->ik_radius_range ) 
-					angle = +npb->ik_radius_range, radius_range = 0;
-				if( angle < -npb->ik_radius_range ) 
-					angle = -npb->ik_radius_range, radius_range = 0;		
-
-				if( npb->const_axis_flag )
-				{
-					//	回転軸制御（ボーン指定）
-					for( int k = 0; k < 3; k ++ )
-						axis[ k ] = npb->axis_vector[ k ];
-				}
-				else
-				{
-					axis = local_effect_dir.cross( local_target_dir );
-					if( axis.dot( axis ) < 1e-4f )	//	axis is zero vector.
-						break;
-					axis.normalize();
-				}
-			
-				//	Rotation matrix create.
-				rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
 			}
 	
 			//	反映

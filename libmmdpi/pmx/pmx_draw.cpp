@@ -48,26 +48,18 @@ void mmdpiPmxDraw::draw( void )
 //	付与親ボーン処理
 int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR pbone, int bone_index, int grant_bone_index )
 {
-	MMDPI_BONE_INFO_PTR	grant_bone;	// 追従のお手本とするボーン
-	MMDPI_BONE_INFO_PTR	target_bone;	// 追従を行うボーン
-	float			rate;
-
-
-	if( !( pbone[ bone_index ].rotation_grant_flag || pbone[ bone_index ].translate_grant_flag ) )
-		return 0;
-
-	target_bone	= &bone[ bone_index ];
-	grant_bone	= &bone[ grant_bone_index ];
-	rate		= pbone[ bone_index ].grant_parent_rate;
-
 	if( pbone[ bone_index ].rotation_grant_flag )
 	{
 		// grant_bone が後の方で出てくるのはMMDでは更新外
 		if( grant_bone_index < bone_index )
 		{
-			mmdpiMatrix			rotation1_matrix;
-			mmdpiVector3d			rotate1;
-			float				rate1 = rate;
+			float			rate		= pbone[ bone_index ].grant_parent_rate;
+			MMDPI_BONE_INFO_PTR	target_bone	= &bone[ bone_index ];
+			MMDPI_BONE_INFO_PTR	grant_bone	= &bone[ grant_bone_index ];
+		
+			mmdpiMatrix		rotation1_matrix;
+			mmdpiVector3d		rotate1;
+			float			rate1 = rate;
 
 			grant_bone->bone_mat.get_rotation( &rotate1.x, &rotate1.y, &rotate1.z );
 			rotation1_matrix.rotation( rotate1.x * rate1, rotate1.y * rate1, rotate1.z * rate1 );
@@ -85,6 +77,10 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 
 	if( pbone[ bone_index ].translate_grant_flag )
 	{
+		float			rate		= pbone[ bone_index ].grant_parent_rate;
+		MMDPI_BONE_INFO_PTR	target_bone	= &bone[ bone_index ];
+		MMDPI_BONE_INFO_PTR	grant_bone	= &bone[ grant_bone_index ];
+		
 		mmdpiVector3d		position = grant_bone->bone_mat.get_transform();
 		position = position * rate;
 		target_bone->bone_mat.transelation( position.x, position.y, position.z );

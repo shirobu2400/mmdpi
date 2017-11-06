@@ -304,11 +304,12 @@ int mmdpiAdjust::adjust_face( dword* face, dword face_num, dword vertex_num )
 			//	0xffff を超えようとしたら境界である。
 			for( int i = 0; i < 3; i ++ )
 			{
-				if( face[ jp + i ] - fmin_vid >= vertex_range )
+				if( ( signed )face[ jp + i ] - fmin_vid >= ( signed )vertex_range )
 				{
 					new_face_pos.push_back( jp );
-					prev_face_pos = face_pos;
 					fmin_vid = face[ jp + i ];
+					prev_face_pos = face_pos;
+					break;
 				}
 			}
 		}
