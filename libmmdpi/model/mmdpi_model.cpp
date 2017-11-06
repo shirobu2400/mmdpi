@@ -110,6 +110,10 @@ int mmdpiModel::draw_main( int cull_flag )
 			else
 				set_edge_size( 0 );
 
+			//	色設定
+			mmdpiShader::set_color( &m->color );
+
+			//	描画
 			mmdpiShader::draw( face->buffer_id, m->face_top, m->face_num );
 		}
 	}

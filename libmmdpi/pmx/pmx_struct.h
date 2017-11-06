@@ -99,17 +99,17 @@ typedef struct tagMMDPI_PMX_MATERIAL
 	char*	name;				//	材質名
 	char*	eng_name;			//	材質名(英)
 
-	float	Diffuse[ 4 ];		//	
-	float	Specular[ 3 ];		//
-	float	Specular_scale;		//	Specular係数
-	float	Ambient[ 3 ];		//
+	float	Diffuse[ 4 ];			//	
+	float	Specular[ 3 ];			//
+	float	Specular_scale;			//	Specular係数
+	float	Ambient[ 3 ];			//
 
 	BYTE	bitFlag;			
 	//描画フラグ(8bit) - 各bit 0:OFF 1:ON
 	//0x01:両面描画, 0x02:地面影, 0x04:セルフシャドウマップへの描画, 0x08:セルフシャドウの描画, 
 	//0x10:エッジ描画
 
-	float	edge_color[ 4 ];	//	エッジ色
+	float	edge_color[ 4 ];		//	エッジ色
 	float	edge_size;			//	エッジサイズ
 
 	dword	texture_index;			//	通常テクスチャ, テクスチャテーブルの参照Index
@@ -136,7 +136,11 @@ typedef struct tagMMDPI_PMX_MATERIAL
 	char*	toon_name;
 	char*	toon_name_sjis;
 
-	float	anti_clear_rate;	//	非透明度 透明:0 - 1:非透明
+	float	anti_clear_rate;		//	非透明度 透明:0 - 1:非透明
+
+// 勝手につけた情報
+	char*	sjis_name;			//	材質名
+	int	has_texture;			//	テクスチャを持ってるか？
 
 } MMDPI_PMX_MATERIAL, *MMDPI_PMX_MATERIAL_PTR;
 

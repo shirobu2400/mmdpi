@@ -50,7 +50,8 @@ int mmdpiShader::default_shader( void )
 	"uniform mat4			BoneMatrix[ %d ];\n"
 	"attribute vec4			BoneIndices;	//	ボーンインデックス\n"
 	"\n"
-	"varying   vec4			v_color;\n"
+	"uniform   vec4			gColor;\n"
+	"varying   vec4			Color;\n"
 	"\n"
 	"// 頂点シェーダメイン関数\n"
 	"void main( void )\n"
@@ -85,10 +86,11 @@ int mmdpiShader::default_shader( void )
 #endif
 	"	gl_Position = ProjectionMatrix * skinTransform * vec4( vertex00, 1 );\n"
 	"	v_Uv = g_Uv;\n"
-	"	v_color = vec4( 1.0, 1.0, 1.0, 0.0 );"
+	"	Color = gColor;\n"
+	//"	Color = vec4( 1.0, 1.0, 1.0, 0.0 );\n"
 #ifdef _MMDPI_OUTLINE_
 	"	if( Edge_size > 0.00001 )\n"
-	"		v_color = Edge_color;//vec4( 0.0, 0.0, 0.0, 1.0 );\n"
+	"		Color = Edge_color;//vec4( 0.0, 0.0, 0.0, 1.0 );\n"
 #endif
 	"}\n"
 	"\n", _MMDPI_MATERIAL_USING_BONE_NUM_ );
@@ -101,7 +103,7 @@ int mmdpiShader::default_shader( void )
 	"uniform	sampler2D	TexToon;\n"
 	"varying	vec4		v_Uv;\n"
 	"\n"
-	"varying	vec4		v_color;\n"
+	"varying	vec4		Color;\n"
 	"uniform	float		Alpha;\n"
 	"\n"
 	"void main( void )\n"
@@ -114,8 +116,8 @@ int mmdpiShader::default_shader( void )
 	"		tc.a = 1.0;\n"
 	"		color = color * tc;\n"
 	"	}\n"
-	//"	gl_FragColor = color * ( 1.0 - v_color.a ) + v_color * v_color.a;\n"
-	"	gl_FragColor = color;\n"
+	"	gl_FragColor = color * ( 1.0 - Color.a ) + Color * ( Color.a );\n"
+	//"	gl_FragColor = color;\n"
 	"}\n"
 	;
 	
@@ -149,16 +151,20 @@ void mmdpiShader::shader_setting( void )
 	vertex_id = glGetAttribLocation( program, ( GLchar* )"Vertex" );
 	glEnableVertexAttribArray( vertex_id );
 
+	//	UV
+	uv_id = glGetAttribLocation( program, ( GLchar* )"g_Uv" );
+	glEnableVertexAttribArray( uv_id );
+
 	//	法線
 	normal_id = 0;
 #ifdef _MMDPI_OUTLINE_
 	normal_id = glGetAttribLocation( program, ( GLchar* )"Normal" );
 	glEnableVertexAttribArray( normal_id );
 #endif
-
-	//	UV
-	uv_id = glGetAttribLocation( program, ( GLchar* )"g_Uv" );
-	glEnableVertexAttribArray( uv_id );
+	//	色
+	color_id = glGetUniformLocation( program, ( GLchar* )"gColor" );
+	mmdpiColor	color;
+	set_color( &color );
 
 	//	基本的なテクスチャ
 	tex2d_01_id = glGetUniformLocation( program, ( GLchar* )"Tex01" );
@@ -204,6 +210,7 @@ void mmdpiShader::shader_setting( void )
 	shader_off();
 }
 
+//	シェーダ生成
 int mmdpiShader::create_shader( GLuint shader_type, const GLchar* src )
 {
 	int		shader_size = strlen( ( const char * )src );
@@ -230,6 +237,7 @@ int mmdpiShader::create_shader( GLuint shader_type, const GLchar* src )
 	return 0;
 }
 
+//	シェーダリンク
 int mmdpiShader::link( void )
 {
 	if( program )
@@ -255,6 +263,7 @@ int mmdpiShader::link( void )
 	return 0;
 }
 
+//	シェーダバッファに頂点データを設定
 void mmdpiShader::set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p, dword vertex_num )
 {
 	this->vertex_num = vertex_num;
@@ -276,6 +285,7 @@ void mmdpiShader::set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p
 	glBufferData( GL_ARRAY_BUFFER, sizeof( MMDPI_VERTEX ) * vertex_num, a_vertex_p, GL_STATIC_DRAW );
 }
 
+//	シェーダバッファに面データを設定
 void mmdpiShader::set_face_buffers( int buffer_id, ushort* face_p, dword face_num )
 {
 	//	Face
@@ -283,6 +293,7 @@ void mmdpiShader::set_face_buffers( int buffer_id, ushort* face_p, dword face_nu
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( ushort ) * face_num, face_p, GL_STATIC_DRAW );
 }
 
+//	シェーダバッファにデータ領域を設定
 void mmdpiShader::set_buffer( int buffer_id )
 {
 	dword		vertex_start = 0;
@@ -296,7 +307,7 @@ void mmdpiShader::set_buffer( int buffer_id )
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) ) );
 
 	glVertexAttribPointer( bone_indices_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 1 ) );
 
 	glVertexAttribPointer( bone_weights_id, 4, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 2 ) );
@@ -309,7 +320,7 @@ void mmdpiShader::set_buffer( int buffer_id )
 #ifdef _MMDPI_USINGSKIN_
 	//	スキン
 	glVertexAttribPointer( skinvertex_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) * 2 + sizeof( mmdpiVector4d ) * 3 ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) * 2 + sizeof( mmdpiVector4d ) * 4 ) );
 #endif
 
 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
@@ -356,6 +367,11 @@ void mmdpiShader::set_alpha_for_shader( GLfloat alpha )
 	glUniform1f( alpha_id, alpha );
 }
 
+void mmdpiShader::set_color( mmdpiColor* color )
+{
+	glUniform4f( color_id, color->r, color->g, color->b, color->a );
+}
+
 void mmdpiShader::set_edge_size( float edge )
 {
 #ifdef _MMDPI_OUTLINE_
@@ -382,6 +398,7 @@ mmdpiShader::mmdpiShader()
 
 	vertex_id	= 0;
 	normal_id	= 0;
+	color_id	= 0;
 	uv_id		= 0;
 	bone_weights_id	= 0;
 	bone_indices_id	= 0;

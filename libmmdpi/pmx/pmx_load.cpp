@@ -135,6 +135,8 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		//	Name
 		uint	buf_len;
 		material[ i ].name = text_buf( buf, &buf_len );
+		material[ i ].sjis_name = new char[ cconv_utf8_to_sjis( 0x00, material[ i ].name ) + 4 ];
+		cconv_utf8_to_sjis( material[ i ].sjis_name, material[ i ].name );
 
 		//	English name
 		material[ i ].eng_name = text_buf( buf );
@@ -774,6 +776,7 @@ mmdpiPmxLoad::~mmdpiPmxLoad()
 			delete[] material[ i ].toon_name;
 			delete[] material[ i ].eng_name;
 			delete[] material[ i ].comment;
+			delete[] material[ i ].sjis_name;
 		}
 		delete[] material;
 	}

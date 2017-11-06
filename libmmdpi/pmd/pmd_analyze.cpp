@@ -83,6 +83,11 @@ int mmdpiPmdAnalyze::analyze( void )
 			m->edge_color.a = 1;
 
 			m->opacity = mpmx->alpha;
+
+			m->color.r = mpmx->diffuse_color[ 0 ];
+			m->color.g = mpmx->diffuse_color[ 1 ];
+			m->color.b = mpmx->diffuse_color[ 2 ];
+			m->color.a = 1 - m->opacity;
 		}
 	}
 	
@@ -105,7 +110,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
 		for( dword i = 0; i < f->material_num; i ++ )
 		{
-			MMDPI_MATERIAL_PTR		m		= f->material[ i ];
+			MMDPI_MATERIAL_PTR	m	= f->material[ i ];
 			MMDPI_PMD_MATERIAL_PTR	mpmx	= &material[ m->pid ];
 			char*	texture_file_name;
 

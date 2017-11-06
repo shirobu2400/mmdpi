@@ -57,8 +57,7 @@ int mmdpiAdjust::vertex_bone_over_range( uint* dev_pos, uint* using_bone_num, ui
 
 //	新マテリアルの作成
 //	シェーダで使うボーン数が _MMDPI_MATERIAL_USING_BONE_NUM_ 未満の個数になるように頂点を分割
-int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR material,
-										dword bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex )
+int mmdpiAdjust::adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR material,	dword bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex )
 {
 	//	再設定後のマテリアルカウント
 	//	マテリアルごとの使用ボーンが_MMDPI_MATERIAL_USING_BONE_NUM_ - 1 以下までにする

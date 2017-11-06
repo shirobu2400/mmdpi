@@ -32,8 +32,7 @@ private :
 public :
 
 	int				adjust_polygon( dword* face, dword face_num, MMDPI_BLOCK_VERTEX_PTR vertex, dword vertex_num );
-	int				adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR material,
-								dword bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex );
+	int				adjust_material_bone( dword material_num, MMDPI_MATERIAL_PTR material, dword bone_num, dword* face, MMDPI_BLOCK_VERTEX_PTR vertex );
 	int				adjust_face( dword* face, dword face_num, dword vertex_num );
 	int				adjust_bone( void );
 	void				update_matrix( MMDPI_BONE_INFO_PTR bone, dword bone_num );

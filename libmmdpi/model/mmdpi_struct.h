@@ -301,6 +301,9 @@ typedef struct tagMMDPI_MATERIAL
 	float				edge_size;
 	mmdpiColor			edge_color;
 
+	//	色
+	mmdpiColor			color;
+
 	tagMMDPI_MATERIAL()
 	{
 		dev_flag = 0;

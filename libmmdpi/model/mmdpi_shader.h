@@ -52,10 +52,11 @@ private :
 	//	ProjectionMatrix
 	GLint		pm_id;
 
-    //      頂点ID
+	//      頂点ID
 	GLint		vertex_id;
 	GLint		uv_id;
 	GLint		normal_id;
+	GLint		color_id;
 	GLint		skinvertex_id;
 
 	//	テクスチャID
@@ -99,6 +100,7 @@ public :
 		
 	void		set_edge_size( float edge );
 	void		set_edge_color( float* edge_cloor );
+	void		set_color( mmdpiColor* color );
 	void		send_material_info( MMDPI_MATERIAL_PTR material );
 	void		set_alpha_for_shader( GLfloat alpha );
 	
