@@ -62,7 +62,8 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			target_dir.normalize();
 
 			float	p = effect_dir.dot( target_dir );
-			p = ( p > 1 )? 1 : p ;	// arccos error!
+			if( p > 1 )
+				break;	// arccos error!
 
 			float	angle = acos( p );
 			if( fabs( angle ) < 1e-4f )
@@ -99,6 +100,8 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 
 			//	移動した距離を計算
 			rotation_distance += fabs( angle ) * radius_range;
+			if( radius_range < 1e-4f )
+				break;
 		}
 
 		//	インバースキネマティクスの補完が必要なくなった(反映する距離が小さい場合)
