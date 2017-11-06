@@ -64,10 +64,10 @@ linux x64 では-Dx64=onオプションを付けてください。<br>
 <tr><td>void mmdpi::draw( void ) </td><td> 表示</td></tr>
 <tr><td>void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix ) </td><td> 指定されたボーンのindexと対応するボーンの姿勢行列を matrix で上書き。</td></tr>
 <tr><td>void mmdpi::set_bone_matrix( const char* bone_name, mmdpiMatrix& matrix ) </td><td> 指定されたボーンの名と対応するボーンの姿勢行列を matrix で上書き。</td></tr>
-<tr><td>mmdpiVmd* mmdpi::get_vmd( int index ) </td><td> vmd情報の取得。</td></tr>
-<tr><td>*[mmdpi 変数名]->get_vmd( 0 ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
-<tr><td>*[mmdpi 変数名]->get_vmd( 0 ) = frame </td><td>指定されたフレームにジャンプ </td></tr>
-<tr><td>[mmdpi 変数名]->get_vmd( 0 )->is_end() </td><td>モーションの終了判定 </td></tr>
+<tr><td>mmdpiVmd* mmdpi::get_vmd( int index ) </td><td> vmd情報の取得。indexはvmdを複数読み込んだうちの読み込んだ順番でvmdを変更できる。</td></tr>
+<tr><td>*[mmdpi 変数名]->get_vmd( int index ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
+<tr><td>*[mmdpi 変数名]->get_vmd( int index ) = frame </td><td>指定されたフレームにジャンプ </td></tr>
+<tr><td>[mmdpi 変数名]->get_vmd( int index )->is_end() </td><td>モーションの終了判定 </td></tr>
 <tr><td>void　mmdpi::set_fps( int fps ) </td><td> モーション実行時のfps を指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
