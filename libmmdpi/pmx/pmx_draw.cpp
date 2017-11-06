@@ -42,7 +42,7 @@ void mmdpiPmxDraw::draw( void )
 	if( bullet_flag )	
 		this->advance_time_physical( mmdpiModel::get_fps() );
 	
-	//mmdpiModel::draw();
+	mmdpiModel::draw();
 }
 
 //	付与親ボーン処理

@@ -417,7 +417,6 @@ void mmdpiAdjust::update_matrix( MMDPI_BONE_INFO_PTR bone, dword bone_num )
 		for( uint j = 0; j < b_material[ i ].bone_list_num; j ++ )
 		{
 			int	bone_index = ( int )b_material[ i ].bone_list[ j ];
-
 			b_material[ i ].matrix[ j ] = bone[ bone_index ].local_matrix;
 		}
 	}
