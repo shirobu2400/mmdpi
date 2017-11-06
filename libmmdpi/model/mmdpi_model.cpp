@@ -57,10 +57,10 @@ void mmdpiModel::draw( void )
 	//	オプション
 	option_enable();
 
-	////	裏面描画
-	//glDisable( GL_DEPTH_TEST );
-	//glCullFace( GL_FRONT );
-	//draw_main( 0 );
+	//	裏面描画
+	glDisable( GL_DEPTH_TEST );
+	glCullFace( GL_FRONT );
+	draw_main( 0 );
 
 	//	本処理
 	glEnable( GL_DEPTH_TEST );
@@ -91,8 +91,8 @@ int mmdpiModel::draw_main( int cull_flag )
 			glActiveTexture( GL_TEXTURE0 );
 
 			init_material();
-			if( m->texture.get_id() > 0 )
-				glBindTexture( GL_TEXTURE_2D, m->texture.get_id() );
+			//if( m->texture.get_id() > 0 )
+			//	glBindTexture( GL_TEXTURE_2D, m->texture.get_id() );
 			//if( m->texture.get_id() > 0 )
 			//	glUniform1f( m->texture.get_id(), 0 );
 
