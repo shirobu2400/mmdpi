@@ -91,8 +91,8 @@ int mmdpiModel::draw_main( int cull_flag )
 			glActiveTexture( GL_TEXTURE0 );
 
 			init_material();
-			//if( m->texture.get_id() > 0 )
-			//	glBindTexture( GL_TEXTURE_2D, m->texture.get_id() );
+			if( m->texture.get_id() > 0 )
+				glBindTexture( GL_TEXTURE_2D, m->texture.get_id() );
 			//if( m->texture.get_id() > 0 )
 			//	glUniform1f( m->texture.get_id(), 0 );
 
