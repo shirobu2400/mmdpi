@@ -1,5 +1,5 @@
 # mmdpi
-Miku_Miku_Pi(mmdpi)v0.1 
+Miku_Miku_Pi(mmdpi)v1.0
 
 shirobu(または wq2400kskm)と申します。<br>
 限られた処理系(Raspberry Pi 等)でも <br>
