@@ -19,10 +19,7 @@ public:
 	MMDPI_PIECE*			b_piece;
 
 	mmdpiShader			( *shader );
-	
-	int				option_enable( void );
-	int				option_disable( void );
-	
+
 	int				draw( void );
 
 	int				draw_main( int cull_flag );

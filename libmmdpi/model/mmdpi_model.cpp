@@ -31,18 +31,73 @@ void mmdpiModel::draw( void )
 	for( dword i = 0; i < mesh.size(); i ++ )
 		mesh[ i ]->update_matrix( mmdpiBone::bone, mmdpiBone::bone_num );
 
+	//	Using My Shader
+	shader_on();
+
 	//	ProjectioMatrix
 	mmdpiShader::set_projection_matrix( &projection_matrix );
 
-	//	Using My Shader
-	shader_on();
+	//	オプション
+	option_enable();
 
 	//	表示
 	for( dword i = 0; i < mesh.size(); i ++ )
 		mesh[ i ]->draw();
+		
+	//	オプション
+	option_disable();
 
 	//	Not Using My Shader
 	shader_off();
+}
+
+
+int mmdpiModel::option_enable( void )
+{
+	//	描画処理
+	GLfloat	light_ambient[] = { 0.3f, 0.3f, 0.3f, 1 };
+	GLfloat	light_diffuse[] = { 0.7f, 0.7f, 0.7f, 1 };
+	GLfloat	light_specular[] = { 0.2f, 0.2f, 0.2f, 1 };
+
+
+	glEnable( GL_TEXTURE_2D );	//	テクスチャ
+
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
+
+	//	カリング
+	//glDisable( GL_CULL_FACE );		//	カリング無効
+	glEnable( GL_CULL_FACE );		//	CCWでカリング(反時計回り)
+	glFrontFace( GL_CCW );
+	glCullFace( GL_FRONT );
+
+	//glEnable( GL_ALPHA_TEST );
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_BLEND );
+	//	GL_SRC_ALPHA : (As/kA,As/kA,As/kA,As/kA)
+	//	GL_ONE_MINUS_SRC_ALPHA : (1,1,1,1)-(As/kA,As/kA,As/kA,As/kA)
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	//glBlendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA );
+
+	//	テクスチャワープ
+	//glEnable( GL_TEXTURE_GEN_S );
+	//glEnable( GL_TEXTURE_GEN_T );
+	//glEnable( GL_TEXTURE_GEN_R );
+	//glEnable( GL_TEXTURE_GEN_Q );
+
+	return 0;
+}
+
+int mmdpiModel::option_disable( void )
+{
+	glDisable( GL_TEXTURE_2D );
+	glDisable( GL_CULL_FACE );
+
+	glDisable( GL_BLEND );
+	glDisable( GL_DEPTH_TEST );
+	//glDisable( GL_ALPHA_TEST );
+
+	return 0;
 }
 
 void mmdpiModel::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )

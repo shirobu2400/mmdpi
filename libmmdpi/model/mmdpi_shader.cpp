@@ -306,7 +306,7 @@ void mmdpiShader::set_buffer( int buffer_id )
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) ) );
 
 	glVertexAttribPointer( bone_indices_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 1 ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) ) );
 
 	glVertexAttribPointer( bone_weights_id, 4, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 2 ) );

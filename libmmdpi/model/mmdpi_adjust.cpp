@@ -138,7 +138,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 				v.nor		= vertex->nor[ old_vi ];
 				v.uv		= vertex->uv[ old_vi ];
 				v.weight	= vertex->weight[ old_vi ];
-				v.index		= mmdpiVector4d( 0, 0, 0,0 );
+				v.index		= mmdpiVector4d( 0, 0, 0, 0 );
 
 				//	生データの頂点から新しい頂点を求めるリストに新しい頂点の位置を保存
 				oldv_2_newv[ old_vi ] = new_vi;
@@ -187,21 +187,6 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			new_face.push_back( new_vi );
 		}
 	}
-
-	//mmdpiMesh*	mesh_temp = new mmdpiMesh( this );
-	//if( mesh_temp == 0x00 )
-	//	return -1;
-
-	////	メッシュ設定
-	//mesh_temp->id = mesh.size();
-	//mesh_temp->set_vertex( &new_vertex[ 0 ], new_vertex.size() );	// &vector array[ 0 ] でベクターを配列化
-	//mesh_temp->set_face( &new_face[ 0 ], new_face.size() );
-	//mesh_temp->set_material( material_id, &material[ material_id ] );
-	//mesh_temp->set_boneid( new_bone_list, bone_counter );
-
-	////	メッシュを追加
-	//mesh.push_back( mesh_temp );
-
 
 	delete[] oldv_2_newv;
 	delete[] bone_list;

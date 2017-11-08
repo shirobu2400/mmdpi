@@ -16,6 +16,9 @@ private :
 	map<const string, uint>		bone_name2index_utf8;		// bone 名 to index
 	string*				bone_name;
 	
+	int				option_enable( void );
+	int				option_disable( void );
+
 public :
 	virtual int			create( void );
 	virtual int			set_bone_name2index( void );
