@@ -17,7 +17,7 @@ protected :
 	mmdpiModel*			pmm;
 	mmdpiPmx*			pmx;
 	mmdpiPmd*			pmd;
-	vector< mmdpiVmd* >		vmd;
+	vector<mmdpiVmd*>		vmd;
 	
 public :
 

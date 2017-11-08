@@ -7,8 +7,6 @@ int mmdpiPmx::load( const char* pmx_name )
 	if( mmdpiPmxAnalyze::load( pmx_name ) )
 		return -1;
 
-	mmdpiModel::create();
-
 	mmdpiPmxAnalyze::create_bone( mmdpiPmxLoad::bone, mmdpiPmxLoad::bone_num );
 		
 	//	bullet

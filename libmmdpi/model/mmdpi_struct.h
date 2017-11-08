@@ -10,6 +10,7 @@
 #pragma once
 
 typedef		ushort	mmdpiShaderIndex;
+//typedef		uint	mmdpiShaderIndex;
 
 //#pragma pack( push, 1 )	//アラインメント制御をオフる
 
@@ -260,87 +261,36 @@ typedef struct tagMMDPI_IMAGE
 
 } MMDPI_IMAGE, *MMDPI_IMAGE_PTR;
 
-//	材質データ型
-//	これはデータ群ではない
+//	材質情報データ
 typedef struct tagMMDPI_MATERIAL
 {
-	//	マテリアルの担当する頂点のはじめ
 	dword				face_top;
+	dword				face_num;
+	MMDPI_IMAGE			texture;
+	MMDPI_IMAGE			toon_texture;
+} MMDPI_MATERIAL, *MMDPI_MATERIAL_PTR;
 
-	//	マテリアルの担当する頂点数
-	dword				face_num;	
+//	メッシュのデータ群
+typedef struct tagMMDPI_PIECE
+{
+	dword				face_top;
+	dword				face_num;
+		
+	int				raw_material_id;
+	MMDPI_MATERIAL*			raw_material;
 
-	//	マテリアルに対応するインデックスバッファ
-	dword				face_id;
-
-	//	分割されたマテリアルのフラグ
-	int*				dev_flag;
-
-	//	所有ボーン数
-	ushort				bone_num;
-
-	//	分割前のマテリアル番号
-	//	本当のマテリアル位置
-	dword				pid;
-
-	//	使用するボーンリスト
 	dword				bone_list_num;
 	dword				bone_list[ _MMDPI_MATERIAL_USING_BONE_NUM_ ];
 
-	//	Using bone list
-	//	Where No Vertex Texture
 	mmdpiMatrix			matrix[ _MMDPI_MATERIAL_USING_BONE_NUM_ ];
 
-	MMDPI_IMAGE			texture;
-	
-	int				toon_flag;
-	MMDPI_IMAGE			toon_texture;
-
-	//	不透明度
-	float				opacity;
-
-	//	輪郭
+	mmdpiColor			color;
 	float				edge_size;
 	mmdpiColor			edge_color;
+	float				opacity;
 
-	//	色
-	mmdpiColor			color;
-
-	tagMMDPI_MATERIAL()
-	{
-		dev_flag = 0;
-		toon_flag = 0;
-	}
-	~tagMMDPI_MATERIAL()
-	{
-		delete[] dev_flag;
-	}
-
-} MMDPI_MATERIAL, *MMDPI_MATERIAL_PTR;
-
-//	面(face)集合データ型
-typedef struct tagMMDPI_BLOCK_FACE
-{
-	//	面情報群
-	dword				face_num;
-	mmdpiShaderIndex*		face;
 	
-	//	バッファID
-	GLuint				buffer_id;	
-		
-	//	頂点情報
-	dword				vertex_num;
-	MMDPI_VERTEX_PTR		vertex;
-	//MMDPI_BLOCK_VERTEX_PTR	vertex;
-	
-	//	マテリアル番号
-	dword				material_num;
-	MMDPI_MATERIAL_PTR*		material;
-
-	//	面を分解した位置
-	dword				face_divide_index;
-
-} MMDPI_BLOCK_FACE, *MMDPI_BLOCK_FACE_PTR;
+} MMDPI_PIECE;
 
 typedef struct tagMMDPI_BONE_INFO
 {

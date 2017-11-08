@@ -2,12 +2,10 @@
 #include "pmd.h"
 
 int mmdpiPmd::load( const char* pmd_name )
-{
+{	
 	//	読み込みと解析
 	if( mmdpiPmdAnalyze::load( pmd_name ) )
 		return -1;
-
-	mmdpiModel::create();
 
 	mmdpiPmdAnalyze::create_bone( mmdpiPmdLoad::bone, mmdpiPmdLoad::bone_num );
 	

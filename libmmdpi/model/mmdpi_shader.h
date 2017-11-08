@@ -102,7 +102,7 @@ public :
 	void		set_edge_size( float edge );
 	void		set_edge_color( float* edge_cloor );
 	void		set_color( mmdpiColor* color );
-	void		send_material_info( MMDPI_MATERIAL_PTR material );
+	void		send_bone( MMDPI_PIECE* piece );
 	void		set_alpha_for_shader( GLfloat alpha );
 	
 	void		set_buffer( int buffer_id );

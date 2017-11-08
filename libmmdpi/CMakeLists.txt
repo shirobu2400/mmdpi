@@ -31,6 +31,7 @@ set(libmmdpi_src
 	model/mmdpi_shader.cpp
 	model/mmdpi_adjust.cpp
 	model/mmdpi_bone.cpp
+	model/mmdpi_mesh.cpp
 
 	pmx/pmx_ik.cpp
 	pmx/pmx_load.cpp
@@ -58,6 +59,7 @@ set(libmmdpi_header
 	model/mmdpi_model.h
 	model/mmdpi_shader.h
 	model/mmdpi_struct.h
+	model/mmdpi_mesh.h
 
 	model/tools/bitmap.h
 	model/tools/get_bin.h

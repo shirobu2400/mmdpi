@@ -6,6 +6,8 @@ int mmdpiPmxAnalyze::load( const char *file_name )
 {
 	if( mmdpiPmxLoad::load( file_name ) )
 		return -1;
+	if( mmdpiModel::create() )
+		return -1;
 	return analyze();
 }
 
@@ -13,8 +15,13 @@ int mmdpiPmxAnalyze::load( const char *file_name )
 int mmdpiPmxAnalyze::analyze( void )
 {
 	adjust_material = new MMDPI_MATERIAL[ material_num ];
+	dword	face_top = 0;
 	for( dword i = 0; i < material_num; i ++ )
+	{
+		adjust_material[ i ].face_top = face_top;
 		adjust_material[ i ].face_num = material[ i ].fver_num;
+		face_top += material[ i ].fver_num;
+	}
 
 	adjust_vertex = new MMDPI_BLOCK_VERTEX();
 	if( adjust_vertex == 0x00 )
@@ -52,41 +59,36 @@ int mmdpiPmxAnalyze::analyze( void )
 	}
 
 	//	最適化
-	mmdpiAdjust::adjust_material_bone( material_num, adjust_material, mmdpiPmxLoad::bone_num, face, adjust_vertex );
-	mmdpiAdjust::adjust_polygon( face, face_num, adjust_vertex, mmdpiPmxLoad::vertex_num );
-	mmdpiAdjust::adjust_face( face, face_num, mmdpiPmxLoad::vertex_num );
-	mmdpiAdjust::adjust_bone();
-	
+	mmdpiAdjust::adjust( adjust_vertex, mmdpiPmxLoad::vertex_num, face, face_num, adjust_material, material_num, mmdpiBone::bone, mmdpiPmxLoad::bone_num );
+
 	//	テクスチャ
 	load_texture();
 			
 	//	マテリアル情報の保存
-	for( dword j = 0; j < get_face_num(); j ++ )
-	{
-		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
-		for( dword i = 0; i < f->material_num; i ++ )
-		{
-			MMDPI_MATERIAL_PTR		m	= f->material[ i ];
-			MMDPI_PMX_MATERIAL_PTR		mpmx	= &material[ m->pid ];
+	for( dword j = 0; j < mesh.size(); j ++ )
+	{		
+		MMDPI_PIECE*			m	= mesh[ j ]->b_piece;
+		MMDPI_PMX_MATERIAL_PTR		mpmx	= &material[ m->raw_material_id ];
 		
-			m->edge_size = mpmx->edge_size;
+		m->edge_size = mpmx->edge_size;
 
-			m->edge_color.r = mpmx->edge_color[ 0 ];
-			m->edge_color.g = mpmx->edge_color[ 1 ];
-			m->edge_color.b = mpmx->edge_color[ 2 ];
-			m->edge_color.a = mpmx->edge_color[ 3 ];
+		m->edge_color.r = mpmx->edge_color[ 0 ];
+		m->edge_color.g = mpmx->edge_color[ 1 ];
+		m->edge_color.b = mpmx->edge_color[ 2 ];
+		m->edge_color.a = mpmx->edge_color[ 3 ];
 
-			m->opacity = mpmx->anti_clear_rate;
+		m->opacity = mpmx->anti_clear_rate;
 
-			m->color.r = mpmx->Diffuse[ 0 ];
-			m->color.g = mpmx->Diffuse[ 1 ];
-			m->color.b = mpmx->Diffuse[ 2 ];
-			m->color.a = mpmx->Diffuse[ 3 ];
-			//	テクスチャ優先
-			if( mpmx->has_texture )
-				m->color.a = 0;
-		}
+		m->color.r = mpmx->Diffuse[ 0 ];
+		m->color.g = mpmx->Diffuse[ 1 ];
+		m->color.b = mpmx->Diffuse[ 2 ];
+		m->color.a = mpmx->Diffuse[ 3 ];
+
+		//	テクスチャ優先
+		if( mpmx->has_texture )
+			m->color.a = 0;
 	}
+
 	return 0;
 }
 
@@ -96,10 +98,11 @@ void mmdpiPmxAnalyze::load_texture( void )
 	dword	fver_num_base = 0;
 	long	ppid = -1;
 	dword	pi = 0;
+	uint	material_num = mesh.size();
 
 	//	一時的に読み込み
-	texture			= new MMDPI_IMAGE[ get_material_num() ];
-	toon_texture		= new MMDPI_IMAGE[ get_material_num() ];
+	texture			= new MMDPI_IMAGE[ material_num ];
+	toon_texture		= new MMDPI_IMAGE[ material_num ];
 
 	texture00		= new MMDPI_IMAGE[ texture_num ];
 	toon_texture00		= new MMDPI_IMAGE[ 10 ];
@@ -143,25 +146,21 @@ void mmdpiPmxAnalyze::load_texture( void )
 		toon_texture00[ i ].load( texture_file_name_full );
 	}
 
-	for( dword j = 0; j < get_face_num(); j ++ )
+	for( dword j = 0; j < mesh.size(); j ++ )
 	{
-		MMDPI_BLOCK_FACE_PTR	f = &get_face_block()[ j ];
-		for( dword i = 0; i < f->material_num; i ++ )
-		{
-			MMDPI_MATERIAL_PTR	m	= f->material[ i ];
-			MMDPI_PMX_MATERIAL_PTR	mpmx	= &material[ m->pid ];
+		MMDPI_PIECE*		m	= mesh[ j ]->b_piece;
+		MMDPI_PMX_MATERIAL_PTR	mpmx	= &material[ m->raw_material_id ];
 		
-			//	テクスチャの関連付け
-			mpmx->has_texture = 0;
-			if( mpmx->texture_index < texture_num )
-			{
-				m->texture.copy( texture00[ mpmx->texture_index ] );
-				mpmx->has_texture = 1;
-			}
-
-			if( mpmx->toon_texture_number < 10 )
-				m->toon_texture.copy( toon_texture00[ mpmx->toon_texture_number ] );
+		//	テクスチャの関連付け
+		mpmx->has_texture = 0;
+		if( mpmx->texture_index < texture_num )
+		{
+			m->raw_material->texture.copy( texture00[ mpmx->texture_index ] );
+			mpmx->has_texture = 1;
 		}
+
+		if( mpmx->toon_texture_number < 10 )
+			m->raw_material->toon_texture.copy( toon_texture00[ mpmx->toon_texture_number ] );
 	}
 
 	//	Pmx はモーフによる材質制御が存在する。

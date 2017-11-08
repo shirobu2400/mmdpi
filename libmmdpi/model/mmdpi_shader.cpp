@@ -281,7 +281,6 @@ void mmdpiShader::set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p
 	
 	/* バッファオブジェクトの名前を作る */
 	glBindBuffer( GL_ARRAY_BUFFER, buffers[ buffer_id ]->get_vertex() );
-
 	glBufferData( GL_ARRAY_BUFFER, sizeof( MMDPI_VERTEX ) * vertex_num, a_vertex_p, GL_STATIC_DRAW );
 }
 
@@ -344,17 +343,17 @@ void mmdpiShader::draw( int buffer_id, dword fver_num_base, dword face_num )
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }
 
-void mmdpiShader::send_material_info( MMDPI_MATERIAL_PTR material )
+void mmdpiShader::send_bone( MMDPI_PIECE* piece )
 {
 	GLfloat		matrix[ _MMDPI_MATERIAL_USING_BONE_NUM_ ][ 16 ] = { 0 };
 
-	for( uint i = 0; i < material->bone_list_num; i ++ )
+	for( uint i = 0; i < piece->bone_list_num; i ++ )
 	{
 		for( int j = 0; j < 16; j ++ )
-			matrix[ i ][ j ] = material->matrix[ i ][ j ];
+			matrix[ i ][ j ] = piece->matrix[ i ][ j ];
 	}
 
-	glUniformMatrix4fv( bone_matrix_id, material->bone_list_num, GL_FALSE, ( GLfloat * )matrix );
+	glUniformMatrix4fv( bone_matrix_id, piece->bone_list_num, GL_FALSE, ( GLfloat * )matrix );
 }
 
 void mmdpiShader::set_projection_matrix( mmdpiMatrix_ptr projection_matrix )

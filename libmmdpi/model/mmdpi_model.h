@@ -10,14 +10,8 @@ private :
 	int				is_pmd;
 	int				fps;
 
-	int				option_enable( void );
-	int				option_disable( void );
-	
 	mmdpiMatrix			projection_matrix;
 
-	// cull_flag : 表示面フラグ 表:1, 裏:0
-	int				draw_main( int cull_flag );
-	
 	map<const string, uint>		bone_name2index_sjis;		// bone 名 to index
 	map<const string, uint>		bone_name2index_utf8;		// bone 名 to index
 	string*				bone_name;

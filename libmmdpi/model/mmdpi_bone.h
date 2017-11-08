@@ -8,7 +8,7 @@
 
 #pragma once
 
-class mmdpiBone : public mmdpiShader, public mmdpiAdjust
+class mmdpiBone : public mmdpiAdjust
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	, public mmdpiBullet
 #endif	
@@ -40,18 +40,18 @@ protected :
 
 public :
 	
-	static mmdpiMatrix	get_global_matrix( MMDPI_BONE_INFO_PTR bone );
+	static mmdpiMatrix		get_global_matrix( MMDPI_BONE_INFO_PTR bone );
 	
-	void			refresh_bone_mat( void );
-	void			make_local_matrix( void );
+	void				refresh_bone_mat( void );
+	void				make_local_matrix( void );
 
-	int			set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );
+	int				set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );
 
-	int			make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset );
-	int			global_matrix( void );
-	mmdpiMatrix		make_global_matrix( int index );
+	int				make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset );
+	int				global_matrix( void );
+	mmdpiMatrix			make_global_matrix( int index );
 	
-	int			advance_time_physical( int fps = 30 );
+	int				advance_time_physical( int fps = 30 );
 	
 	dword get_bone_num( void )
 	{ 
