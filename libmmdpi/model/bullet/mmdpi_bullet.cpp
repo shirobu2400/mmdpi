@@ -231,8 +231,8 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	btScalar mass( weight );  // 質量0なら静的ボディ
 	btTransform rigid_trans = *trans;
 
-	//btDefaultMotionState* myMotionState = NULL;
-	btMotionState *myMotionState = NULL;
+	//btDefaultMotionState* myMotionState = 0x00;
+	btMotionState *myMotionState = 0x00;
 	if( kinematic_flag && rigid_info->kinematic_mode )
 		myMotionState = new btKinematicMotionState( rigid_trans, rigid_info->offset, 
 			rigid_info->kinematicMatrix );

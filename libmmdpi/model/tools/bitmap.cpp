@@ -14,10 +14,12 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	BITMAPINFOHEADER	bitmapInfoHeader;
 	BITMAPFILEHEADER	header;
 	GLubyte			temp = 0;
-	
+	GLuint			mask_color[ 4 ] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
+	GLuint			mask_shift[ 4 ] = { 0 };
+		
 
 	//　ファイルを開く
-	if ( ( fp = fopen( filename, "rb" ) ) == NULL )
+	if ( ( fp = fopen( filename, "rb" ) ) == 0x00 )
 	{
 		//cout << "Error : Connot open.\n";
 		//cout << "File Name : " << filename << endl;
@@ -47,49 +49,99 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	}
 
 	//　幅と高さを取得
-	width = bitmapInfoHeader.biWidth;
-	height = bitmapInfoHeader.biHeight;
+	width	= bitmapInfoHeader.biWidth;
+	height	= bitmapInfoHeader.biHeight;
 
 	//	bit幅
 	bitc = bitmapInfoHeader.biBitCount / 8;
-
+	
 	if( bitmapInfoHeader.biSizeImage == 0 )
 		bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * bitc;
+	
+	//	マスク読み込み
+	if( bitmapInfoHeader.biCompression == 3 )
+	{
+		if( fread( mask_color, 4, bitc, fp ) == 0 )
+		{
+			fclose( fp );
+			return -1;
+		}
 
+		//	マスクはシフトしなくてはいけないので
+		//	シフトする値を算出
+		//	
+		for( int i = 0; i < bitc; i ++ )
+		{
+			while( ( mask_color[ i ] >> mask_shift[ i ] ) > 0xff )
+				mask_shift[ i ] ++;
+		}
+	}
+
+	//	pixel 情報の最初へ
 	fseek( fp, header.bfOffBits, SEEK_SET );
 
 	//　データサイズを決定し，メモリを確保
 	bit_size = bitmapInfoHeader.biSizeImage;
-	bits = new GLubyte[ bit_size + 1 ];
 
-	//　エラーチェック
+	bits = new GLubyte[ bit_size + 1 ];	
 	if( bits == 0x00 )
 	{
-		//cout << "Error : Allocation error!\n";
+		//　エラーチェック
 		delete[] bits;
 		fclose( fp );
-
 		return -1;
 	}
 
-	//　ピクセルデータの読み込み
-	if( fread( bits, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
-	{
-		fclose( fp );
-		return -1;
-	}
+	switch( bitmapInfoHeader.biCompression )
+	{	
+	case 0:
+		//　ピクセルデータの読み込み
+		if( fread( bits, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
+		{
+			fclose( fp );
+			return -1;
+		}
 
-	//　BGR　→　RGBに変換
-	for( uint i = 0; i < bit_size; i += bitc )
-	{
-		temp = bits[ i + 0 ];
-		bits[ i + 0 ] = bits[ i + 2 ];
-		bits[ i + 2 ] = temp;
-	}
-	if( bitc == 4 )
-	{
+		// biCompression == 0 で無圧縮 BGR の順なので RGB に変換する
+		// 他の圧縮に関しては未実装
+		// BGR　→　RGBに変換
 		for( uint i = 0; i < bit_size; i += bitc )
-			bits[ i + 3 ] = 1;
+		{
+			temp = bits[ i + 0 ];
+			bits[ i + 0 ] = bits[ i + 2 ];
+			bits[ i + 2 ] = temp;
+		}
+		if( bitc == 4 )
+		{
+			for( uint i = 0; i < bit_size; i += bitc )
+				bits[ i + 3 ] = 0xff;
+		}
+
+		break;
+	case 3:
+		GLuint*		bits_dword = 0x00;
+		bits_dword = new GLuint[ bit_size + 1 ];
+		if( bits_dword == 0x00 )
+		{
+			fclose( fp );
+			return -1;
+		}
+		//　ピクセルデータの読み込み
+		if( fread( bits_dword, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
+		{
+			fclose( fp );
+			return -1;
+		}
+
+		// biCompression == 3 では
+		// 青のマスクが0x000000FFで 緑のマスクが0x0000FF00、赤が0x00FF0000 緑のマスクが0x07E0、赤が0xF800の"5-5-5 16-bit image
+		for( uint i = 0, c = 0; i < bit_size; i += bitc, c ++ )
+		{
+			for( int j = 0; j < bitc; j ++ )
+				bits[ i + j ] = ( bits_dword[ c ] & mask_color[ j ] ) >> mask_shift[ j ];
+		}
+		delete[] bits_dword;
+		break;
 	}
 
 	//　ファイルを閉じる
@@ -99,18 +151,16 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	return 0;
 }
 
-
 int MMDPI_BMP::load( const char *filename )
 {
 	if( ReadBMP( filename ) )
 		return -1;
 
-	internalFormat	= GL_RGB;
+	internal_format	= GL_RGB;
 	format		= GL_RGB;
-
 	if( bitc == 4 )
 	{
-		//internalFormat	= GL_RGBA;
+		//internal_format	= GL_RGBA;
 		format		= GL_RGBA;
 	}
 
@@ -123,8 +173,7 @@ int MMDPI_BMP::load( const char *filename )
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 	//	テクスチャの割り当て
-	//	gluBuild2DMipmaps( GL_TEXTURE_2D, internalFormat, width, height, format, GL_UNSIGNED_BYTE, bits );
-	glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, bits );  
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, bits );  
   
 	//	テクスチャの拡大、縮小方法
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
@@ -139,7 +188,7 @@ int MMDPI_BMP::load( const char *filename )
 	if( bits )
 	{
 		delete[] bits;
-		bits = NULL;
+		bits = 0x00;
 	}
 #endif
 
@@ -150,7 +199,7 @@ int MMDPI_BMP::load( const char *filename )
 GLuint	MMDPI_BMP::load( char *file_name )
 {
 	FILE*	 fp = fopen( file_name, "rb" );
-	if( fp == NULL ) 
+	if( fp == 0x00 ) 
 	{
 		printf( "stream did not open.\nFile is %s.\n", file_name );
 		return -1;
@@ -196,13 +245,13 @@ GLuint	MMDPI_BMP::load( char *file_name )
 
 BYTE* MMDPI_BMP::get_bits( void )
 {
-	return NULL;
+	return 0x00;
 	//return bits;
 }
 
 int MMDPI_BMP::draw( void )
 {
-	if( bits == NULL )
+	if( bits == 0x00 )
 		return -1;
 
 	glBitmap( width, height, 0, 0, 0, 0, bits );
@@ -215,7 +264,7 @@ int MMDPI_BMP::draw( void )
 */
 int MMDPI_BMP::draw( void )
 {
-	if( bits == NULL )
+	if( bits == 0x00 )
 		return -1;
 
 //	glBitmap( width, height, 0, 0, 0, 0, bits );
@@ -233,7 +282,7 @@ GLuint MMDPI_BMP::get_id( void )
 
 MMDPI_BMP::MMDPI_BMP()
 {
-	bits = NULL;
+	bits = 0x00;
 	width = 0;
 	height = 0;
 }

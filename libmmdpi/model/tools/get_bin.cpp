@@ -33,7 +33,7 @@ unsigned char* GetBin::get_bin( void *bin, int size )
 unsigned char* GetBin::get_bin2( void* bin, int buf_size, int next_size )
 {
 	if( ( unsigned int )( buf - buf_base + ( unsigned int )buf_size ) > ( unsigned int )buf_len )
-		return NULL;
+		return 0x00;
 
 	memset( bin, 0, buf_size );
 	memcpy( bin, ( void* )buf, next_size );
@@ -45,7 +45,7 @@ unsigned char* GetBin::get_bin2( void* bin, int buf_size, int next_size )
 int GetBin::load( const char *file_name )
 {
 	FILE*	fp = fopen( file_name, "rb" );
-	if( fp == NULL )
+	if( fp == 0x00 )
 		return -1;
 
 	get_direcotory( file_name );
@@ -58,7 +58,7 @@ int GetBin::load( const char *file_name )
 	fseek( fp, 0l, SEEK_SET );
 
 	buf_base = buf = new unsigned char[ ( unsigned int )buf_len + 2 ];
-	if( buf == NULL )
+	if( buf == 0x00 )
 		return -1;
 
 	size_t	get_size;

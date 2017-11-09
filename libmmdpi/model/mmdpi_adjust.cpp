@@ -8,6 +8,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			MMDPI_MATERIAL_PTR material, dword material_num,
 			MMDPI_BONE_INFO_PTR bone, dword bone_num )
 {
+	//	１メッシュの扱える頂点インデックスの上限
 	dword		vertex_range = 0xffff - 0xffff % 3;
 
 	//	face and vertex adjust
@@ -16,7 +17,8 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 	//	vartex の個数を vertex_range 以下にする
 	//	face は新しく作り直す
 	int	bone_counter	= 1;	// id:0 のボーンはどのメッシュにも存在させる
-	int	vartexid_min	= 0;
+	dword	vartexid_min	= 0;
+	dword	vartexid_max	= 0;
 
 	//	ボーンを登録済みかのフラグ
 	dword*	bone_list = new dword[ bone_num ];
@@ -63,12 +65,18 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 		//	メッシュ更新フラグ
 		int			update_flag = 0x00;
 
-		////	頂点数が範囲外
-		//for( int i = 0; i < 3; i ++ )
-		//{
-		//	if( v3i[ i ] - vartexid_min > vertex_range )
-		//		update_flag = 1;
-		//}
+		//	頂点番号の最大値と最小値を計算
+		//	使用する頂点の番号の範囲を検出
+		for( int i = 0; i < 3; i ++ )
+		{
+			if( vartexid_min > v3i[ i ] )
+				vartexid_min = v3i[ i ];
+			if( vartexid_max < v3i[ i ] )
+				vartexid_max = v3i[ i ];
+		}
+		//	頂点数が範囲外
+		if( vartexid_max - vartexid_min > vertex_range )
+			update_flag |= 0x01;
 		
 		//	このメッシュで使用するボーンが上限に達した
 		if( bone_counter >= _MMDPI_MATERIAL_USING_BONE_NUM_ - 4 )
@@ -88,6 +96,8 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			//	メッシュ設定
 			mesh_temp->id = mesh.size();
 			mesh_temp->set_vertex( &new_vertex[ 0 ], new_vertex.size() );	// &vector array[ 0 ] でベクターを配列化
+			//for( uint i = 0; i < new_face.size(); i ++ )
+			//	new_face[ i ] -= vartexid_min;
 			mesh_temp->set_face( &new_face[ 0 ], new_face.size() );
 			mesh_temp->set_material( material_id, &material[ material_id ] );
 			mesh_temp->set_boneid( new_bone_list, bone_counter );
@@ -123,6 +133,13 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			for( dword i = 0; i < face_num; i ++ )
 				oldv_2_newv[ i ] = -1;
 			v3i_max = 0;
+
+			//	頂点番号の現在の値を設定
+			if( f + 4 < face_num )
+			{
+				vartexid_min = face[ f + 4 ];
+				vartexid_max = face[ f + 4 ];
+			}
 		}
 
 		//	メッシュ操作

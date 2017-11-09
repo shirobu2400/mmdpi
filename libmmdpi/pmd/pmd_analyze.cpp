@@ -140,9 +140,9 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 	
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
-		mmdpiModel::bone[ i ].parent		= NULL;
-		mmdpiModel::bone[ i ].first_child	= NULL;
-		mmdpiModel::bone[ i ].sibling		= NULL;
+		mmdpiModel::bone[ i ].parent		= 0x00;
+		mmdpiModel::bone[ i ].first_child	= 0x00;
+		mmdpiModel::bone[ i ].sibling		= 0x00;
 	}
 
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )

@@ -359,11 +359,11 @@ typedef struct tagMMDPI_PMX_MORPH_INFO
 
 	tagMMDPI_PMX_MORPH_INFO()
 	{
-		vertex		= NULL;
-		uv			= NULL;
-		bone		= NULL;
-		material	= NULL;
-		group		= NULL;
+		vertex		= 0x00;
+		uv			= 0x00;
+		bone		= 0x00;
+		material	= 0x00;
+		group		= 0x00;
 	}
 
 	//○頂点モーフ

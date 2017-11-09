@@ -27,7 +27,7 @@ int mmdpiBone::global_matrix( void )
 //	グローバル行列生成
 int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset )
 {
-	if( my_bone == NULL )
+	if( my_bone == 0x00 )
 		return -1;
 
 	if( offset )
@@ -398,11 +398,11 @@ int mmdpiBone::create_physical_info( void )
 
 mmdpiBone::mmdpiBone()
 {
-	bone = NULL;
+	bone = 0x00;
 	
 	bullet_flag = 1;
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
-	physics_sys = NULL;
+	physics_sys = 0x00;
 #endif
 }
 

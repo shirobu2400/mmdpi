@@ -205,13 +205,13 @@ public:
 	btSoftBody *getSoftBody( int id )
 	{
 		if( id < 0 || getSoftDynamicsWorld()->getSoftBodyArray().size() <= id )
-			return NULL;
+			return 0x00;
 		return getSoftDynamicsWorld()->getSoftBodyArray()[ id ];
 	}
 	btRigidBody *getRigidBody( int id )
 	{ 
 		if( id < 0 || getDiscreteDynamicsWorld()->getCollisionObjectArray().size() <= id )
-			return NULL;
+			return 0x00;
 		return ( btRigidBody * )getDiscreteDynamicsWorld()->getCollisionObjectArray()[ id ]; 
 	}
 	

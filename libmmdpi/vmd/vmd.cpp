@@ -185,13 +185,13 @@ int mmdpiVmd::analyze( void )
 
 	for( int i = 0; i < bone_num; i ++ )
 	{
-		m_list[ i ].motion = NULL;
-		m_list[ i ].next = NULL;
-		m_list[ i ].prev = NULL;
+		m_list[ i ].motion = 0x00;
+		m_list[ i ].next = 0x00;
+		m_list[ i ].prev = 0x00;
 
-		motion_line[ i ] = NULL;
+		motion_line[ i ] = 0x00;
 
-		now_motion[ i ] = NULL;
+		now_motion[ i ] = 0x00;
 	}
 
 	for( dword i = 0; i < vmd_info->motion_num; i ++ )
@@ -241,13 +241,13 @@ int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 	new_skin->skin		= skin;
 	new_skin->target_id	= skin_name_to_index[ skin->SkinName ];
 	
-	new_skin->next = NULL;
-	new_skin->prev = NULL;
-	new_skin->brot = NULL;
+	new_skin->next = 0x00;
+	new_skin->prev = 0x00;
+	new_skin->brot = 0x00;
 
 	//	相互関係
-	MMDPI_VMD_SKIN_INFO_LIST_PTR	next_l = NULL;
-	MMDPI_VMD_SKIN_INFO_LIST_PTR	prev_l = NULL;
+	MMDPI_VMD_SKIN_INFO_LIST_PTR	next_l = 0x00;
+	MMDPI_VMD_SKIN_INFO_LIST_PTR	prev_l = 0x00;
 	
 	//	モーションのフレーム毎の挿入位置までシーク
 	while( ml && ml->skin && ml->skin->FrameNo < skin->FrameNo )
@@ -260,7 +260,7 @@ int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 		prev_l = ml;
 		ml = ml->next;
 	}
-	next_l = ( bflag && ml && ml->skin )? ml : NULL ;
+	next_l = ( bflag && ml && ml->skin )? ml : 0x00 ;
 
 	new_skin->next = next_l;
 	new_skin->prev = prev_l;
@@ -272,7 +272,7 @@ int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 		prev_l->next = new_skin;
 
 	//	はじめと比較して早いフレームを最初のフレームに指定
-	if( skin_line == NULL || skin_line->skin == NULL )
+	if( skin_line == 0x00 || skin_line->skin == 0x00 )
 		skin_line = new_skin;
 	//	それ以外は必要な場所に入れる
 	else if( skin_line->skin->FrameNo > new_skin->skin->FrameNo )
@@ -292,12 +292,12 @@ int mmdpiVmd::insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_mo
 	//	セット
 	new_motion->motion	= insert_motion;
 	
-	new_motion->next = NULL;
-	new_motion->prev = NULL;
+	new_motion->next = 0x00;
+	new_motion->prev = 0x00;
 
 	//	相互関係
-	MMDPI_VMD_INFO_LIST_PTR	next_l = NULL;
-	MMDPI_VMD_INFO_LIST_PTR	prev_l = NULL;
+	MMDPI_VMD_INFO_LIST_PTR	next_l = 0x00;
+	MMDPI_VMD_INFO_LIST_PTR	prev_l = 0x00;
 
 //	モーションのフレーム毎の挿入位置までシーク
 	while( ml && ml->motion && ml->motion->FrameNo < insert_motion->FrameNo )
@@ -305,7 +305,7 @@ int mmdpiVmd::insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_mo
 		prev_l = ml;
 		ml = ml->next;
 	}
-	next_l = ( ml && ml->motion )? ml : NULL ;
+	next_l = ( ml && ml->motion )? ml : 0x00 ;
 
 	new_motion->next = next_l;
 	new_motion->prev = prev_l;
@@ -317,7 +317,7 @@ int mmdpiVmd::insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_mo
 		prev_l->next = new_motion;
 
 	//	はじめと比較して早いフレームを最初のフレームに指定
-	if( motion_line[ bone_index ] == NULL || motion_line[ bone_index ]->motion == NULL )
+	if( motion_line[ bone_index ] == 0x00 || motion_line[ bone_index ]->motion == 0x00 )
 		motion_line[ bone_index ] = new_motion;
 	//	それ以外は必要な場所に入れる
 	else if( motion_line[ bone_index ]->motion->FrameNo > new_motion->motion->FrameNo )
@@ -496,10 +496,10 @@ mmdpiVmd::~mmdpiVmd()
 		{
 			MMDPI_VMD_SKIN_INFO_LIST_PTR mml = ml->next;
 			delete ml;
-			ml = NULL;
+			ml = 0x00;
 			ml = mml;
 		}
-		skin_line = NULL;
+		skin_line = 0x00;
 		delete skin_line;
 	}
 

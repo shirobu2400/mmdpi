@@ -349,21 +349,21 @@ mmdpiPmdLoad::mmdpiPmdLoad()
 	//phy_obj;
 	//phy_joint;
 
-	vertex				= NULL;
-	face				= NULL;
-	material			= NULL;
-	bone				= NULL;
-	ik				= NULL;
-	skin				= NULL;
-	ver_skin			= NULL;
-	skin_cnt			= NULL;
-	bone_name			= NULL;
-	en_bone_name			= NULL;
-	en_skin_name			= NULL;
-	en_bone_disp_name		= NULL;
-	toon_name			= NULL;
-	p_rigid				= NULL;
-	p_joint				= NULL;
+	vertex				= 0x00;
+	face				= 0x00;
+	material			= 0x00;
+	bone				= 0x00;
+	ik				= 0x00;
+	skin				= 0x00;
+	ver_skin			= 0x00;
+	skin_cnt			= 0x00;
+	bone_name			= 0x00;
+	en_bone_name			= 0x00;
+	en_skin_name			= 0x00;
+	en_bone_disp_name		= 0x00;
+	toon_name			= 0x00;
+	p_rigid				= 0x00;
+	p_joint				= 0x00;
 }
 
 mmdpiPmdLoad::~mmdpiPmdLoad()

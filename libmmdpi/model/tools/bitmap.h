@@ -91,16 +91,16 @@ using namespace std;
 class MMDPI_BMP
 {
 protected:
-	GLuint	bit_size;
-	GLubyte	*bits;
-	GLenum	format;
-	GLuint	internalFormat;
-	GLuint	width;
-	GLuint	height;
-	GLuint	bpp;
+	GLuint		bit_size;
+	GLubyte*	bits;
+	GLenum		format;
+	GLuint		internal_format;
+	GLuint		width;
+	GLuint		height;
+	GLuint		bpp;
 
-	GLuint	texture;
-	GLubyte	bitc;
+	GLuint		texture;
+	GLubyte		bitc;
 	
 public:
 

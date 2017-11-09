@@ -179,7 +179,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			else
 			{
 				delete[] material[ i ].toon_name;
-				material[ i ].toon_name = NULL;
+				material[ i ].toon_name = 0x00;
 			}
 		}
 
@@ -323,7 +323,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			tbone->ik_flag = 1;
 		}
 		else
-			bone[ i ].ik_link = NULL;
+			bone[ i ].ik_link = 0x00;
 
 		if( bone_level_range < bone[ i ].level + 1 )
 			bone_level_range = bone[ i ].level + 1;
@@ -440,7 +440,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	}
 
 	p_rigid_num = 0;
-	if( buf->get_bin( &p_rigid_num, sizeof( dword ) ) == NULL )
+	if( buf->get_bin( &p_rigid_num, sizeof( dword ) ) == 0x00 )
 	{
 		p_rigid_num = 0;
 		return 0;
@@ -621,7 +621,7 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 	if( text1 == 0x00 )
 	{
 		puts( "Text buf cannot Allocation." );
-		return NULL;
+		return 0x00;
 	}
 	memset( text1, 0, byte_len + 4 );
 	buf->get_bin( text1, byte_len );
@@ -722,22 +722,22 @@ int mmdpiPmxLoad::load( const char *file_name )
 
 mmdpiPmxLoad::mmdpiPmxLoad()
 {
-	head.byte		= NULL;
+	head.byte		= 0x00;
 // Pointer Veriables
 	head.name		= 0x00;
 	head.name_eng		= 0x00;
 	head.comment		= 0x00;
 	head.comment_eng	= 0x00;
 
-	vertex			= NULL;
-	face			= NULL;
-	texture			= NULL;
-	material		= NULL;
-	bone			= NULL;
-	morph			= NULL;
-	show			= NULL;
-	p_rigid			= NULL;
-	p_joint			= NULL;
+	vertex			= 0x00;
+	face			= 0x00;
+	texture			= 0x00;
+	material		= 0x00;
+	bone			= 0x00;
+	morph			= 0x00;
+	show			= 0x00;
+	p_rigid			= 0x00;
+	p_joint			= 0x00;
 }
 
 mmdpiPmxLoad::~mmdpiPmxLoad()

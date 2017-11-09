@@ -3,16 +3,18 @@
 
 int MMDPI_TGA::ReadTGA( const char *filename )
 {
-	FILE		*fp;
+	FILE*		fp;
 	GLubyte		header[ 18 ]; 
-	GLubyte		bytePerPixel;
-	GLuint		temp;
+	GLubyte		pixel_size;
+	int		image_type;
+	
 
 	//　ファイルを開く
-	if( ( fp = fopen( filename, "rb" ) ) == NULL )
-	{
-		cout << "Error : Connot open!\n";
-		cout << "File Name : " << filename << endl;
+	fp = fopen( filename, "rb" );
+	if( fp == 0x00 )
+	{	
+		//cout << "Error : Connot open!\n";
+		//cout << "File Name : " << filename << endl;
 		return -1;
 	}
 
@@ -22,10 +24,18 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 		fclose( fp );
 		return -1;
 	}
+
+	//	圧縮形式を調査
+	image_type = header[ 0x02 ];
+	if( image_type == 0x00 )
+	{
+		fclose( fp );
+		return -1;
+	}
     
 	//　幅と高さを決める
-	width = header[ 13 ] * 256 + header[ 12 ];
-	height = header[ 15 ] * 256 + header[ 14 ];
+	width	= header[ 13 ] * 0x100 + header[ 12 ];
+	height	= header[ 15 ] * 0x100 + header[ 14 ];
     
 	//　ビットの深さ
 	bpp = header[ 16 ];
@@ -33,42 +43,91 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 	//　24 bit
 	if( bpp == 24 )
 	{
-		format = GL_RGB;
-		internalFormat = GL_RGB;
+		internal_format = GL_RGB;
+		format		= GL_RGB;
 	}
 	//　32 bit
 	else if( bpp = 32 )
 	{
-		format = GL_RGBA;
-		internalFormat = GL_RGBA;
+		internal_format = GL_RGBA;
+		format		= GL_RGBA;
 	}
 
 	//　1ピクセル当たりのバイト数を決定
-	bytePerPixel = bpp / 8;
+	pixel_size = bpp / 8;
 
 	//　データサイズの決定
-	imageSize = width * height * bytePerPixel;
+	bit_length = width * height * pixel_size;
 
 	//　メモリを確保
-	imageData = new GLubyte[ imageSize ];
+	bits = new GLubyte[ bit_length ];
+	if( bits == 0x00 )
+	{
+		fclose( fp );
+		return -1;
+	}
+
+	raw_bits = new GLubyte[ bit_length ];
+	if( raw_bits == 0x00 )
+	{
+		fclose( fp );
+		return -1;
+	}
 
 	//　テクセルデータを一気に読み取り
-	if( fread( imageData, 1, imageSize, fp ) == 0 )
+	if( fread( raw_bits, 1, bit_length, fp ) == 0 )
 	{
 		fclose( fp );
 		return -1;
 	}
 
 	//　BGR(A)をRGB(A)にコンバート
-	for( uint i = 0; i < imageSize; i += bytePerPixel )
+	if( image_type == 0x02 || image_type == 0x03 )
 	{
-		temp = imageData[ i ];
-		imageData[ i ] = imageData[ i + 2 ];
-		imageData[ i + 2 ] = temp;
+		for( uint i = 0; i < bit_length; i += pixel_size )
+		{
+			bits[ i + 0 ] = raw_bits[ i + 2 ];
+			bits[ i + 1 ] = raw_bits[ i + 1 ];
+			bits[ i + 2 ] = raw_bits[ i + 0 ];
+			if( pixel_size > 3 )
+				bits[ i + 3 ] = raw_bits[ i + 3 ];
+		}
 	}
+	else if( image_type == 0x09 || image_type == 0x0a )
+	{
+		GLubyte*	elements = new GLubyte[ pixel_size ];
+		if( elements == 0x00 )
+			return -1;
+		
+		//	ラングレンス圧縮(RLE)
+		for( uint d = 0, o = 0; d < bit_length; )
+		{
+			int	packet = raw_bits[ o ++ ] & 0xff;
+
+			if( ( packet & 0x80 ) != 0 )
+			{
+				for( uint j = 0; j < pixel_size; j ++ )
+					elements[ j ] = raw_bits[ o ++ ];
+				int	count = ( packet & 0x7f ) + 1;
+				for( int k = 0; k < count; k ++ )
+					for( uint j = 0; j < pixel_size; j ++ )
+						bits[ d ++ ] = elements[ j ];
+			}
+			else
+			{
+				int	count = ( packet + 1 ) * pixel_size;
+				for( int k = 0; k < count; k ++ )
+					bits[ d ++ ] = raw_bits[ o ++ ];
+			}
+		}
+
+		delete[] elements;
+	}	
 
 	//　ファイルを閉じる
 	fclose( fp );
+
+	delete[] raw_bits;
 
 	return 0;
 }
@@ -93,8 +152,7 @@ GLuint MMDPI_TGA::load( const char *filename )
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 	//　テクスチャの割り当て
-	//gluBuild2DMipmaps( GL_TEXTURE_2D, internalFormat, width, height, format, GL_UNSIGNED_BYTE, imageData );
-	glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, imageData );
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, bits );
 
 	////　テクスチャを拡大・縮小する方法の指定
 	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -108,10 +166,10 @@ GLuint MMDPI_TGA::load( const char *filename )
 	//   glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
 
 	//　メモリ解放
-	if( imageData )
+	if( raw_bits )
 	{
-		delete[] imageData;
-		imageData = NULL;
+		delete[] bits;
+		bits = 0x00;
 	}
 
 	return texture;

@@ -122,8 +122,11 @@ void mmdpiPmxAnalyze::load_texture( void )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 
+		//	読み込み成功
 		if( texture00[ i ].load( texture_file_name_full ) >= 0 )
 			continue;
+
+		//	utf8, sjis での読み込みを試行するので２回読み込みを実行する
 
 		//	name での読み込み失敗
 		texture_file_name = mmdpiPmxLoad::texture[ i ].sjis_name;
@@ -135,6 +138,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 
+		//	全ての場合で失敗
 		texture00[ i ].load( texture_file_name_full );
 	}
 
@@ -191,9 +195,9 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 	
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
-		mmdpiModel::bone[ i ].parent		= NULL;
-		mmdpiModel::bone[ i ].first_child	= NULL;
-		mmdpiModel::bone[ i ].sibling		= NULL;
+		mmdpiModel::bone[ i ].parent		= 0x00;
+		mmdpiModel::bone[ i ].first_child	= 0x00;
+		mmdpiModel::bone[ i ].sibling		= 0x00;
 
 		mmdpiModel::bone[ i ].level		= pbone[ i ].level;
 	}

@@ -77,7 +77,7 @@ void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix )
 mmdpiVmd* mmdpi::get_vmd( int index )
 {
 	if( index < 0 || vmd.size() <= ( unsigned )index )
-		return NULL;
+		return 0x00;
 	return vmd[ index ]; 
 }
 

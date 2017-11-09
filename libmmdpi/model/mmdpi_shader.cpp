@@ -250,7 +250,7 @@ int mmdpiShader::link( void )
 		if( infoLen > 0 ) 
 		{
 			char* infoLog = new char[ infoLen ];
-			glGetProgramInfoLog( program, infoLen, NULL, infoLog );
+			glGetProgramInfoLog( program, infoLen, 0x00, infoLog );
 			printf( "Error linking program:\n%s\n", infoLog );
 			delete[] infoLog;
 		}

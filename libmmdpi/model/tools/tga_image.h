@@ -9,10 +9,11 @@
 class MMDPI_TGA
 {
 protected:
-	GLuint		imageSize;
-	GLubyte*	imageData;
+	GLuint		bit_length;
+	GLubyte*	raw_bits;
+	GLubyte*	bits;
 	GLenum		format;
-	GLuint		internalFormat;
+	GLuint		internal_format;
 	GLuint		width;
 	GLuint		height;
 	GLuint		bpp;
