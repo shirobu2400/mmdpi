@@ -104,7 +104,7 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 		{
 			int	packet = raw_bits[ o ++ ] & 0xff;
 
-			if( ( packet & 0x80 ) != 0 )
+			if( ( packet & 0x80 ) != 0x00 )
 			{
 				for( uint j = 0; j < pixel_size; j ++ )
 					elements[ j ] = raw_bits[ o ++ ];

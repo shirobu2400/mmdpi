@@ -14,8 +14,8 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	BITMAPINFOHEADER	bitmapInfoHeader;
 	BITMAPFILEHEADER	header;
 	GLubyte			temp = 0;
-	GLuint			mask_color[ 4 ] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
-	GLuint			mask_shift[ 4 ] = { 0 };
+	dword			mask_color[ 4 ] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
+	dword			mask_shift[ 4 ] = { 0 };
 		
 
 	//　ファイルを開く
@@ -72,7 +72,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		//	
 		for( int i = 0; i < bitc; i ++ )
 		{
-			while( ( mask_color[ i ] >> mask_shift[ i ] ) > 0xff )
+			while( ( dword )( mask_color[ i ] >> mask_shift[ i ] ) > ( dword )0xff )
 				mask_shift[ i ] ++;
 		}
 	}
@@ -119,15 +119,16 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 
 		break;
 	case 3:
-		GLuint*		bits_dword = 0x00;
-		bits_dword = new GLuint[ bit_size + 1 ];
-		if( bits_dword == 0x00 )
+		dword*	raw_bits = 0x00;
+
+		raw_bits = new dword[ bit_size + 1 ];
+		if( raw_bits == 0x00 )
 		{
 			fclose( fp );
 			return -1;
 		}
 		//　ピクセルデータの読み込み
-		if( fread( bits_dword, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
+		if( fread( raw_bits, 4, bitmapInfoHeader.biSizeImage / 4, fp ) == 0 )
 		{
 			fclose( fp );
 			return -1;
@@ -138,9 +139,10 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		for( uint i = 0, c = 0; i < bit_size; i += bitc, c ++ )
 		{
 			for( int j = 0; j < bitc; j ++ )
-				bits[ i + j ] = ( bits_dword[ c ] & mask_color[ j ] ) >> mask_shift[ j ];
+				bits[ i + j ] = ( GLubyte )( ( dword )( ( dword )raw_bits[ c ] & ( dword )mask_color[ j ] ) >> mask_shift[ j ] );
 		}
-		delete[] bits_dword;
+
+		delete[] raw_bits;
 		break;
 	}
 
@@ -160,7 +162,7 @@ int MMDPI_BMP::load( const char *filename )
 	format		= GL_RGB;
 	if( bitc == 4 )
 	{
-		//internal_format	= GL_RGBA;
+		internal_format	= GL_RGBA;
 		format		= GL_RGBA;
 	}
 

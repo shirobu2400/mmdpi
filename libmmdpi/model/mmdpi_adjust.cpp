@@ -54,6 +54,9 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 	int				material_id = 0;
 	uint				v3i_max = 0;
 
+	//	メッシュ更新フラグ
+	int				update_flag = 0x00;
+
 	for( dword f = 0; f < face_num; f += 3 )
 	{
 		//	頂点インデックス
@@ -62,9 +65,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 		//	頂点情報作業領域
 		MMDPI_VERTEX		v;
 
-		//	メッシュ更新フラグ
-		int			update_flag = 0x00;
-
+	
 		//	頂点番号の最大値と最小値を計算
 		//	使用する頂点の番号の範囲を検出
 		for( int i = 0; i < 3; i ++ )
@@ -140,6 +141,9 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 				vartexid_min = face[ f + 4 ];
 				vartexid_max = face[ f + 4 ];
 			}
+
+			//	メッシュを更新情報の初期化
+			update_flag = 0x00;
 		}
 
 		//	メッシュ操作
@@ -199,6 +203,9 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			//	あとで初期化するときに高速化のため必要
 			if( v3i_max < old_vi )
 				v3i_max = old_vi;
+
+			if( new_vi >= vertex_range )
+				update_flag |= 0x01;
 
 			//	頂点と頂点インデックスの関連づけ
 			new_face.push_back( new_vi );

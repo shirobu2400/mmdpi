@@ -139,7 +139,12 @@ void mmdpiPmxAnalyze::load_texture( void )
 		texture_file_name_full[ k ] = '\0';
 
 		//	全ての場合で失敗
-		texture00[ i ].load( texture_file_name_full );
+		if( texture00[ i ].load( texture_file_name_full ) < 0 )
+		{
+			printf( "Texture load error.\n" );
+			printf( "\t=> %s\n", mmdpiPmxLoad::texture[ i ].name      );
+			printf( "\t=> %s\n", mmdpiPmxLoad::texture[ i ].sjis_name );
+		}
 	}
 
 	//	Toon texture
