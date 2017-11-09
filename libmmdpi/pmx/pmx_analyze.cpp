@@ -287,11 +287,11 @@ mmdpiPmxAnalyze::~mmdpiPmxAnalyze()
 
 	delete[] texture;
 	delete[] toon_texture;
-	if( texture00 )
-	{
-		delete[] texture00;
-		texture00 = 0x00;
-	}
+	//if( texture00 )
+	//{
+	//	delete[] texture00;
+	//	texture00 = 0x00;
+	//}
 	//if( toon_texture00 )
 	//{
 	//	delete[] toon_texture00;
