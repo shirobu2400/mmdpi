@@ -166,6 +166,7 @@ install(FILES
 	model/mmdpi_model.h
 	model/mmdpi_shader.h
 	model/mmdpi_struct.h
+	model/mmdpi_mesh.h
 DESTINATION include/mmdpi/model)
 install(FILES
 	model/tools/bitmap.h
