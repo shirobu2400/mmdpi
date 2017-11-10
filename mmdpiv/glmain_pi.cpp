@@ -19,39 +19,38 @@ extern "C"
 
 //int 	usec = 16 * 1000;//1000 / 30 * 1000 ;	//	30 fps
 int		_fps_ = 60;
-uint32_t	_screen_max_size_ = 0x1000;//1280;	//640;
 
 extern "C"
 {
 
 	typedef struct
 	{
-		EGLNativeWindowType  nativeWin;
-		EGLDisplay  display;
-		EGLContext  context;
-		EGLSurface  surface;
-		EGLint      majorVersion;
-		EGLint      minorVersion;
-		int         width;
-		int         height;
+		EGLNativeWindowType  	nativeWin;
+		EGLDisplay  		display;
+		EGLContext 		context;
+		EGLSurface  		surface;
+		EGLint      		majorVersion;
+		EGLint      		minorVersion;
+		int         		width;
+		int         		height;
 	} ScreenSettings;
 
 	typedef struct
 	{
-		float m[ 16 ];
+		float 	m[ 16 ];
 	} Mat4;
 
 	typedef struct
 	{
-		GLint   aPosition;
-		GLint   aTex;
-		GLint   uVpMatrix;
-		GLint   uModelMatrix;
-		Mat4    VpMatrix;
+		GLint   	aPosition;
+		GLint   	aTex;
+		GLint   	uVpMatrix;
+		GLint   	uModelMatrix;
+		Mat4    	VpMatrix;
 	} ShaderParams;
 
-	ShaderParams    g_sp;
-	ScreenSettings  g_sc;
+	ShaderParams    	g_sp;
+	ScreenSettings  	g_sc;
 }
 
 #include "mmdpi.h"
@@ -95,8 +94,6 @@ public:
 		struct timespec tp ;
 		clock_gettime( CLOCK_MONOTONIC, &tp );
 		return ( float )( tp.tv_sec * 1000.0 + ( double )tp.tv_nsec / 1000000.0 );	//	milli sec
-		//return glutGet( GLUT_ELAPSED_TIME );
-		//return clock() * 1000.0f / ( float )CLOCKS_PER_SEC;
 	}
 
 	void set_fps( int fps )
@@ -151,8 +148,6 @@ public:
 };
 
 Fps* 			fps = 0x00;
-static int		vmd_flag = 0;
-
 
 char* get_command_option( const char* option, int argc, char* argv[] )
 {
@@ -191,7 +186,6 @@ void init( int argc, char *argv[] )
 
 	char*	vmd_name = 0x00;
 	vmd_name = get_command_option( "-v", argc, argv );
-	vmd_flag = 0;
 	if( p && vmd_name && vmd_name[ 0 ] )
 	{
 		if( p->vmd_load( vmd_name ) )
@@ -199,8 +193,6 @@ void init( int argc, char *argv[] )
 			printf( "Not found %s.\n", vmd_name );
 			exit( 0 );
 		}
-		else
-			vmd_flag = 1;
 	}
 
 	if( p )
@@ -237,10 +229,10 @@ void init( int argc, char *argv[] )
 
 	Model_offset.rotation( 0, 1, 0, 3.14f );
 
-	puts( "End Loading." );
+	puts( "Start!" );
 }
 
-void draw()
+void draw( void )
 {
 	fps->update();
 	if( p )
@@ -249,7 +241,7 @@ void draw()
 		{
 			float	frame = 30.0f / fps->get_mfps();
 			//	フレームを進める関数
-			//（MMD は１秒間に３０フレームがデフォルト）
+			//	（MMD は１秒間に３０フレームがデフォルト）
 			//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
 			( *p->get_vmd( 0 ) ) += frame;
 		}
@@ -258,8 +250,9 @@ void draw()
 	}
 }
 
-void end()
+void end( void )
 {
+	printf( "Finish!\n" );
 	delete p;
 }
 
@@ -289,47 +282,53 @@ char get_keyboard( void )
 	return c;
 }
 
-EGLBoolean WinCreate(ScreenSettings *sc)
+EGLBoolean WinCreate( ScreenSettings *sc, int screen_width, int screen_height, float screen_alpha )
 {
-	uint32_t success = 0;
-	uint32_t width;
-	uint32_t height;
-	VC_RECT_T dst_rect;
-	VC_RECT_T src_rect;
-	DISPMANX_ELEMENT_HANDLE_T dispman_element;
-	DISPMANX_DISPLAY_HANDLE_T dispman_display;
-	DISPMANX_UPDATE_HANDLE_T dispman_update;
-	static EGL_DISPMANX_WINDOW_T nativewindow;
-	VC_DISPMANX_ALPHA_T alpha = {DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS, 255, 0};
+	uint32_t 			success = 0;
+	uint32_t 			width;
+	uint32_t 			height;
+	VC_RECT_T 			dst_rect;
+	VC_RECT_T 			src_rect;
+	DISPMANX_ELEMENT_HANDLE_T 	dispman_element;
+	DISPMANX_DISPLAY_HANDLE_T 	dispman_display;
+	DISPMANX_UPDATE_HANDLE_T 	dispman_update;
+	static EGL_DISPMANX_WINDOW_T 	nativewindow;
+	VC_DISPMANX_ALPHA_T 		alpha = { DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS, ( uint32_t )( screen_alpha * 255 ), 0x00 };
+	VC_DISPMANX_ALPHA_T*		alpha_ptr = &alpha;
 
-	success = graphics_get_display_size(0, &width, &height);
+	if( screen_alpha < 1e-4f )
+		alpha_ptr = 0x00;
+
+	success = graphics_get_display_size( 0, &width, &height );
 	if( success < 0 )
 		return EGL_FALSE;
 
-	if( _screen_max_size_ > 0 )
-	{
-		if( width > _screen_max_size_ )
-			width = _screen_max_size_;
-		if( height > _screen_max_size_ )
-			height = _screen_max_size_;
-	}
+	// if( width > max_width )
+	// 	width = max_width;
+	// if( height > max_height )
+	// 	height = max_height;
+
+	if( screen_width && width < screen_width )
+		width = screen_width;
+	if( screen_height && height < screen_height )
+		height = screen_height;
 
 	sc->width = width;
 	sc->height = height;
 
-	vc_dispmanx_rect_set(&dst_rect, 0, 0, sc->width, sc->height);
-	vc_dispmanx_rect_set(&src_rect, 0, 0, sc->width << 16, sc->height << 16);
+	vc_dispmanx_rect_set( &dst_rect, 0, 0, sc->width, sc->height );
+	vc_dispmanx_rect_set( &src_rect, 0, 0, sc->width << 16, sc->height << 16 );
 
-	dispman_display = vc_dispmanx_display_open(0);
-	dispman_update = vc_dispmanx_update_start(0);
+	dispman_display = vc_dispmanx_display_open( 0 );
+	dispman_update = vc_dispmanx_update_start( 0 );
 	dispman_element = vc_dispmanx_element_add( dispman_update, dispman_display,
-	0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, &alpha, 0, ( DISPMANX_TRANSFORM_T )0);
+		0, &dst_rect, 0, &src_rect, DISPMANX_PROTECTION_NONE, alpha_ptr, 0, ( DISPMANX_TRANSFORM_T )0 );
 
 	vc_dispmanx_update_submit_sync(dispman_update);
-	nativewindow.element = dispman_element;
-	nativewindow.width = width;
-	nativewindow.height = height;
-	sc->nativeWin = &nativewindow;
+	nativewindow.element 	= dispman_element;
+	nativewindow.width 	= width;
+	nativewindow.height 	= height;
+	sc->nativeWin 		= &nativewindow;
 
 	return EGL_TRUE;
 }
@@ -357,7 +356,7 @@ EGLBoolean SurfaceCreate( ScreenSettings *sc )
 	if( !eglChooseConfig( sc->display, attrib, &config, 1, &numConfigs ) )
 		return EGL_FALSE;
 
-	sc->surface = eglCreateWindowSurface( sc->display, config, sc->nativeWin, NULL );
+	sc->surface = eglCreateWindowSurface( sc->display, config, sc->nativeWin, 0x00 );
 	if( sc->surface == EGL_NO_SURFACE )
 		return EGL_FALSE;
 	sc->context = eglCreateContext( sc->display, config, EGL_NO_CONTEXT, context );
@@ -523,7 +522,7 @@ int main( int argc, char *argv[] )
 	}
 
 	bcm_host_init();
-	res = WinCreate( &g_sc );
+	res = WinCreate( &g_sc, 0, 0, 0.0f );
 	if( !res )
 	{
 		printf( "Create window error!\n" );
@@ -539,17 +538,11 @@ int main( int argc, char *argv[] )
 	makeUnit( &viewMat );
 
 	aspect = ( float )g_sc.width / ( float )g_sc.height;
-
-	//makeProjectionMatrix(&g_sp.VpMatrix, 1, 65536, 53, aspect);
-	//setPosition(&viewMat, 0, -4, -24 );
-
 	dw = 0.5f * aspect;
 	dh = 0.5f;
 
 	perspectiveMatrix( -dw, +dw, -dh, +dh, 1, 160, &g_sp.VpMatrix );
 	setPosition( &viewMat, 0, -12, -32 );
-
-	//print_mat4( &g_sp.VpMatrix );
 
 	mulMatrix( &g_sp.VpMatrix, &g_sp.VpMatrix, &viewMat );
 
@@ -568,12 +561,18 @@ int main( int argc, char *argv[] )
 	//print_mat4( &projection_matrix );
 
 	glEnable( GL_DEPTH_TEST );
-	glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
 
 	Mat4	delta_mat;
 	makeUnit( &delta_mat );
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
+
+	if( p == 0x00 )
+		return -1;
+
+	// background color
+	//glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
+	glClearColor( 0, 0, 0, 0 );
 
 	/* 1200frame / 60fps = 20sec */
 	while( !p->get_vmd( 0 ) || !p->get_vmd( 0 )->is_end() )
@@ -582,7 +581,7 @@ int main( int argc, char *argv[] )
 		Mat4	delta_key_mat;
 		int	key_matrix_flag = 0;
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		/* X Rotation */
 		mulMatrix( &pl_matrix, &projection_matrix, &delta_mat );
@@ -606,18 +605,19 @@ int main( int argc, char *argv[] )
 		if( c == 'q' )
 			break;
 
-		eglSwapBuffers(g_sc.display, g_sc.surface);
+		eglSwapBuffers( g_sc.display, g_sc.surface );
 		frames ++;
 
 		//glutTimerFunc( fps->get_wait_time() * 1000.0f, timer, 0 );
-		usleep( 1700 );
+
+		//	usleep でGPU に描画時間の余裕を与える
+		//	あまり速くCPUが動くと描画が追い付かない
+		usleep( 1800 );
 		//usleep( 3200 );
+		
 		if( debug_flag )
 			fps->draw();
 	}
-
-	printf( "Ending process!\n" );
-
 	end();
 
 	return 0;

@@ -37,12 +37,14 @@ int mmdpiShader::default_shader( void )
 	"mat4			ProjectionMatrix = gl_ModelViewProjectionMatrix;\n"
 #endif
 	"attribute	vec3		Vertex;\n"
+#ifdef _MMDPI_OUTLINE_
 	"attribute	vec3		Normal;\n"
+	"uniform	float		Edge_size;		//	エッジサイズ\n"
+	"uniform	vec4		Edge_color;		//	エッジカラー\n"
+#endif
 	"attribute	vec4		g_Uv;\n"
 	"varying	vec4		v_Uv;\n"
 	"attribute	vec4		BoneWeights;	//	頂点ウェイト\n"
-	"uniform	float		Edge_size;		//	エッジサイズ\n"
-	"uniform	vec4		Edge_color;		//	エッジカラー\n"
 	"attribute	vec3		SkinVertex;\n"
 	"\n"
 	"//	Bone Info\n"
@@ -75,7 +77,7 @@ int mmdpiShader::default_shader( void )
 	"\n"
 	"	for( int i = 0; i < 4; i ++ )\n"
 	"	{\n"
-	"		int bone_index = int( indices[ i ] + 0.1 );\n"
+	"		int bone_index = int( indices[ i ] );\n"
 	"		skinTransform += weight[ i ] * BoneMatrix[ bone_index ];\n"
 	"	}\n"
 	"\n"
@@ -312,6 +314,7 @@ void mmdpiShader::set_buffer( int buffer_id )
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 2 ) );
 
 #ifdef _MMDPI_OUTLINE_
+	//	法線ベクトル
 	glVertexAttribPointer( normal_id, 3, GL_FLOAT, GL_FALSE, 
 		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 3 ) );
 #endif

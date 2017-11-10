@@ -358,9 +358,10 @@ mmdpiBullet::mmdpiBullet()
 	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 	//overlappingPairCache = new btDbvtBroadphase();
 	// 物理演算の有効領域の指定
-	overlappingPairCache 
-		= new btAxisSweep3( btVector3( -_MMDPI_BULLET_SPACE_, -_MMDPI_BULLET_SPACE_, -_MMDPI_BULLET_SPACE_ ),
-			btVector3( _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_ ) );
+	overlappingPairCache = new btAxisSweep3( 
+				btVector3( -_MMDPI_BULLET_SPACE_, -_MMDPI_BULLET_SPACE_, -_MMDPI_BULLET_SPACE_ ),
+				btVector3( _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_ ) 
+			);
 
 	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
 	solver = new btSequentialImpulseConstraintSolver;

@@ -14,13 +14,13 @@ set(CMAKE_CXX_FLAG_RELEASE "-Wall -O2")
 set(CMAKE_BUILD_TYPE Release)
 
 # mmdpiv version
-set(SERIAL "1.00.00")
+set(SERIAL "1.10.00")
 
 # source
 if(NOT pi)
-	set(mmdpi_src ${mmdpi_src} gl_main.cpp )
+	set(mmdpi_src ${mmdpi_src} glmain.cpp )
 else()
-	set(mmdpi_src ${mmdpi_src} gl_main_es.cpp )
+	set(mmdpi_src ${mmdpi_src} glmain_pi.cpp )
 endif()
 
 # Include Directory
@@ -43,7 +43,7 @@ set(mmdpi_lib_path
 
 set( mmdpi_lib )
 
-# Bullet 
+# Bullet
 #find_package( Bullet )
 #if( bullet AND Bullet_FOUND )
 if( bullet )

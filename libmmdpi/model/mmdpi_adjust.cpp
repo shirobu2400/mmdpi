@@ -156,7 +156,9 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			{
 				//	新たに頂点を追加
 				v.ver		= vertex->ver[ old_vi ];
+#ifdef _MMDPI_OUTLINE_
 				v.nor		= vertex->nor[ old_vi ];
+#endif
 				v.uv		= vertex->uv[ old_vi ];
 				v.weight	= vertex->weight[ old_vi ];
 				v.index		= mmdpiVector4d( 0, 0, 0, 0 );
@@ -184,7 +186,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 					}
 
 					//	ボーンを指定
-					v.index[ j ] = ( float )rawbone_2_newbone[ bone_index ];
+					v.index[ j ] = ( float )rawbone_2_newbone[ bone_index ] + 0.1;
 
 					//	ボーンを登録済みにする
 					bone_list[ bone_index ] ++;

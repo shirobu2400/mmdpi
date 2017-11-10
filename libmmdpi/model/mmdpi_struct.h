@@ -30,15 +30,9 @@ typedef struct tagMMDPI_VERTEX
 	mmdpiVector4d	weight;
 	
 	//	法線ベクトル
+#ifdef _MMDPI_OUTLINE_
 	mmdpiVector3d	nor;
-
-	//	最適化済みフラグ
-	long		update_flag;
-
-	tagMMDPI_VERTEX()
-	{
-		update_flag = 0;
-	}
+#endif
 
 } MMDPI_VERTEX, *MMDPI_VERTEX_PTR;
 

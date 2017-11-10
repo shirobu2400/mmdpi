@@ -89,7 +89,7 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 			bits[ i + 0 ] = raw_bits[ i + 2 ];
 			bits[ i + 1 ] = raw_bits[ i + 1 ];
 			bits[ i + 2 ] = raw_bits[ i + 0 ];
-			if( pixel_size > 3 )
+			if( pixel_size == 4 )
 				bits[ i + 3 ] = raw_bits[ i + 3 ];
 		}
 	}
