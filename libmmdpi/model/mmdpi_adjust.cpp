@@ -186,7 +186,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 					}
 
 					//	ボーンを指定
-					v.index[ j ] = ( float )rawbone_2_newbone[ bone_index ] + 0.1;
+					v.index[ j ] = ( float )rawbone_2_newbone[ bone_index ] + 0.1f;
 
 					//	ボーンを登録済みにする
 					bone_list[ bone_index ] ++;
