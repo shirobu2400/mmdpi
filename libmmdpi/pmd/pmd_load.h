@@ -1,8 +1,9 @@
 
 #include "../model/tools/get_bin.h"
 #include "pmd_struct.h"
-#pragma once
 
+#ifndef		__MMDPI__PMD__LOAD__DEFINES__
+#define		__MMDPI__PMD__LOAD__DEFINES__	( 1 )
 
 class mmdpiPmdLoad
 {
@@ -89,4 +90,6 @@ public :
 	}
 	mmdpiPmdLoad();
 	~mmdpiPmdLoad();
-} ;
+};
+
+#endif	//	__MMDPI__PMD__LOAD__DEFINES__

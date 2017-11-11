@@ -2,7 +2,9 @@
 #include "../model/tools/get_bin.h"
 #include "pmx_struct.h"
 
-#pragma once
+
+#ifndef		__MMDPI__PMX__LOAD__DEFINES__
+#define		__MMDPI__PMX__LOAD__DEFINES__	( 1 )
 
 class mmdpiPmxLoad
 {
@@ -76,4 +78,6 @@ public :
 
 	mmdpiPmxLoad();
 	~mmdpiPmxLoad();
-} ;
+};
+
+#endif	//	__MMDPI__PMX__LOAD__DEFINES__

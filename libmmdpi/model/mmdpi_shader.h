@@ -1,7 +1,8 @@
 
 #include "mmdpi_struct.h"
 
-#pragma once
+#ifndef		__MMDPI__SHADER__DEFINES__
+#define		__MMDPI__SHADER__DEFINES__	( 1 )
 
 
 class mmdpiShaderBuffer
@@ -115,3 +116,6 @@ public :
 	~mmdpiShader();
 
 } ;
+
+
+#endif	//	__MMDPI__SHADER__DEFINES__

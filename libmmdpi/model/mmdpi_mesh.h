@@ -3,7 +3,8 @@
 #include "mmdpi_struct.h"
 #include "mmdpi_shader.h"
 
-#pragma once
+#ifndef		__MMDPI__MESH__DEFINES__
+#define		__MMDPI__MESH__DEFINES__	( 1 )
 
 class mmdpiMesh
 {
@@ -34,3 +35,4 @@ public:
 	mmdpiMesh( mmdpiShader* shader_p );
 	~mmdpiMesh();
 };
+#endif	//	__MMDPI__MESH__DEFINES__

@@ -2,8 +2,8 @@
 #include "pmx_analyze.h"
 #include "pmx_ik.h"
 
-#pragma once
-
+#ifndef		__MMDPI__PMX__DRAW__DEFINES__
+#define		__MMDPI__PMX__DRAW__DEFINES__	( 1 )
 
 class mmdpiPmxDraw : public mmdpiPmxAnalyze, public mmdpiPmxIk
 {
@@ -19,4 +19,6 @@ public :
 
 	mmdpiPmxDraw();
 	~mmdpiPmxDraw();
-} ;
+};
+
+#endif	//	__MMDPI__PMX__DRAW__DEFINES__

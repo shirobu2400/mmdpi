@@ -6,7 +6,8 @@
 #include <string>
 
 
-#pragma once
+#ifndef		__MMDPI__PMD__STRUCT__DEFINES__
+#define		__MMDPI__PMD__STRUCT__DEFINES__	( 1 )
 
 
 #pragma pack( push, 1 )	//アラインメント制御をオフる
@@ -205,3 +206,5 @@ typedef struct tagMMDPI_PMD_PHYSICAL_JOINT
 
 
 #pragma pack( pop )	//アラインメント制御エンド
+
+#endif	//	__MMDPI__PMD__STRUCT__DEFINES__

@@ -9,6 +9,8 @@
 #define		__MMDPI__SJIS__FLAG__	( 0 )
 #endif
 
+#ifndef		__MMDPI__DEFINES__
+#define		__MMDPI__DEFINES__	( 1 )
 
 class mmdpi
 {
@@ -37,3 +39,5 @@ public :
 	mmdpi();
 	~mmdpi();
 } ;
+
+#endif	//	__MMDPI__DEFINES__

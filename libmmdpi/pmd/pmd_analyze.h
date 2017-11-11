@@ -1,8 +1,9 @@
 
-#pragma once
 #include "pmd_load.h"
 #include "../model/mmdpi_model.h"
 
+#ifndef		__MMDPI__PMD__ANALYZE__DEFINES__
+#define		__MMDPI__PMD__ANALYZE__DEFINES__	( 1 )
 
 class mmdpiPmdAnalyze : public mmdpiPmdLoad, public mmdpiModel
 {
@@ -25,3 +26,5 @@ public :
 	mmdpiPmdAnalyze();
 	~mmdpiPmdAnalyze();
 } ;
+
+#endif	//	__MMDPI__PMD__ANALYZE__DEFINES__

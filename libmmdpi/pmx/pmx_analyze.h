@@ -1,9 +1,10 @@
 
 #include "pmx_load.h"
-#include "pmx_ik.h"
 #include "../model/mmdpi_model.h"
 
-#pragma once
+#ifndef		__MMDPI__PMX__ANALYZE__DEFINES__
+#define		__MMDPI__PMX__ANALYZE__DEFINES__	( 1 )
+
 
 class mmdpiPmxAnalyze : public mmdpiPmxLoad, public mmdpiModel
 {
@@ -28,4 +29,6 @@ public :
 
 	mmdpiPmxAnalyze();
 	~mmdpiPmxAnalyze();
-} ;
+};
+
+#endif	//	__MMDPI__PMX__ANALYZE__DEFINES__

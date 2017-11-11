@@ -2,7 +2,8 @@
 #include "../mmdpi_include.h"
 #include "../mmdpi_struct.h"
 
-#pragma once
+#ifndef		__MMDPI__BULLET__DEFINES__
+#define		__MMDPI__BULLET__DEFINES__	( 1 )
 
 // SPU
 //#define USE_PARALLEL_DISPATCHER
@@ -258,3 +259,5 @@ public:
 	mmdpiBullet();
 	~mmdpiBullet();
 } ;
+
+#endif	//	__MMDPI__BULLET__DEFINES__

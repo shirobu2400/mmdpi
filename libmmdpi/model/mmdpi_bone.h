@@ -1,12 +1,12 @@
 
 
-#include "mmdpi_shader.h"
 #include "mmdpi_adjust.h"
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 #	include "bullet/mmdpi_bullet.h"
 #endif
 
-#pragma once
+#ifndef		__MMDPI__BONE__DEFINES__
+#define		__MMDPI__BONE__DEFINES__	( 1 )
 
 class mmdpiBone : public mmdpiAdjust
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
@@ -79,3 +79,5 @@ public :
 	mmdpiBone();
 	~mmdpiBone();
 } ;
+
+#endif	//	__MMDPI__ADJUST__DEFINES__

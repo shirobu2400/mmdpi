@@ -7,7 +7,8 @@
 #include "png.h"
 
 
-#pragma once
+#ifndef		__MMDPI__STRUCT__DEFINES__
+#define		__MMDPI__STRUCT__DEFINES__	( 1 )
 
 typedef		ushort	mmdpiShaderIndex;
 //typedef		uint	mmdpiShaderIndex;
@@ -434,3 +435,5 @@ typedef struct tagMMDPI_PHYSICAL_JOINT_INFO
 	//--
 
 } MMDPI_PHYSICAL_JOINT_INFO, *MMDPI_PHYSICAL_JOINT_INFO_PTR;
+
+#endif	//	__MMDPI__STRUCT__DEFINES__

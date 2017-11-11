@@ -1,7 +1,8 @@
 
-#pragma once
-
 #include "mmdpi_bone.h"
+
+#ifndef		__MMDPI__MODEL__DEFINES__
+#define		__MMDPI__MODEL__DEFINES__	( 1 )
 
 
 class mmdpiModel : public mmdpiBone
@@ -43,3 +44,5 @@ public :
 	mmdpiModel();
 	~mmdpiModel();
 } ;
+
+#endif //	__MMDPI__MODEL__DEFINES__

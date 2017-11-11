@@ -1,4 +1,5 @@
-#pragma once
+#ifndef		__MMDPI__INCLUDE__DEFINES__
+#define		__MMDPI__INCLUDE__DEFINES__	( 1 )
 
 #include "mmdpi_define.h"
 
@@ -815,3 +816,5 @@ typedef struct _mmdpiMatrix_
 		printf( "Error.%d\n", error_code );	\
 										\
 }
+
+#endif	//	__MMDPI__INCLUDE__DEFINES__

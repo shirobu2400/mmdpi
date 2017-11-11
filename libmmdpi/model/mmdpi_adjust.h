@@ -4,7 +4,8 @@
 #include "mmdpi_mesh.h"
 
 
-#pragma once
+#ifndef		__MMDPI__ADJUST__DEFINES__
+#define		__MMDPI__ADJUST__DEFINES__	( 1 )
 
 /*
  *	頂点の調節部
@@ -28,3 +29,5 @@ public:
 	mmdpiAdjust();
 	~mmdpiAdjust();
 };
+
+#endif	//	__MMDPI__ADJUST__DEFINES__

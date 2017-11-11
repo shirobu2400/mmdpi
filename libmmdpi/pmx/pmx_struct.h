@@ -1,8 +1,8 @@
 
 #include "../model/mmdpi_struct.h"
 
-#pragma once
-
+#ifndef		__MMDPI__PMX__STRUCT__DEFINES__
+#define		__MMDPI__PMX__STRUCT__DEFINES__	( 1 )
 
 //#pragma pack( push, 1 )	//アラインメント制御をオフる
 
@@ -461,3 +461,5 @@ typedef struct tagMMDPI_PMX_SHOW_FRAME_INFO
 } MMDPI_PMX_SHOW_FRAME_INFO, *MMDPI_PMX_SHOW_FRAME_INFO_PTR;
 
 //#pragma pack( pop )	//アラインメント制御エンド
+
+#endif	//	__MMDPI__PMX__STRUCT__DEFINES__

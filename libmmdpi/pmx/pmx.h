@@ -1,6 +1,9 @@
 
 #include "pmx_draw.h"
 
+#ifndef		__MMDPI__PMX__DEFINES__
+#define		__MMDPI__PMX__DEFINES__	( 1 )
+
 class mmdpiPmx : public mmdpiPmxDraw
 {
 public :
@@ -8,4 +11,6 @@ public :
 
 	virtual void		draw( void );
 	virtual void		set_bone_matrix( uint bone_index, mmdpiMatrix& matrix );
-} ;
+};
+
+#endif	//	__MMDPI__PMX__DEFINES__
