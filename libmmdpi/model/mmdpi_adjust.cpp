@@ -75,6 +75,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			if( vartexid_max < v3i[ i ] )
 				vartexid_max = v3i[ i ];
 		}
+
 		//	頂点数が範囲外
 		if( vartexid_max - vartexid_min > vertex_range )
 			update_flag |= 0x01;
@@ -97,8 +98,6 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			//	メッシュ設定
 			mesh_temp->id = mesh.size();
 			mesh_temp->set_vertex( &new_vertex[ 0 ], new_vertex.size() );	// &vector array[ 0 ] でベクターを配列化
-			//for( uint i = 0; i < new_face.size(); i ++ )
-			//	new_face[ i ] -= vartexid_min;
 			mesh_temp->set_face( &new_face[ 0 ], new_face.size() );
 			mesh_temp->set_material( material_id, &material[ material_id ] );
 			mesh_temp->set_boneid( new_bone_list, bone_counter );
@@ -156,10 +155,10 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			{
 				//	新たに頂点を追加
 				v.ver		= vertex->ver[ old_vi ];
+				v.uv		= vertex->uv[ old_vi ];
 #ifdef _MMDPI_OUTLINE_
 				v.nor		= vertex->nor[ old_vi ];
 #endif
-				v.uv		= vertex->uv[ old_vi ];
 				v.weight	= vertex->weight[ old_vi ];
 				v.index		= mmdpiVector4d( 0, 0, 0, 0 );
 

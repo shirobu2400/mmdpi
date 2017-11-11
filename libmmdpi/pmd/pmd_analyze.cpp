@@ -20,7 +20,7 @@ int mmdpiPmdAnalyze::analyze( void )
 	for( dword i = 0; i < material_num; i ++ )
 	{
 		adjust_material[ i ].face_top = face_top;
-		adjust_material[ i ].face_num = material[ i ].face_vert_count;
+		adjust_material[ i ].face_num = material[ i ].face_vert_count - face_top;
 		face_top += material[ i ].face_vert_count;
 	}
 

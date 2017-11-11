@@ -39,23 +39,23 @@ int mmdpiShader::default_shader( void )
 	"attribute	vec3		Vertex;\n"
 #ifdef _MMDPI_OUTLINE_
 	"attribute	vec3		Normal;\n"
-	"uniform	float		Edge_size;		//	エッジサイズ\n"
-	"uniform	vec4		Edge_color;		//	エッジカラー\n"
+	"uniform	float		Edge_size;\n"		//	エッジサイズ
+	"uniform	vec4		Edge_color;\n"		//	エッジカラー
 #endif
 	"attribute	vec4		g_Uv;\n"
 	"varying	vec4		v_Uv;\n"
-	"attribute	vec4		BoneWeights;	//	頂点ウェイト\n"
+	"attribute	vec4		BoneWeights;	\n"	//	頂点ウェイト
 	"attribute	vec3		SkinVertex;\n"
 	"\n"
 	"//	Bone Info\n"
 	"//	ボーン姿勢情報\n"
 	"uniform mat4			BoneMatrix[ %d ];\n"
-	"attribute vec4			BoneIndices;	//	ボーンインデックス\n"
+	"attribute vec4			BoneIndices;	\n"	//	ボーンインデックス
 	"\n"
 	"uniform   vec4			gColor;\n"
 	"varying   vec4			Color;\n"
 	"\n"
-	"// 頂点シェーダメイン関数\n"
+	//	頂点シェーダメイン関数
 	"void main( void )\n"
 	"{\n"
 	"	mat4	skinTransform;\n"
@@ -63,13 +63,13 @@ int mmdpiShader::default_shader( void )
 	"\n"
 	"	skinTransform = mat4( 0 );\n"
 	"\n"
-	"	float weight[ 4 ];\n"
+	"	float	weight[ 4 ];\n"
 	"	weight[ 0 ] = BoneWeights.x;\n"
 	"	weight[ 1 ] = BoneWeights.y;\n"
 	"	weight[ 2 ] = BoneWeights.z;\n"
 	"	weight[ 3 ] = BoneWeights.w;\n"
 	"\n"
-	"	float indices[ 4 ];\n"
+	"	float	indices[ 4 ];\n"
 	"	indices[ 0 ] = BoneIndices.x;\n"
 	"	indices[ 1 ] = BoneIndices.y;\n"
 	"	indices[ 2 ] = BoneIndices.z;\n"
@@ -112,12 +112,12 @@ int mmdpiShader::default_shader( void )
 	"{\n"
 	"	vec4	color = texture2D( Tex01, v_Uv.xy );\n"
 	"	color.a = color.a * Alpha;\n"
-	"	if( TexToonFlag > 0.5 )\n"
-	"	{\n"
-	"		vec4	tc = texture2D( TexToon, v_Uv.xy );\n"
-	"		tc.a = 1.0;\n"
-	"		color = color * tc;\n"
-	"	}\n"
+	//"	if( TexToonFlag > 0.5 )\n"
+	//"	{\n"
+	//"		vec4	tc = texture2D( TexToon, v_Uv.xy );\n"
+	//"		tc.a = 1.0;\n"
+	//"		color = color * tc;\n"
+	//"	}\n"
 	"	gl_FragColor = color * ( 1.0 - Color.a ) + Color * ( Color.a );\n"
 	//"	gl_FragColor = color;\n"
 	"}\n"
@@ -158,7 +158,6 @@ void mmdpiShader::shader_setting( void )
 	glEnableVertexAttribArray( uv_id );
 
 	//	法線
-	normal_id = 0;
 #ifdef _MMDPI_OUTLINE_
 	normal_id = glGetAttribLocation( program, ( GLchar* )"Normal" );
 	glEnableVertexAttribArray( normal_id );
@@ -177,7 +176,7 @@ void mmdpiShader::shader_setting( void )
 	//	テクスチャサイズ
 	bone_size_id = glGetUniformLocation( program, ( GLchar* )"BoneTextureSize" );
 	
-	// Attribute1にindices変数、Attribute2にweights変数を割り当てる
+	//	Attribute1にindices変数、Attribute2にweights変数を割り当てる
 	bone_weights_id = glGetAttribLocation( program, ( GLchar* )"BoneWeights" );
 	glEnableVertexAttribArray( bone_weights_id );
 	
