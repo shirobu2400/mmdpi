@@ -31,9 +31,7 @@ typedef struct tagMMDPI_VERTEX
 	mmdpiVector4d	weight;
 	
 	//	法線ベクトル
-#ifdef _MMDPI_OUTLINE_
 	mmdpiVector3d	nor;
-#endif
 
 } MMDPI_VERTEX, *MMDPI_VERTEX_PTR;
 
@@ -52,14 +50,14 @@ typedef struct tagMMDPI_BLOCK_VERTEX
 	//	テクスチャ座標群
 	mmdpiVector4d_ptr	uv;
 
-	//	法線ベクトル群
-	mmdpiVector3d_ptr	nor;
-
 	//	ボーンインデックス群
 	mmdpiVector4d_ptr	index;
 
 	//	ボーン重み群
 	mmdpiVector4d_ptr	weight;
+
+	//	法線ベクトル群
+	mmdpiVector3d_ptr	nor;
 
 	//	メモリ自動開放フラグ
 	int			alloc_flag;
@@ -70,8 +68,8 @@ typedef struct tagMMDPI_BLOCK_VERTEX
 		ver	= 0;
 		uv	= 0;
 		nor	= 0;
-		index = 0;
-		weight = 0;
+		index	= 0;
+		weight	= 0;
 		alloc_flag = 0;
 	}
 	void alloc( dword num )
@@ -285,7 +283,7 @@ typedef struct tagMMDPI_PIECE
 	mmdpiColor			edge_color;
 	float				opacity;
 
-	
+	int				has_texture;	
 } MMDPI_PIECE;
 
 typedef struct tagMMDPI_BONE_INFO

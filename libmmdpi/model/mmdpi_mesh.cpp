@@ -105,6 +105,8 @@ int mmdpiMesh::set_material( dword raw_material_id, MMDPI_MATERIAL* raw_material
 	b_piece->raw_material		= raw_material;
 	b_piece->face_top		= 0;
 	b_piece->face_num		= b_face_num;
+	b_piece->has_texture		= 0;
+
 	return 0;
 }
 

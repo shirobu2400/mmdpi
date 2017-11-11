@@ -16,6 +16,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	GLubyte			temp = 0;
 	dword			mask_color[ 4 ] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
 	dword			mask_shift[ 4 ] = { 0 };
+	int			result = 0;
 		
 
 	//　ファイルを開く
@@ -119,6 +120,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 
 		break;
 	case 3:
+	{
 		dword*	raw_bits = 0x00;
 
 		raw_bits = new dword[ bit_size + 1 ];
@@ -143,14 +145,15 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		}
 
 		delete[] raw_bits;
-		break;
+	} break;
+	default:
+		result = -1;
 	}
 
 	//　ファイルを閉じる
 	fclose( fp );
 
-	//	成功
-	return 0;
+	return result;
 }
 
 int MMDPI_BMP::load( const char *filename )

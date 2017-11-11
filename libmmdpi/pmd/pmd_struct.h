@@ -42,8 +42,7 @@ typedef ushort tagMMDPI_PMD_FACE,
 
 // 材質
 typedef struct tagMMDPI_PMD_MATERIAL
-{
-	
+{	
 	float diffuse_color[ 3 ]; // dr, dg, db // 減衰色
 	float alpha;
 	float specularity;
@@ -53,7 +52,6 @@ typedef struct tagMMDPI_PMD_MATERIAL
 	BYTE edge_flag; // 輪郭、影
 	dword face_vert_count; // 面頂点数 // インデックスに変換する場合は、材質0から順に加算
 	char texture_file_name[ 20 ]; // テクスチャファイル名またはスフィアファイル名 // 20バイトぎりぎりまで使える(終端の0x00は無くても動く)
-
 } MMDPI_PMD_MATERIAL, *MMDPI_PMD_MATERIAL_PTR;
 
 // ボーン

@@ -20,7 +20,7 @@ int mmdpiPmdAnalyze::analyze( void )
 	for( dword i = 0; i < material_num; i ++ )
 	{
 		adjust_material[ i ].face_top = face_top;
-		adjust_material[ i ].face_num = material[ i ].face_vert_count - face_top;
+		adjust_material[ i ].face_num = material[ i ].face_vert_count;
 		face_top += material[ i ].face_vert_count;
 	}
 
@@ -88,7 +88,9 @@ int mmdpiPmdAnalyze::analyze( void )
 		m->color.r = mpmx->diffuse_color[ 0 ];
 		m->color.g = mpmx->diffuse_color[ 1 ];
 		m->color.b = mpmx->diffuse_color[ 2 ];
-		m->color.a = 0;
+		m->color.a = m->opacity;
+		if( m->has_texture )
+			m->color.a = 0;
 	}
 	
 	return 0;
@@ -100,16 +102,21 @@ void mmdpiPmdAnalyze::load_texture( void )
 	dword	fver_num_base = 0;
 	long	ppid = -1;
 	dword	pi = 0;
-	uint	material_num = mesh.size();
 
 	//	一時的に読み込み
 	texture		= new MMDPI_IMAGE[ material_num ];
 	toon_texture	= new MMDPI_IMAGE[ material_num ];
+	int*	loaded_flag = new int[ material_num ];
+	if( loaded_flag == 0x00 || toon_texture == 0x00 || texture == 0x00 )
+		return ;
+	for( uint i = 0; i < material_num; i ++ )
+		loaded_flag[ i ] = 0;
 
 	for( dword i = 0; i < mesh.size(); i ++ )
 	{		
 		MMDPI_PIECE*		m	= mesh[ i ]->b_piece;
 		MMDPI_PMD_MATERIAL_PTR	mpmx	= &material[ m->raw_material_id ];
+		int	ri = m->raw_material_id;
 		char*	texture_file_name;
 
 		texture_file_name = mpmx->texture_file_name;
@@ -127,8 +134,14 @@ void mmdpiPmdAnalyze::load_texture( void )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 	
+		if( loaded_flag[ ri ] == 0 )
+			texture[ ri ].load( texture_file_name_full );
+		
 		//	テクスチャの関連付け
-		m->raw_material->texture.load( texture_file_name_full );
+		m->raw_material->texture.copy( texture[ ri ] );
+		if( texture[ ri ].type )
+			m->has_texture = 1;
+		loaded_flag[ ri ] ++;
 	}
 }
 

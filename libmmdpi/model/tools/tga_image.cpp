@@ -7,6 +7,7 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 	GLubyte		header[ 18 ]; 
 	GLubyte		pixel_size;
 	int		image_type;
+	int		result = 0;
 	
 
 	//　ファイルを開く
@@ -123,13 +124,17 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 
 		delete[] elements;
 	}	
+	else
+	{
+		result = -1;
+	}
 
 	//　ファイルを閉じる
 	fclose( fp );
 
 	delete[] raw_bits;
 
-	return 0;
+	return result;
 }
 
 GLuint MMDPI_TGA::load( const char *filename )

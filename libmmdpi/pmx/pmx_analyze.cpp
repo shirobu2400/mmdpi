@@ -85,7 +85,7 @@ int mmdpiPmxAnalyze::analyze( void )
 		m->color.a = mpmx->Diffuse[ 3 ];
 
 		//	テクスチャ優先
-		if( mpmx->has_texture )
+		if( m->has_texture )
 			m->color.a = 0;
 	}
 
@@ -166,7 +166,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 		if( mpmx->texture_index < texture_num )
 		{
 			m->raw_material->texture.copy( texture00[ mpmx->texture_index ] );
-			mpmx->has_texture = 1;
+			m->has_texture = 1;
 		}
 
 		if( mpmx->toon_texture_number < 10 )
