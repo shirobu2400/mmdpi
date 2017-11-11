@@ -189,7 +189,7 @@ typedef struct tagMMDPI_IMAGE
 				delete bmp;
 				return -1;
 			}
-			type = 0;
+			type = 3;
 			id = bmp->get_id();
 		}
 		else if( strncmp( file_name + len - 4, ".jpg", 3 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 4 ) == 0 )
@@ -200,7 +200,7 @@ typedef struct tagMMDPI_IMAGE
 				delete jpg;
 				return -1;
 			}
-			type = 0;
+			type = 4;
 			id = jpg->get_id();
 		}
 
@@ -222,6 +222,7 @@ typedef struct tagMMDPI_IMAGE
 	tagMMDPI_IMAGE()
 	{
 		id = -1;
+		type = 0;
 		ref = 0;
 
 		tga = 0x00;
