@@ -46,8 +46,6 @@ void mmdpi::draw( void )
 void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix )
 {
 	pmm->set_bone_matrix( bone_index, matrix );
-	//pmx? pmx->set_bone_matrix( bone_index, matrix ) : pmd? pmd->set_bone_matrix( bone_index, matrix ) : 0x00 ;
-	//pmx->set_bone_matrix( bone_index, matrix );
 }
 
 void mmdpi::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix )
@@ -74,15 +72,20 @@ void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix )
 	pmm->set_projection_matrix( p_projection_matrix );
 }
 
+mmdpiVmd* mmdpi::vmd( int index )
+{
+	return get_vmd( index );
+}
+
 mmdpiVmd* mmdpi::get_vmd( int index )
 {
-	if( index < 0 || vmd.size() <= ( unsigned )index )
+	if( index < 0 || vmd_list.size() <= ( unsigned )index )
 		return 0x00;
-	return vmd[ index ]; 
+	return vmd_list[ index ]; 
 }
 
 //	Vmd Loader
-int mmdpi::vmd_load( const char *file_name )
+int mmdpi::vmd_load( const char* motion_name )
 {
 	mmdpiVmd*			lvmd = new mmdpiVmd();
 	MMDPI_BONE_INFO_PTR		bone = 0x00;
@@ -104,17 +107,21 @@ int mmdpi::vmd_load( const char *file_name )
 	}
 	else
 		return -1; // error.
-	lvmd->load( file_name );
+	lvmd->load( motion_name );
 	lvmd->set_bone( bone );
 
-	vmd.push_back( lvmd );
+	vmd_list.push_back( lvmd );
 	return 0;
+}
+
+int mmdpi::motion_load( const char* motion_name )
+{
+	return vmd_load( motion_name );
 }
 
 void mmdpi::set_fps( int fps )
 {
 	pmm->set_fps( fps );
-	//pmx? pmx->set_fps( fps ) : pmd? pmd->set_fps( fps ) : 0x00 ;
 }
 
 mmdpi::mmdpi()
@@ -126,8 +133,8 @@ mmdpi::mmdpi()
 
 mmdpi::~mmdpi()
 {
-	for( unsigned int i = 0; i < vmd.size(); i ++ )
-		delete vmd[ i ];
+	for( unsigned int i = 0; i < vmd_list.size(); i ++ )
+		delete vmd_list[ i ];
 	if( pmx )
 		delete pmx;
 	if( pmd )

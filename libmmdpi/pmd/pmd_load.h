@@ -8,7 +8,7 @@
 class mmdpiPmdLoad
 {
 
-protected :
+protected:
 
 	//	Hader
 	MMDPI_PMD_HEADER				head;
@@ -80,7 +80,7 @@ protected :
 	
 	int		char_byte( const char* _string );
 
-public :
+public:
 
 	virtual int	load( const char *file_name );
 		
@@ -88,6 +88,7 @@ public :
 	{
 		return bone;
 	}
+
 	mmdpiPmdLoad();
 	~mmdpiPmdLoad();
 };

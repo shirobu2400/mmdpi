@@ -2,11 +2,11 @@
 #include "pmx_draw.h"
 
 #ifndef		__MMDPI__PMX__DEFINES__
-#define		__MMDPI__PMX__DEFINES__	( 1 )
+#define		__MMDPI__PMX__DEFINES__		( 1 )
 
 class mmdpiPmx : public mmdpiPmxDraw
 {
-public :
+public:
 	virtual int		load( const char* pmx_name );
 
 	virtual void		draw( void );

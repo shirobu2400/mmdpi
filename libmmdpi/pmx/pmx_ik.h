@@ -7,7 +7,7 @@
 
 class mmdpiPmxIk
 {
-protected :
+protected:
 	int		rotation_range( mmdpiMatrix_ptr rotation_matrix, mmdpiVector3d_ptr max, mmdpiVector3d_ptr min, float once_range );
 	
 public :

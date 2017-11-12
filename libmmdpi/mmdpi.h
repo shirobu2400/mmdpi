@@ -3,7 +3,7 @@
 #include "pmx/pmx.h"
 #include "vmd/vmd.h"
 
-#ifdef	_WIN32
+#ifdef	_WINDOWS
 #define		__MMDPI__SJIS__FLAG__	( 1 )
 #else
 #define		__MMDPI__SJIS__FLAG__	( 0 )
@@ -14,19 +14,20 @@
 
 class mmdpi
 {
-protected :
-
+protected:
 	mmdpiModel*			pmm;
 	mmdpiPmx*			pmx;
 	mmdpiPmd*			pmd;
-	vector<mmdpiVmd*>		vmd;
+	vector<mmdpiVmd*>		vmd_list;
 	
-public :
-
+public:
 	virtual int		load( const char* model_name );
-	virtual int		vmd_load( const char *file_name );
-	virtual mmdpiVmd*	get_vmd( int index );
+	virtual int		motion_load( const char* motion_name );	// vmd_load Ç∆àÍèè
+	virtual int		vmd_load( const char* motion_name );
 
+	virtual mmdpiVmd*	vmd( int index );	//	Ç∆ìØÇ∂
+	virtual mmdpiVmd*	get_vmd( int index );
+	
 	virtual void		draw( void );
 	virtual void		set_bone_matrix( uint bone_index, mmdpiMatrix& matrix );
 	virtual void		set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix );	// set bone matrix
@@ -38,6 +39,6 @@ public :
 
 	mmdpi();
 	~mmdpi();
-} ;
+};
 
 #endif	//	__MMDPI__DEFINES__

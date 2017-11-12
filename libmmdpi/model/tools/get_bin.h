@@ -3,15 +3,13 @@
 #include "utf8_sjis.h"
 
 
-typedef unsigned int uint;
-
-#pragma once
-
+#ifndef		__MMDPI__GETBIN__DEFINES__
+#define		__MMDPI__GETBIN__DEFINES__	( 1 )
 
 class GetBin
 {
 
-public :
+public:
 
 	unsigned char	*buf, *buf_base;
 	unsigned long	buf_len;
@@ -30,4 +28,6 @@ public :
 
 	GetBin();
 	~GetBin();
-} ;
+};
+
+#endif	//	__MMDPI__GETBIN__DEFINES__

@@ -8,15 +8,12 @@
 
 class mmdpiPmdDraw : public mmdpiPmdAnalyze, public mmdpiPmdIk
 {
-
-private :
-
-public :
+public:
 
 	void draw( void );
 
 	mmdpiPmdDraw();
 	~mmdpiPmdDraw();
-} ;
+};
 
 #endif	//	__MMDPI__PMD__DRAW__DEFINES__

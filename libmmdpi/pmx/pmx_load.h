@@ -4,12 +4,12 @@
 
 
 #ifndef		__MMDPI__PMX__LOAD__DEFINES__
-#define		__MMDPI__PMX__LOAD__DEFINES__	( 1 )
+#define		__MMDPI__PMX__LOAD__DEFINES__		( 1 )
 
 class mmdpiPmxLoad
 {
 
-protected :
+protected:
 
 	//	Hader
 	MMDPI_PMX_HEADER				head;
@@ -67,7 +67,7 @@ protected :
 	//	文字バイト数
 	uint		byte_one_length;
 	
-public :
+public:
 
 	virtual int	load( const char *file_name );
 

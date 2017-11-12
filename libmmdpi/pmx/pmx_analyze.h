@@ -8,7 +8,7 @@
 
 class mmdpiPmxAnalyze : public mmdpiPmxLoad, public mmdpiModel
 {
-private :
+private:
 	
 	MMDPI_MATERIAL_PTR		adjust_material;
 	MMDPI_BLOCK_VERTEX_PTR		adjust_vertex;
@@ -24,7 +24,7 @@ private :
 protected:
 	int				create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len );
 	
-public :
+public:
 	virtual int			load( const char *file_name );
 
 	mmdpiPmxAnalyze();

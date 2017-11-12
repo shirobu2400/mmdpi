@@ -3,7 +3,8 @@
 
 //#define _MMDPI_BITMAP_DRAW_SWITCH_
 
-#pragma once
+#ifndef		__MMDPI__BITMAP__DEFINES__
+#define		__MMDPI__BITMAP__DEFINES__	( 1 )
 
 #pragma pack( push, 1 )	//アラインメント制御をオフる
 
@@ -84,10 +85,6 @@ typedef struct tagBITMAPINFOHEADER
 #include <iostream>
 using namespace std;
 
-
-/////////////////////////////////////////////////////////////////////////
-//　　MMDPI_BMP class
-/////////////////////////////////////////////////////////////////////////
 class MMDPI_BMP
 {
 protected:
@@ -115,3 +112,4 @@ public:
     ~MMDPI_BMP();
 };
 
+#endif	//	__MMDPI__BITMAP__DEFINES__

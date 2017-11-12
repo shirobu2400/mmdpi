@@ -5,36 +5,38 @@
 #include "../pmx/pmx_struct.h"
 #include "../pmd/pmd_struct.h"
 
-#pragma once
+#ifndef		__MMDPI__VMD__DEFINES__
+#define		__MMDPI__VMD__DEFINES__		( 1 )
+
 #pragma pack( push, 1 )		//	アライメント
 
 //	動作
 typedef struct tagMMDPI_VMD_MMDPI_PMD_HEADER 
 {
-	char			VmdHeader[ 30 ];	//	"Vocaloid Motion Data 0002"
-	char			VmdModelName[ 20 ];
+	char				vmd_header[ 30 ];	//	"Vocaloid Motion Data 0002"
+	char				vmd_model_name[ 20 ];
 } MMDPI_VMD_MMDPI_PMD_HEADER;
 
 typedef struct tagMMDPI_VMD_MOTION 
 { // 111 Bytes
-	char			BoneName[ 15 ];
-	dword			FrameNo;
-	float			vx, vy, vz;
-	float			qx, qy, qz, qw;			// Quaternion
-	char			Interpolation[ 64 ];	// [4][4][4]
+	char				bone_name[ 15 ];
+	dword				frame_number;
+	float				vx, vy, vz;
+	float				qx, qy, qz, qw;			// Quaternion
+	char				interpolation[ 64 ];	// [4][4][4]
 } MMDPI_VMD_MOTION, *MMDPI_VMD_MOTION_PTR;
 
 //	表情
 typedef struct tagMMDPI_VMD_SKIN_COUNT 
 {
-	dword						Count;
+	dword				count;
 } MMDPI_VMD_SKIN_COUNT, *MMDPI_VMD_SKIN_COUNT_PTR;
 
 typedef struct tagMMDPI_VMD_SKIN 
 { // 23 Bytes	
-	char						SkinName[ 15 ];
-	dword						FrameNo;
-	float						Weight;
+	char				skin_name[ 15 ];
+	dword				frame_number;
+	float				weight;
 } MMDPI_VMD_SKIN, *MMDPI_VMD_SKIN_PTR;
  
 typedef struct tagMMDPI_VMD_INFO
@@ -42,18 +44,18 @@ typedef struct tagMMDPI_VMD_INFO
 	MMDPI_VMD_MMDPI_PMD_HEADER	header;		//	ヘッダ
 	
 	//	モーション
-	dword						motion_num;	//	モーション数
+	dword				motion_num;	//	モーション数
 	MMDPI_VMD_MOTION_PTR		motion;		//	モーション
 
 	//	スキン
 	MMDPI_VMD_SKIN_COUNT		skin_num;
-	MMDPI_VMD_SKIN_PTR			skin;			
+	MMDPI_VMD_SKIN_PTR		skin;			
 
 } MMDPI_VMD_INFO, *MMDPI_VMD_INFO_PTR;
 
 #if 0
  struct VMD_CAMERA_COUNT {
- dword Count;
+ dword count;
  } vmd_camera_count;
 
  struct VMD_CAMERA { 
@@ -61,13 +63,13 @@ dword FlameNo;
  float Length; 
 float Location[3];
  float Rotation[3]; 
-BYTE Interpolation[24]; 
+BYTE interpolation[24]; 
 dword ViewingAngle;
  BYTE Perspective; // 0:on 1:off
  } vmd_camera;
 
  struct VMD_LIGHT_COUNT {
- dword Count;
+ dword count;
  } vmd_light_count;
 
  struct VMD_LIGHT { // 28 Bytes // 
@@ -77,7 +79,7 @@ dword FlameNo;
  } vmd_light;
 
  struct VMD_SELF_SHADOW_COUNT {
- dword Count;
+ dword count;
  } vmd_self_shadow_count;
 
  struct VMD_SELF_SHADOW { // 9 Bytes //
@@ -92,9 +94,9 @@ dword FlameNo;
  //	内部処理用
  typedef struct tagMMDPI_VMD_INFO_LIST
  {
-	tagMMDPI_VMD_INFO_LIST*		next;		//	
-	tagMMDPI_VMD_INFO_LIST*		prev;		//	
-	MMDPI_VMD_MOTION_PTR		motion;		//	モーション
+	tagMMDPI_VMD_INFO_LIST*			next;		//	
+	tagMMDPI_VMD_INFO_LIST*			prev;		//	
+	MMDPI_VMD_MOTION_PTR			motion;		//	モーション
  } MMDPI_VMD_INFO_LIST, *MMDPI_VMD_INFO_LIST_PTR, **MMDPI_VMD_INFO_LIST_PTR_PTR;
 
   //	内部処理用
@@ -104,14 +106,14 @@ dword FlameNo;
 	tagMMDPI_VMD_SKIN_INFO_LIST*		prev;		//	前
 	tagMMDPI_VMD_SKIN_INFO_LIST*		brot;		//	兄弟
 
- 	MMDPI_VMD_SKIN_PTR					skin;		//	スキン
-	dword								target_id;
+ 	MMDPI_VMD_SKIN_PTR			skin;		//	スキン
+	dword					target_id;
  } MMDPI_VMD_SKIN_INFO_LIST, *MMDPI_VMD_SKIN_INFO_LIST_PTR;
 
  //	VMD Loader
 class mmdpiVmd
 {
-protected :
+protected:
 
 	MMDPI_VMD_INFO_PTR		vmd_info;
 	int				bone_num;
@@ -144,7 +146,7 @@ protected :
 
 	MMDPI_BONE_INFO_PTR		bone;
 	
-public :
+public:
 	
 	int operator++( void )
 	{ 
@@ -191,4 +193,6 @@ public :
 
 	mmdpiVmd();
 	~mmdpiVmd();
-} ; 
+}; 
+
+#endif	//	__MMDPI__VMD__DEFINES__

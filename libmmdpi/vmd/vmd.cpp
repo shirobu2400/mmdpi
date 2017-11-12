@@ -32,8 +32,8 @@ int mmdpiVmd::advance_time( float time_scale )
 		mmdpiVector3d	now_vec( vp->vx, vp->vy, vp->vz );
 		
 		float		time_f = 0.5f;
-		if( 0 <= vp->FrameNo && vp->FrameNo <= vpn->FrameNo ) 
-			time_f = ( motion_time - ( float )vp->FrameNo ) / ( float )( vpn->FrameNo - vp->FrameNo ); 
+		if( 0 <= vp->frame_number && vp->frame_number <= vpn->frame_number ) 
+			time_f = ( motion_time - ( float )vp->frame_number ) / ( float )( vpn->frame_number - vp->frame_number ); 
 		
 		int		interInde = 0;
 		const float	_interpolation_div_ = 127.0f;
@@ -43,20 +43,20 @@ int mmdpiVmd::advance_time( float time_scale )
 		// 高度な補間
 
 		// x
-		s_vec.x = interpolate( ( float )vp->Interpolation[ 0 ] / _interpolation_div_, ( float )vp->Interpolation[ 4 ] / _interpolation_div_, 
-					( float )vp->Interpolation[ 8 ] / _interpolation_div_, ( float )vp->Interpolation[ 12 ] / _interpolation_div_, 
+		s_vec.x = interpolate( ( float )vp->interpolation[ 0 ] / _interpolation_div_, ( float )vp->interpolation[ 4 ] / _interpolation_div_, 
+					( float )vp->interpolation[ 8 ] / _interpolation_div_, ( float )vp->interpolation[ 12 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.x - now_vec.x );
 		// y
-		s_vec.y = interpolate( ( float )vp->Interpolation[ 1 ] / _interpolation_div_, ( float )vp->Interpolation[ 5 ] / _interpolation_div_, 
-					( float )vp->Interpolation[ 9 ] / _interpolation_div_, ( float )vp->Interpolation[ 13 ] / _interpolation_div_, 
+		s_vec.y = interpolate( ( float )vp->interpolation[ 1 ] / _interpolation_div_, ( float )vp->interpolation[ 5 ] / _interpolation_div_, 
+					( float )vp->interpolation[ 9 ] / _interpolation_div_, ( float )vp->interpolation[ 13 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.y - now_vec.y );
 		// z
-		s_vec.z = interpolate( ( float )vp->Interpolation[ 2 ] / _interpolation_div_, ( float )vp->Interpolation[ 6 ] / _interpolation_div_, 
-					( float )vp->Interpolation[ 10 ] / _interpolation_div_, ( float )vp->Interpolation[ 14 ] / _interpolation_div_, 
+		s_vec.z = interpolate( ( float )vp->interpolation[ 2 ] / _interpolation_div_, ( float )vp->interpolation[ 6 ] / _interpolation_div_, 
+					( float )vp->interpolation[ 10 ] / _interpolation_div_, ( float )vp->interpolation[ 14 ] / _interpolation_div_, 
 					time_f ) * ( next_vec.z - now_vec.z );
 		//// radw
-		//radw = interpolate( ( float )vp->Interpolation[ 3 ] / _interpolation_div_, ( float )vp->Interpolation[ 7 ] / _interpolation_div_, 
-		//			( float )vp->Interpolation[ 11 ] / _interpolation_div_, ( float )vp->Interpolation[ 15 ] / _interpolation_div_, 
+		//radw = interpolate( ( float )vp->interpolation[ 3 ] / _interpolation_div_, ( float )vp->interpolation[ 7 ] / _interpolation_div_, 
+		//			( float )vp->interpolation[ 11 ] / _interpolation_div_, ( float )vp->interpolation[ 15 ] / _interpolation_div_, 
 		//			time_f );
 
 		s_vec = s_vec + now_vec;
@@ -69,7 +69,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		s_qt.slerp_quaternion( now_qt, next_qt, time_f );
 		rot_matrix.quaternion( s_qt );
 
-		if( motion_time >= ( float )vpn->FrameNo )
+		if( motion_time >= ( float )vpn->frame_number )
 			now_motion[ i ] = now_motion[ i ]->next;	//次のモーションへ
 
 		//	親ボーンからみた姿勢行列に
@@ -84,7 +84,7 @@ int mmdpiVmd::advance_time( float time_scale )
 		{
 			now_skin = now_skin->next;
 		}
-		if( ( float )now_skin->skin->FrameNo <= motion_time )
+		if( ( float )now_skin->skin->frame_number <= motion_time )
 		{
 			MMDPI_VMD_SKIN_INFO_LIST_PTR	skinl = now_skin;
 			while( skinl )
@@ -196,7 +196,7 @@ int mmdpiVmd::analyze( void )
 
 	for( dword i = 0; i < vmd_info->motion_num; i ++ )
 	{
-		string str( vmd_info->motion[ i ].BoneName );
+		string str( vmd_info->motion[ i ].bone_name );
 		//	インデックス
 		bone_id = bone_name_to_index[ str ];
 		if( bone_id < 1 )
@@ -204,8 +204,8 @@ int mmdpiVmd::analyze( void )
 		insert_motion_list( bone_id - 1, &vmd_info->motion[ i ] );
 
 		//	最大モーション数
-		if( max_frame < vmd_info->motion[ i ].FrameNo )
-			max_frame = vmd_info->motion[ i ].FrameNo;
+		if( max_frame < vmd_info->motion[ i ].frame_number )
+			max_frame = vmd_info->motion[ i ].frame_number;
 	}
 
 	//	Skin
@@ -217,7 +217,7 @@ int mmdpiVmd::analyze( void )
 	skin_line->brot	= 0;
 	skin_line->target_id = 0;
 	skin_line->skin	= 0;
-	for( dword i = 0; i < vmd_info->skin_num.Count; i ++ )
+	for( dword i = 0; i < vmd_info->skin_num.count; i ++ )
 		insert_skin( &vmd_info->skin[ i ] );
 	while( skin_line->prev )
 		skin_line = skin_line->prev;
@@ -239,7 +239,7 @@ int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 
 	//	セット
 	new_skin->skin		= skin;
-	new_skin->target_id	= skin_name_to_index[ skin->SkinName ];
+	new_skin->target_id	= skin_name_to_index[ skin->skin_name ];
 	
 	new_skin->next = 0x00;
 	new_skin->prev = 0x00;
@@ -250,9 +250,9 @@ int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 	MMDPI_VMD_SKIN_INFO_LIST_PTR	prev_l = 0x00;
 	
 	//	モーションのフレーム毎の挿入位置までシーク
-	while( ml && ml->skin && ml->skin->FrameNo < skin->FrameNo )
+	while( ml && ml->skin && ml->skin->frame_number < skin->frame_number )
 	{
-		if( ml->skin->FrameNo == skin->FrameNo && ml->brot == 0x00 )
+		if( ml->skin->frame_number == skin->frame_number && ml->brot == 0x00 )
 		{
 			ml->brot	= new_skin;
 			bflag		= 1;
@@ -275,7 +275,7 @@ int mmdpiVmd::insert_skin( MMDPI_VMD_SKIN_PTR skin )
 	if( skin_line == 0x00 || skin_line->skin == 0x00 )
 		skin_line = new_skin;
 	//	それ以外は必要な場所に入れる
-	else if( skin_line->skin->FrameNo > new_skin->skin->FrameNo )
+	else if( skin_line->skin->frame_number > new_skin->skin->frame_number )
 		skin_line = new_skin;
 
 	return 0;
@@ -300,7 +300,7 @@ int mmdpiVmd::insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_mo
 	MMDPI_VMD_INFO_LIST_PTR	prev_l = 0x00;
 
 //	モーションのフレーム毎の挿入位置までシーク
-	while( ml && ml->motion && ml->motion->FrameNo < insert_motion->FrameNo )
+	while( ml && ml->motion && ml->motion->frame_number < insert_motion->frame_number )
 	{
 		prev_l = ml;
 		ml = ml->next;
@@ -320,7 +320,7 @@ int mmdpiVmd::insert_motion_list( int bone_index, MMDPI_VMD_MOTION_PTR insert_mo
 	if( motion_line[ bone_index ] == 0x00 || motion_line[ bone_index ]->motion == 0x00 )
 		motion_line[ bone_index ] = new_motion;
 	//	それ以外は必要な場所に入れる
-	else if( motion_line[ bone_index ]->motion->FrameNo > new_motion->motion->FrameNo )
+	else if( motion_line[ bone_index ]->motion->frame_number > new_motion->motion->frame_number )
 		motion_line[ bone_index ] = new_motion;
 
 	return 0;
@@ -406,7 +406,7 @@ int mmdpiVmd::load( const char *filename )
 
 	//	ヘッダ
 	buf->get_bin( &vmd_info->header, sizeof( MMDPI_VMD_MMDPI_PMD_HEADER ) );
-	if( strncmp( vmd_info->header.VmdHeader, _vmd_head_, strlen( _vmd_head_ ) ) ) 
+	if( strncmp( vmd_info->header.vmd_header, _vmd_head_, strlen( _vmd_head_ ) ) ) 
 		return -1;	//違ったら
 
 	//	モーション読み込み
@@ -421,10 +421,10 @@ int mmdpiVmd::load( const char *filename )
 
 	//	スキン読み込み
 	buf->get_bin( &vmd_info->skin_num, sizeof( MMDPI_VMD_SKIN_COUNT ) );
-	vmd_info->skin = new MMDPI_VMD_SKIN[ vmd_info->skin_num.Count ];
+	vmd_info->skin = new MMDPI_VMD_SKIN[ vmd_info->skin_num.count ];
 	if( vmd_info->skin == 0x00 )
 		return -1;
-	for( dword i = 0; i < vmd_info->skin_num.Count; i ++ )
+	for( dword i = 0; i < vmd_info->skin_num.count; i ++ )
 	{
 		buf->get_bin( &vmd_info->skin[ i ], sizeof( MMDPI_VMD_SKIN ) );
 	}

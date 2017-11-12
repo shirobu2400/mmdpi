@@ -3,7 +3,9 @@
 //
 #include "../mmdpi_include.h"
 
-#pragma once
+#ifndef		__MMDPI__TGA__DEFINES__
+#define		__MMDPI__TGA__DEFINES__		( 1 )
+
 #include <iostream>
 
 class MMDPI_TGA
@@ -29,3 +31,5 @@ public:
 	MMDPI_TGA();
 	~MMDPI_TGA();
 };
+
+#endif	//	__MMDPI__TGA__DEFINES__
