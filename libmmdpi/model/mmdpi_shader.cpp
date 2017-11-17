@@ -36,24 +36,24 @@ int mmdpiShader::default_shader( void )
 #else
 	"mat4			ProjectionMatrix = gl_ModelViewProjectionMatrix;\n"
 #endif
-	"attribute	vec3		Vertex;\n"
+	"attribute	vec3		Vertex;		\n"
 #ifdef _MMDPI_OUTLINE_
-	"attribute	vec3		Normal;\n"
-	"uniform	float		Edge_size;\n"		//	エッジサイズ
-	"uniform	vec4		Edge_color;\n"		//	エッジカラー
+	"attribute	vec3		Normal;		\n"
+	"uniform	float		Edge_size;	\n"		//	エッジサイズ
+	"uniform	vec4		Edge_color;	\n"		//	エッジカラー
 #endif
-	"attribute	vec4		g_Uv;\n"
-	"varying	vec4		v_Uv;\n"
+	"attribute	vec4		gUv;		\n"
+	"varying	vec4		vUv;		\n"
+	"attribute	vec3		SkinVertex;	\n"
+	"\n"
+	//"	Bone Info\n"
+	//"ボーン姿勢情報\n"
+	"uniform	mat4		BoneMatrix[ %d ];\n"
 	"attribute	vec4		BoneWeights;	\n"	//	頂点ウェイト
-	"attribute	vec3		SkinVertex;\n"
+	"attribute	vec4		BoneIndices;	\n"	//	ボーンインデックス
 	"\n"
-	"//	Bone Info\n"
-	"//	ボーン姿勢情報\n"
-	"uniform mat4			BoneMatrix[ %d ];\n"
-	"attribute vec4			BoneIndices;	\n"	//	ボーンインデックス
-	"\n"
-	"uniform   vec4			gColor;\n"
-	"varying   vec4			Color;\n"
+	"uniform	vec4		gColor;		\n"
+	"varying	vec4		Color;		\n"
 	"\n"
 	//	頂点シェーダメイン関数
 	"void main( void )\n"
@@ -61,25 +61,29 @@ int mmdpiShader::default_shader( void )
 	"	mat4	skinTransform;\n"
 	"	vec3	vertex00;\n"
 	"\n"
-	"	skinTransform = mat4( 0 );\n"
+	//"	skinTransform = mat4( 0 );\n"
 	"\n"
-	"	float	weight[ 4 ];\n"
-	"	weight[ 0 ] = BoneWeights.x;\n"
-	"	weight[ 1 ] = BoneWeights.y;\n"
-	"	weight[ 2 ] = BoneWeights.z;\n"
-	"	weight[ 3 ] = BoneWeights.w;\n"
+	//"	float	weight[ 4 ];\n"
+	//"	weight[ 0 ] = BoneWeights.x;\n"
+	//"	weight[ 1 ] = BoneWeights.y;\n"
+	//"	weight[ 2 ] = BoneWeights.z;\n"
+	//"	weight[ 3 ] = BoneWeights.w;\n"
+	//"\n"
+	//"	float	indices[ 4 ];\n"
+	//"	indices[ 0 ] = BoneIndices.x;\n"
+	//"	indices[ 1 ] = BoneIndices.y;\n"
+	//"	indices[ 2 ] = BoneIndices.z;\n"
+	//"	indices[ 3 ] = BoneIndices.w;\n"
 	"\n"
-	"	float	indices[ 4 ];\n"
-	"	indices[ 0 ] = BoneIndices.x;\n"
-	"	indices[ 1 ] = BoneIndices.y;\n"
-	"	indices[ 2 ] = BoneIndices.z;\n"
-	"	indices[ 3 ] = BoneIndices.w;\n"
-	"\n"
-	"	for( int i = 0; i < 4; i ++ )\n"
-	"	{\n"
-	"		int bone_index = int( indices[ i ] );\n"
-	"		skinTransform += weight[ i ] * BoneMatrix[ bone_index ];\n"
-	"	}\n"
+	"	skinTransform  = BoneWeights[ 0 ] * BoneMatrix[ int( BoneIndices[ 0 ] ) ];\n"
+	"	skinTransform += BoneWeights[ 1 ] * BoneMatrix[ int( BoneIndices[ 1 ] ) ];\n"
+	"	skinTransform += BoneWeights[ 2 ] * BoneMatrix[ int( BoneIndices[ 2 ] ) ];\n"
+	"	skinTransform += BoneWeights[ 3 ] * BoneMatrix[ int( BoneIndices[ 3 ] ) ];\n"
+	//"	for( int i = 0; i < 4; i ++ )\n"
+	//"	{\n"
+	//"		int bone_index = int( indices[ i ] );\n"
+	//"		skinTransform += weight[ i ] * BoneMatrix[ bone_index ];\n"
+	//"	}\n"
 	"\n"
 #ifdef _MMDPI_OUTLINE_
 	"	vertex00 = Vertex + SkinVertex + Normal * Edge_size * 0.02;\n"
@@ -87,7 +91,7 @@ int mmdpiShader::default_shader( void )
 	"	vertex00 = Vertex;\n"
 #endif
 	"	gl_Position = ProjectionMatrix * skinTransform * vec4( vertex00, 1 );\n"
-	"	v_Uv = g_Uv;\n"
+	"	vUv = gUv;\n"
 	"	Color = gColor;\n"
 	//"	Color = vec4( 1.0, 1.0, 1.0, 0.0 );\n"
 #ifdef _MMDPI_OUTLINE_
@@ -103,18 +107,18 @@ int mmdpiShader::default_shader( void )
 	"uniform	sampler2D	Tex01;\n"
 	"uniform	float		TexToonFlag;\n"
 	"uniform	sampler2D	TexToon;\n"
-	"varying	vec4		v_Uv;\n"
+	"varying	vec4		vUv;\n"
 	"\n"
 	"varying	vec4		Color;\n"
 	"uniform	float		Alpha;\n"
 	"\n"
 	"void main( void )\n"
 	"{\n"
-	"	vec4	color = texture2D( Tex01, v_Uv.xy );\n"
+	"	vec4	color = texture2D( Tex01, vUv.xy );\n"
 	"	color.a = color.a * Alpha;\n"
 	//"	if( TexToonFlag > 0.5 )\n"
 	//"	{\n"
-	//"		vec4	tc = texture2D( TexToon, v_Uv.xy );\n"
+	//"		vec4	tc = texture2D( TexToon, vUv.xy );\n"
 	//"		tc.a = 1.0;\n"
 	//"		color = color * tc;\n"
 	//"	}\n"
@@ -154,7 +158,7 @@ void mmdpiShader::shader_setting( void )
 	glEnableVertexAttribArray( vertex_id );
 
 	//	UV
-	uv_id = glGetAttribLocation( program, ( GLchar* )"g_Uv" );
+	uv_id = glGetAttribLocation( program, ( GLchar* )"gUv" );
 	glEnableVertexAttribArray( uv_id );
 
 	//	法線
@@ -296,32 +300,43 @@ void mmdpiShader::set_face_buffers( int buffer_id, mmdpiShaderIndex* face_p, dwo
 //	シェーダバッファにデータ領域を設定
 void mmdpiShader::set_buffer( int buffer_id )
 {
-	dword		vertex_start = 0;
-	
+	dword		vertex_start	= 0;
+	dword		vertex_now	= 0;
+
 	glBindBuffer( GL_ARRAY_BUFFER, buffers[ buffer_id ]->get_vertex() );
 	
+// vertex
 	glVertexAttribPointer( vertex_id, 3, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( size_t )vertex_start ) );
+	vertex_now += sizeof( mmdpiVector3d );
 
+// uv
 	glVertexAttribPointer( uv_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) ) );
-
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
+	vertex_now += sizeof( mmdpiVector4d );
+	
+// bone index
 	glVertexAttribPointer( bone_indices_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
+	vertex_now += sizeof( mmdpiVector4d );
 
+// bone weight
 	glVertexAttribPointer( bone_weights_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 2 ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
+	vertex_now += sizeof( mmdpiVector4d );
 
 #ifdef _MMDPI_OUTLINE_
 	//	法線ベクトル
 	glVertexAttribPointer( normal_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) + sizeof( mmdpiVector4d ) * 3 ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
+	vertex_now += sizeof( mmdpiVector4d );
 #endif
 	
 #ifdef _MMDPI_USINGSKIN_
 	//	スキン
 	glVertexAttribPointer( skinvertex_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + sizeof( mmdpiVector3d ) * 2 + sizeof( mmdpiVector4d ) * 4 ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
+	vertex_now += sizeof( mmdpiVector3d );
 #endif
 
 	glBindBuffer( GL_ARRAY_BUFFER, 0 );

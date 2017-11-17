@@ -158,7 +158,12 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 				v.uv		= vertex->uv[ old_vi ];
 				v.nor		= vertex->nor[ old_vi ];
 				v.weight	= vertex->weight[ old_vi ];
-				v.index		= mmdpiVector4d( 0, 0, 0, 0 );
+
+				v.index[ 0 ]	= 0;
+				v.index[ 1 ]	= 0;
+				v.index[ 2 ]	= 0;
+				v.index[ 3 ]	= 0;
+
 
 				//	生データの頂点から新しい頂点を求めるリストに新しい頂点の位置を保存
 				oldv_2_newv[ old_vi ] = new_vi;

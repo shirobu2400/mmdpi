@@ -7,8 +7,7 @@ int mmdpiModel::create( void )
 {
 	if( mmdpiShader::default_shader() )
 		return -1;	//	Error
-	//	Success
-	return 0;
+	return 0;	//	Success
 }
 
 void mmdpiModel::draw( void )
