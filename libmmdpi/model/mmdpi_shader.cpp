@@ -301,42 +301,42 @@ void mmdpiShader::set_face_buffers( int buffer_id, mmdpiShaderIndex* face_p, dwo
 void mmdpiShader::set_buffer( int buffer_id )
 {
 	dword		vertex_start	= 0;
-	dword		vertex_now	= 0;
+	
 
 	glBindBuffer( GL_ARRAY_BUFFER, buffers[ buffer_id ]->get_vertex() );
 	
 // vertex
 	glVertexAttribPointer( vertex_id, 3, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( size_t )vertex_start ) );
-	vertex_now += sizeof( mmdpiVector3d );
+	vertex_start += sizeof( mmdpiVector3d );
 
 // uv
 	glVertexAttribPointer( uv_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
-	vertex_now += sizeof( mmdpiVector4d );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+	vertex_start += sizeof( mmdpiVector4d );
 	
 // bone index
 	glVertexAttribPointer( bone_indices_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
-	vertex_now += sizeof( mmdpiVector4d );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+	vertex_start += sizeof( mmdpiVector4d );
 
 // bone weight
 	glVertexAttribPointer( bone_weights_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
-	vertex_now += sizeof( mmdpiVector4d );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+	vertex_start += sizeof( mmdpiVector4d );
 
 #ifdef _MMDPI_OUTLINE_
 	//	法線ベクトル
 	glVertexAttribPointer( normal_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
-	vertex_now += sizeof( mmdpiVector4d );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+	vertex_start += sizeof( mmdpiVector4d );
 #endif
 	
 #ifdef _MMDPI_USINGSKIN_
 	//	スキン
 	glVertexAttribPointer( skinvertex_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start + vertex_now ) );
-	vertex_now += sizeof( mmdpiVector3d );
+		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+	vertex_start += sizeof( mmdpiVector3d );
 #endif
 
 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
