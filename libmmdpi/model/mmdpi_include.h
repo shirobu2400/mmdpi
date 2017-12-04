@@ -10,6 +10,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <clocale>
+#include <cstdint>
 
 #ifdef _MMDPI_OPENGL_ES_DEFINES_	// OpenGL ES 2.0
 	#include <GLES2/gl2.h>
@@ -24,15 +25,10 @@
 #include <string>
 using namespace std;
 
-#ifndef _MMDPI_AMD64BIT_
-	//	32bit
-	typedef long		integer;
-	typedef unsigned long	dword;
-#else
-	//	64bit amd
-	typedef int		integer;
-	typedef unsigned int	dword;
-#endif
+//	32bit
+typedef int32_t		integer;
+typedef uint32_t	dword;
+
 
 typedef dword dword;
 typedef integer INTEGER;
