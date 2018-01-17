@@ -12,7 +12,7 @@ typedef struct tagMMDPI_PMX_HEADER
 	char	pmx[ 4 ];			//	Header
 	float	version;			//	バージョン
 	uchar	byte_num;			//	後続するデータ列のバイトサイズ  PMX2.0は 8 で固定
-	byte*	byte;			
+	uchar*	byte;			
 	//	n : byte[8]	| byte * バイトサイズ
 
 	//バイト列 - byte
