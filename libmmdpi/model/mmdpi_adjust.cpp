@@ -139,10 +139,10 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			v3i_max = 0;
 
 			//	頂点番号の現在の値を設定
-			if( f + 4 < face_num )
+			if( f + polygon_vertex_size + 1 < face_num )
 			{
-				vartexid_min = face[ f + 4 ];
-				vartexid_max = face[ f + 4 ];
+				vartexid_min = face[ f + polygon_vertex_size + 1 ];
+				vartexid_max = face[ f + polygon_vertex_size + 1 ];
 			}
 
 			//	メッシュを更新情報の初期化
@@ -150,7 +150,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 		}
 
 		//	メッシュ操作
-		for( int i = 0; i < 3; i ++ )
+		for( int i = 0; i < polygon_vertex_size; i ++ )
 		{
 			uint	new_vi		= new_vertex.size();
 			uint	old_vi		= v3i[ i ];
@@ -176,7 +176,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 				//	ボーンリストの更新
 				for( int j = 0; j < 4; j ++ )
 				{
-					int	bone_index = ( int )( vertex->index[ old_vi ][ j ] + 0.10 );
+					int	bone_index = ( int )( vertex->index[ old_vi ][ j ] + 0.01 );
 					if( bone_index < 0 )
 						bone_index = 0;
 
@@ -197,7 +197,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 					}
 
 					//	ボーンを指定
-					v.index[ j ] = ( float )( rawbone_2_newbone[ bone_index ] + 0.10 );
+					v.index[ j ] = ( float )( rawbone_2_newbone[ bone_index ] + 0.01 );
 
 					//	ボーンを登録済みにする
 					bone_list[ bone_index ] ++;
