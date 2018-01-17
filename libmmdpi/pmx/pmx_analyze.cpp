@@ -87,6 +87,10 @@ int mmdpiPmxAnalyze::analyze( void )
 		//	テクスチャ優先
 		if( m->has_texture )
 			m->color.a = 0;
+
+		//	表示面の設定
+		if( mpmx->bit_flag & 0x01 )
+			m->is_cullface = 0;
 	}
 
 	return 0;

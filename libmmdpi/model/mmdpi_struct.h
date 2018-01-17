@@ -283,7 +283,11 @@ typedef struct tagMMDPI_PIECE
 	mmdpiColor			edge_color;
 	float				opacity;
 
-	int				has_texture;	
+	int				has_texture;
+
+	//	片面のみの表示とするフラグ
+	int				is_cullface;
+	
 } MMDPI_PIECE;
 
 typedef struct tagMMDPI_BONE_INFO

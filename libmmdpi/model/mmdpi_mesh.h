@@ -11,8 +11,6 @@ class mmdpiMesh
 public:
 	int				id;
 
-	int				is_cullface;
-
 	dword				b_vertex_num;
 	MMDPI_VERTEX*			b_vertex;
 

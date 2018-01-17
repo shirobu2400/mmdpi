@@ -281,8 +281,8 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	{
 		ushort	g_index = 0x0001 << rigid_info->rigidbody_group_index;
 		ushort	g_mask = rigid_info->rigidbody_group_mask;
-		if( g_mask == 0xffff )
-			g_mask = 0;
+		//if( g_mask == 0xffff )
+		//	g_mask = 0;
 		getDiscreteDynamicsWorld()->addRigidBody( body,	g_index, g_mask );		// ワールドに追加
 	}
 	else
