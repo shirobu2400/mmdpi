@@ -32,8 +32,9 @@ typedef uint32_t	dword;
 
 typedef dword dword;
 typedef integer INTEGER;
-typedef unsigned char byte, BYTE;
-typedef unsigned short ushort, ushort;
+typedef unsigned char byte;
+typedef unsigned char BYTE;
+typedef unsigned short ushort;
 typedef short SHORT;
 
 typedef unsigned int uint;
