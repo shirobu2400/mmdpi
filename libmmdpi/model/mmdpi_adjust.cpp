@@ -8,8 +8,10 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			MMDPI_MATERIAL_PTR material, dword material_num,
 			MMDPI_BONE_INFO_PTR bone, dword bone_num )
 {
+	const int	polygon_vertex_size = 3;
+
 	//	１メッシュの扱える頂点インデックスの上限
-	dword		vertex_range = 0xffff - 0xffff % 3;
+	dword	vertex_range = 0xffff - 0xffff % polygon_vertex_size;
 
 	//	face and vertex adjust
 	//	条件は 
@@ -57,10 +59,12 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 	//	メッシュ更新フラグ
 	int				update_flag = 0x00;
 
-	for( dword f = 0; f < face_num; f += 3 )
+	for( dword f = 0; f < face_num; f += polygon_vertex_size )
 	{
 		//	頂点インデックス
-		dword			v3i[ 3 ] = { face[ f + 0 ], face[ f + 1 ], face[ f + 2 ] };
+		dword			v3i[ polygon_vertex_size ];
+		for( int i = 0; i < polygon_vertex_size; i ++ )
+			v3i[ i ] = face[ f + i ];
 
 		//	頂点情報作業領域
 		MMDPI_VERTEX		v;
@@ -68,7 +72,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 	
 		//	頂点番号の最大値と最小値を計算
 		//	使用する頂点の番号の範囲を検出
-		for( int i = 0; i < 3; i ++ )
+		for( int i = 0; i < polygon_vertex_size; i ++ )
 		{
 			if( vartexid_min > v3i[ i ] )
 				vartexid_min = v3i[ i ];
@@ -80,12 +84,12 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 		if( vartexid_max - vartexid_min > vertex_range )
 			update_flag |= 0x01;
 		
-		//	このメッシュで使用するボーンが上限に達した
-		if( bone_counter >= _MMDPI_MATERIAL_USING_BONE_NUM_ - 4 )
-			update_flag |= 0x02;
-		
+		////	このメッシュで使用するボーンが上限に達した
+		//if( bone_counter >= _MMDPI_MATERIAL_USING_BONE_NUM_ - 4 )
+		//	update_flag |= 0x02;
+
 		//	マテリアルが更新された
-		if( f >= material[ material_id ].face_top + material[ material_id ].face_num - 3 )
+		if( f >= material[ material_id ].face_top + material[ material_id ].face_num )
 			update_flag |= 0x04;
 
 		//	メッシュを新しく作成
@@ -150,6 +154,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 		{
 			uint	new_vi		= new_vertex.size();
 			uint	old_vi		= v3i[ i ];
+			
 
 			if( oldv_2_newv[ old_vi ] < 0 )
 			{
@@ -171,7 +176,7 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 				//	ボーンリストの更新
 				for( int j = 0; j < 4; j ++ )
 				{
-					int	bone_index = ( int )( vertex->index[ old_vi ][ j ] + 0.1 );
+					int	bone_index = ( int )( vertex->index[ old_vi ][ j ] + 0.10 );
 					if( bone_index < 0 )
 						bone_index = 0;
 
@@ -185,13 +190,21 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 						rawbone_2_newbone[ bone_index ] = bone_counter;
 
 						bone_counter ++;
+
+						//	このメッシュで使用するボーンが上限に達した
+						if( bone_counter >= _MMDPI_MATERIAL_USING_BONE_NUM_ - 1 )
+							update_flag |= 0x02;
 					}
 
 					//	ボーンを指定
-					v.index[ j ] = ( float )( rawbone_2_newbone[ bone_index ] + 1e-4f );
+					v.index[ j ] = ( float )( rawbone_2_newbone[ bone_index ] + 0.10 );
 
 					//	ボーンを登録済みにする
 					bone_list[ bone_index ] ++;
+
+					//	メッシュ生成処理を終了状態にする
+					if( update_flag )
+						break;
 				}
 					
 				//	頂点追加
@@ -208,11 +221,21 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			if( v3i_max < old_vi )
 				v3i_max = old_vi;
 
+			//	マテリアルが扱える上限を新しい頂点インデックスが超えた
 			if( new_vi >= vertex_range )
 				update_flag |= 0x01;
 
 			//	頂点と頂点インデックスの関連づけ
 			new_face.push_back( new_vi );
+
+			//	メッシュ生成処理を終了状態にする
+			if( update_flag )
+			{
+				//	ポリゴンとしては途中で停止してしまうので
+				//	ここで次のポリゴンの開始位置を正常位置から開始させる
+				f -= polygon_vertex_size;
+				break;
+			}
 		}
 	}
 

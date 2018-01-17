@@ -22,7 +22,7 @@ unsigned char* GetBin::get_bin( void *bin, int size )
 {
 	if( ( unsigned int )( buf - buf_base + ( unsigned int )size ) > ( unsigned int )buf_len )
 	{
-		memset( bin, 0, size );
+		memset( bin, 0x00, size );
 		return 0x00;
 	}
 	memcpy( bin, ( const void* )buf, size );
@@ -30,15 +30,20 @@ unsigned char* GetBin::get_bin( void *bin, int size )
 	return buf;
 }
 
-unsigned char* GetBin::get_bin2( void* bin, int buf_size, int next_size )
+unsigned char* GetBin::get_bin2( void* bin, int bin_size, int buf_size )
 {
-	if( ( unsigned int )( buf - buf_base + ( unsigned int )buf_size ) > ( unsigned int )buf_len )
+	unsigned int	bin_i = ( unsigned int )bin;
+
+	if( ( unsigned int )( buf - buf_base + ( unsigned int )bin_size ) > ( unsigned int )buf_len )
+	{
+		memset( bin, 0, bin_size );
 		return 0x00;
+	}
 
-	memset( bin, 0, buf_size );
-	memcpy( bin, ( void* )buf, next_size );
+	memset( ( void* )bin_i, 0x00, bin_size );
+	memcpy( ( void* )bin_i, ( void* )buf, buf_size );
 
-	buf += next_size;
+	buf += buf_size;
 	return buf;
 }
 

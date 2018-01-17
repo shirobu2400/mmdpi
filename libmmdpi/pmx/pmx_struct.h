@@ -11,8 +11,8 @@ typedef struct tagMMDPI_PMX_HEADER
 {
 	char	pmx[ 4 ];			//	Header
 	float	version;			//	バージョン
-	BYTE	byte_num;			//	後続するデータ列のバイトサイズ  PMX2.0は 8 で固定
-	BYTE	*byte;			
+	byte	byte_num;			//	後続するデータ列のバイトサイズ  PMX2.0は 8 で固定
+	byte*	byte;			
 	//	n : byte[8]	| byte * バイトサイズ
 
 	//バイト列 - byte
@@ -39,7 +39,7 @@ typedef struct tagMMDPI_PMX_VERTEX
 	float	nor[ 3 ];		//	法線
 	float	uv[ 2 ];		//	uv
 	float*	add_uv;			//	追加UV
-	BYTE	weight_calc;	//	ウェイト変形方式 0:BDEF1 1:BDEF2 2:BDEF4 3:SDEF
+	byte	weight_calc;	//	ウェイト変形方式 0:BDEF1 1:BDEF2 2:BDEF4 3:SDEF
 	//BDEF1 ->
 	//  n : ボーンIndexサイズ  | ウェイト1.0の単一ボーン(参照Index)
 
@@ -65,7 +65,7 @@ typedef struct tagMMDPI_PMX_VERTEX
 	// 12 : float3             | SDEF-C値(x,y,z)
 	// 12 : float3             | SDEF-R0値(x,y,z)
 	// 12 : float3             | SDEF-R1値(x,y,z) ※修正値を要計算
-	float	sdef_options[ 3 * 3 ];
+	float	sdef_options[ 3 * 3 + 1 ];
 
 	dword	bone_index[ 4 ];
 	float	bone_value[ 4 ];
@@ -86,7 +86,6 @@ typedef dword MMDPI_PMX_FACE, *MMDPI_PMX_FACE_PTR;
 //	テクスチャ
 typedef struct tagMMDPI_PMX_TEXTURE
 {
-
 	char*	name;
 	char*	sjis_name;
 
@@ -95,19 +94,18 @@ typedef struct tagMMDPI_PMX_TEXTURE
 //	材質
 typedef struct tagMMDPI_PMX_MATERIAL
 {
-
 	char*	name;				//	材質名
 	char*	eng_name;			//	材質名(英)
 
-	float	Diffuse[ 4 ];			//	
-	float	Specular[ 3 ];			//
-	float	Specular_scale;			//	Specular係数
-	float	Ambient[ 3 ];			//
+	float	diffuse[ 4 ];			//	
+	float	specular[ 3 ];			//
+	float	specular_scale;			//	specular係数
+	float	ambient[ 3 ];			//
 
-	BYTE	bit_flag;			
-	//描画フラグ(8bit) - 各bit 0:OFF 1:ON
-	//0x01:両面描画, 0x02:地面影, 0x04:セルフシャドウマップへの描画, 0x08:セルフシャドウの描画, 
-	//0x10:エッジ描画
+	byte	bit_flag;			
+	//	描画フラグ(8bit) - 各bit 0:OFF 1:ON
+	//	0x01:両面描画, 0x02:地面影, 0x04:セルフシャドウマップへの描画, 0x08:セルフシャドウの描画, 
+	//	0x10:エッジ描画
 
 	float	edge_color[ 4 ];		//	エッジ色
 	float	edge_size;			//	エッジサイズ
@@ -115,10 +113,10 @@ typedef struct tagMMDPI_PMX_MATERIAL
 	dword	texture_index;			//	通常テクスチャ, テクスチャテーブルの参照Index
 	dword	sphere_texture_index;		//	スフィアテクスチャ, テクスチャテーブルの参照Index  ※テクスチャ拡張子の制限なし
 
-	BYTE	sphere_mode;				
+	byte	sphere_mode;				
 	//	スフィアモード 0:無効 1:乗算(sph) 2:加算(spa) 3:サブテクスチャ(追加UV1のx,yをUV参照して通常テクスチャ描画を行う)
 
-	BYTE	toon_flag;			//	共有Toonフラグ 0:継続値は個別Toon 1:継続値は共有Toon
+	byte	toon_flag;			//	共有Toonフラグ 0:継続値は個別Toon 1:継続値は共有Toon
 
 	dword	toon_texture_number;
 	//共有Toonフラグ:0 の場合
@@ -138,7 +136,7 @@ typedef struct tagMMDPI_PMX_MATERIAL
 
 	float	anti_clear_rate;		//	非透明度 透明:0 - 1:非透明
 
-// 勝手につけた情報
+//	PMXファイル内に存在しない処理上で必要な情報
 	char*	sjis_name;			//	材質名
 	int	has_texture;			//	テクスチャを持ってるか？
 
@@ -147,9 +145,8 @@ typedef struct tagMMDPI_PMX_MATERIAL
 //	ik
 typedef struct tagMMDPI_PMX_IK_INFO
 {
-
 	dword	ik_bone_index;
-	BYTE	rotate_limit_flag;
+	byte	rotate_limit_flag;
 
 	float	bottom[ 3 ];
 	float	top[ 3 ];
@@ -167,7 +164,6 @@ typedef struct tagMMDPI_PMX_IK_INFO
 //	Bone
 typedef struct tagMMDPI_PMX_BONE_INFO
 {
-
 	char*	name;				//	ボーン名
 	char*	eng_name;			//	ボーン名(英)
 
@@ -241,18 +237,18 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 
 	//	設定情報
 	//	生データにはなし
-	BYTE	child_flag;		//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
-	BYTE	rotation_flag;		//	回転可能
-	BYTE	translate_flag;		//	移動可能
-	BYTE	show_flag;		//	表示
-	BYTE	user_update_flag;	//	操作可
-	BYTE	ik_flag;		//	IK
-	BYTE	rotation_grant_flag;	//	回転付与
-	BYTE	translate_grant_flag;	//	移動付与
-	BYTE	const_axis_flag;	//	軸固定
-	BYTE	local_axis_flag;	//	ローカル軸
-	BYTE	physical_update_flag;	//	物理後変形
-	BYTE	out_parent_update_flag;	//	外部親変形
+	byte	child_flag;		//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
+	byte	rotation_flag;		//	回転可能
+	byte	translate_flag;		//	移動可能
+	byte	show_flag;		//	表示
+	byte	user_update_flag;	//	操作可
+	byte	ik_flag;		//	IK
+	byte	rotation_grant_flag;	//	回転付与
+	byte	translate_grant_flag;	//	移動付与
+	byte	const_axis_flag;	//	軸固定
+	byte	local_axis_flag;	//	ローカル軸
+	byte	physical_update_flag;	//	物理後変形
+	byte	out_parent_update_flag;	//	外部親変形
 
 	tagMMDPI_PMX_BONE_INFO()
 	{
@@ -277,6 +273,7 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 		out_parent_update_flag = 0;	//	外部親変形
 	}
 
+//	PMXファイル内に存在しない処理上で必要な情報
 	char*	sjis_name;
 
 } MMDPI_PMX_BONE_INFO, *MMDPI_PMX_BONE_INFO_PTR;
@@ -285,7 +282,6 @@ typedef struct tagMMDPI_PMX_BONE_INFO
 //	モーフ
 typedef struct tagMMDPI_PMX_MORPH_INFO_VERTEX
 {
-
 	//	頂点
 	dword		vertex_id;
 	float		vertex[ 3 ];
@@ -294,9 +290,8 @@ typedef struct tagMMDPI_PMX_MORPH_INFO_VERTEX
 
 typedef struct tagMMDPI_PMX_MORPH_INFO_UV
 {
-
 	//	ＵＶ
-	BYTE		uv_number;	//	uv1, uv2 ..
+	byte		uv_number;	//	uv1, uv2 ..
 
 	dword		uv_id;
 	float		uv[ 4 ];
@@ -305,7 +300,6 @@ typedef struct tagMMDPI_PMX_MORPH_INFO_UV
 
 typedef struct tagMMDPI_PMX_MORPH_INFO_BONE
 {
-
 	//	ボーン
 	dword		bone_id;
 	float		translate[ 3 ];
@@ -315,10 +309,9 @@ typedef struct tagMMDPI_PMX_MORPH_INFO_BONE
 
 typedef struct tagMMDPI_PMX_MORPH_INFO_MATERIAL
 {
-
 	//	材質
 	dword		material_id;
-	BYTE		calc_format;	//	演算法
+	byte		calc_format;	//	演算法
 	float		diffuse[ 4 ];
 	float		specular[ 3 ];
 	float		specular_alpha;
@@ -333,7 +326,6 @@ typedef struct tagMMDPI_PMX_MORPH_INFO_MATERIAL
 
 typedef struct tagMMDPI_PMX_MORPH_INFO_GROUP
 {
-
 	dword		group_id;
 	float		morph_rate;
 
@@ -346,13 +338,13 @@ typedef struct tagMMDPI_PMX_MORPH_INFO
 	char*		name;
 	char*		eng_name;
 
-	BYTE		panel;
-	BYTE		type;
+	byte		panel;
+	byte		type;
 
 	dword		offset_num;
 
 	MMDPI_PMX_MORPH_INFO_VERTEX_PTR		vertex;
-	MMDPI_PMX_MORPH_INFO_UV_PTR			uv;
+	MMDPI_PMX_MORPH_INFO_UV_PTR		uv;
 	MMDPI_PMX_MORPH_INFO_BONE_PTR		bone;
 	MMDPI_PMX_MORPH_INFO_MATERIAL_PTR	material;
 	MMDPI_PMX_MORPH_INFO_GROUP_PTR		group;
@@ -360,7 +352,7 @@ typedef struct tagMMDPI_PMX_MORPH_INFO
 	tagMMDPI_PMX_MORPH_INFO()
 	{
 		vertex		= 0x00;
-		uv			= 0x00;
+		uv		= 0x00;
 		bone		= 0x00;
 		material	= 0x00;
 		group		= 0x00;
@@ -382,10 +374,10 @@ typedef struct tagMMDPI_PMX_MORPH_INFO
 	//○材質モーフ
 	//n  : 材質Indexサイズ  | 材質Index -> -1:全材質対象
 	//1  : オフセット演算形式 | 0:乗算, 1:加算 - 詳細は後述
-	//16 : float4	| Diffuse (R,G,B,A) - 乗算:1.0／加算:0.0 が初期値となる(同以下)
-	//12 : float3	| Specular (R,G,B)
-	//4  : float	| Specular係数
-	//12 : float3	| Ambient (R,G,B)
+	//16 : float4	| diffuse (R,G,B,A) - 乗算:1.0／加算:0.0 が初期値となる(同以下)
+	//12 : float3	| specular (R,G,B)
+	//4  : float	| specular係数
+	//12 : float3	| ambient (R,G,B)
 	//16 : float4	| エッジ色 (R,G,B,A)
 	//4  : float	| エッジサイズ
 	//16 : float4	| テクスチャ係数 (R,G,B,A)
@@ -412,7 +404,7 @@ typedef struct tagMMDPI_PMX_MORPH_INFO
 	//オフセットデータ * n  | モーフ種類に従ってオフセットデータを格納 ※異なる種類の混合は不可
 
 	//	ここはファイルには無し（自作設定）
-	int			morph_flag;			//	モーフ実行スイッチ
+	int		morph_flag;			//	モーフ実行スイッチ
 	float		morph_step;			//	モーフ実行率
 	char*		sjis_name;
 	
@@ -421,8 +413,7 @@ typedef struct tagMMDPI_PMX_MORPH_INFO
 //	表示枠	枠内要素
 typedef struct tagMMDPI_PMX_SHOW_FRAME_INFO_INLINE
 {
-
-	BYTE		type;
+	byte		type;
 	dword		index;		//	要素対象 0:ボーン 1:モーフ
 
 } MMDPI_PMX_SHOW_FRAME_INFO_INLINE, *MMDPI_PMX_SHOW_FRAME_INFO_INLINE_PTR;
@@ -434,7 +425,7 @@ typedef struct tagMMDPI_PMX_SHOW_FRAME_INFO
 	char*		name;
 	char*		eng_name;
 
-	BYTE		frame_flag;	
+	byte		frame_flag;	
 
 	dword		index_num;	//	枠内要素数 : 後続の要素数
 

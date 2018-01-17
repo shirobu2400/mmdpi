@@ -16,7 +16,7 @@ public:
 	
 	char*		text_buf( char byte_size, uint* length = 0 );
 	int		change_enmark( char* _string_ );
-	unsigned char*	get_bin2( void* bin, int buf_size, int next_size );
+	unsigned char*	get_bin2( void* bin, int bin_size, int buf_size );
 	unsigned char*	get_bin( void* bin, int size );
 	int		load( const char *file_name );
 

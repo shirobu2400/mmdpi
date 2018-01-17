@@ -79,10 +79,10 @@ int mmdpiPmxAnalyze::analyze( void )
 
 		m->opacity = mpmx->anti_clear_rate;
 
-		m->color.r = mpmx->Diffuse[ 0 ];
-		m->color.g = mpmx->Diffuse[ 1 ];
-		m->color.b = mpmx->Diffuse[ 2 ];
-		m->color.a = mpmx->Diffuse[ 3 ];
+		m->color.r = mpmx->diffuse[ 0 ];
+		m->color.g = mpmx->diffuse[ 1 ];
+		m->color.b = mpmx->diffuse[ 2 ];
+		m->color.a = mpmx->diffuse[ 3 ];
 
 		//	テクスチャ優先
 		if( m->has_texture )

@@ -68,7 +68,8 @@ int mmdpiModel::option_enable( void )
 	//glDisable( GL_CULL_FACE );		//	カリング無効
 	glEnable( GL_CULL_FACE );		//	CCWでカリング(反時計回り)
 	glFrontFace( GL_CCW );
-	glCullFace( GL_FRONT );
+	glCullFace( GL_BACK );
+	//glCullFace( GL_FRONT );
 
 	//glEnable( GL_ALPHA_TEST );
 	glEnable( GL_DEPTH_TEST );

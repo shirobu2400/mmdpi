@@ -24,7 +24,19 @@ int mmdpiMesh::draw( void )
 
 	//	本処理
 	glEnable( GL_DEPTH_TEST );
-	glCullFace( GL_BACK );
+	if( is_cullface )	
+	{	
+		//	表面のみ描画
+		glEnable( GL_CULL_FACE );	//	CCWでカリング(反時計回り)
+		glFrontFace( GL_CCW );
+		glCullFace( GL_BACK );
+	}
+	else			
+	{
+		//	両面描画
+		glDisable( GL_CULL_FACE );	//	カリング無効
+	}
+
 	draw_main( 1 );
 
 	return 0;
@@ -137,6 +149,9 @@ mmdpiMesh::mmdpiMesh( mmdpiShader* shader_p )
 	b_vertex	= 0x00;
 	b_face		= 0x00;
 	b_piece		= 0x00;
+
+	//	最初は表面のみの表示とする
+	is_cullface	= 0;
 
 	shader = shader_p;
 }

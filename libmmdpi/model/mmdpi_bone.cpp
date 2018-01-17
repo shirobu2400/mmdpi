@@ -266,21 +266,23 @@ int mmdpiBone::create_physical_info( void )
 
 		switch( physics[ i ].type )
 		{
-		case 0: rigid_type = MMDPI_BULLET_SHERE;		break;		// 球
-		case 1: rigid_type = MMDPI_BULLET_BOX;			break;		// 箱
-		case 2: rigid_type = MMDPI_BULLET_CAPSULE;		break;		// カプセル
+		case 0: rigid_type = MMDPI_BULLET_SHERE;	break;		// 球
+		case 1: rigid_type = MMDPI_BULLET_BOX;		break;		// 箱
+		case 2: rigid_type = MMDPI_BULLET_CAPSULE;	break;		// カプセル
 		}		
 
-		dword j = physics[ i ].bone_index;
+		dword		j = physics[ i ].bone_index;
 
-		float bone_pos[ 3 ];
+		float		bone_pos[ 3 ];
 		mmdpiMatrix*	bone_matrix_l;
 		if( j < bone_num )  
 			bone_matrix_l = &bone[ j ].matrix;
 		else
 			bone_matrix_l = &bone[ center_index ].matrix;
-		mmdpiVector3d	vec3;
+
+		mmdpiVector3d		vec3;
 		float			delta_pos[ 3 ];
+
 		vec3 = bone_matrix_l->get_transform();
 		for( int k = 0; k < 3; k ++ )
 		{
@@ -303,7 +305,7 @@ int mmdpiBone::create_physical_info( void )
 		physics_sys[ i ].rbInfo.fLinearDamping		= physics[ i ].ac_t;
 		physics_sys[ i ].rbInfo.fAngularDamping		= physics[ i ].ac_r;
 		physics_sys[ i ].rbInfo.fRestitution		= physics[ i ].repulsion;
-		physics_sys[ i ].rbInfo.fFriction			= physics[ i ].friction;
+		physics_sys[ i ].rbInfo.fFriction		= physics[ i ].friction;
 		
 		physics_sys[ i ].rbInfo.rigidbody_group_index = physics[ i ].group;
 		//if( physics[ i ].not_touch_group_flag == 0xffff )
@@ -331,30 +333,31 @@ int mmdpiBone::create_physical_info( void )
 		//}
 
 		btTransform btt = matrix_to_btTrans( bone_pos, physics[ i ].rot );
-
-		// 剛体セット
-		create_rigidbody( 
-			rigid_type, &btt, mass,
-			( physics[ i ].rigidbody_type == 0 ), 
-			physics[ i ].size[ 0 ], physics[ i ].size[ 1 ], physics[ i ].size[ 2 ],
-			&physics_sys[ i ].rbInfo 
-		);
-
+		
 		// 他の情報
-		if( physics[ i ].bone_index == 0xFFFF )
+		if( physics[ i ].bone_index == 0xffff )
 			physics_sys[ i ].m_bNoCopyToBone = 1;
 		else
+		{
+			// 剛体セット
+			create_rigidbody( 
+				rigid_type, &btt, mass,
+				( physics[ i ].rigidbody_type == 0 ), 
+				physics[ i ].size[ 0 ], physics[ i ].size[ 1 ], physics[ i ].size[ 2 ],
+				&physics_sys[ i ].rbInfo 
+			);
 			physics_sys[ i ].m_bNoCopyToBone = 0;
+		}
 	}
 	
-	// ジョイント
+	//	ジョイント
 	for( uint i = 0; i < joint_count; i ++ )
 	{
 		// 点と点のジョイント
-		btTransform trans = matrix_to_btTrans( joint[ i ].pos, joint[ i ].rot );
+		btTransform			trans = matrix_to_btTrans( joint[ i ].pos, joint[ i ].rot );
 
 		// 拡張情報
-		MMDPI_BULLET_CONSTRAINT_INFO j_info;
+		MMDPI_BULLET_CONSTRAINT_INFO	j_info;
 
 		j_info.limit_pos1 = btVector3( 
 			joint[ i ].trans_limit1[ 0 ],
