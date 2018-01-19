@@ -225,9 +225,6 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 			if( new_vi >= vertex_range )
 				update_flag |= 0x01;
 
-			//	頂点と頂点インデックスの関連づけ
-			new_face.push_back( new_vi );
-
 			//	メッシュ生成処理を終了状態にする
 			if( update_flag )
 			{
@@ -236,6 +233,9 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 				f -= polygon_vertex_size;
 				break;
 			}
+
+			//	頂点と頂点インデックスの関連づけ
+			new_face.push_back( new_vi );
 		}
 	}
 
