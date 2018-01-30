@@ -239,6 +239,21 @@ int mmdpiAdjust::adjust( MMDPI_BLOCK_VERTEX* vertex, dword vertex_num,
 		}
 	}
 
+	//	最後のマテリアルを追加
+	mmdpiMesh*	mesh_temp = new mmdpiMesh( this );
+	if( mesh_temp == 0x00 )
+		return -1;
+
+	//	メッシュ設定
+	mesh_temp->id = mesh.size();
+	mesh_temp->set_vertex( &new_vertex[ 0 ], new_vertex.size() );	// &vector array[ 0 ] でベクターを配列化
+	mesh_temp->set_face( &new_face[ 0 ], new_face.size() );
+	mesh_temp->set_material( material_id, &material[ material_id ] );
+	mesh_temp->set_boneid( new_bone_list, bone_counter );
+
+	//	メッシュを追加
+	mesh.push_back( mesh_temp );
+
 	delete[] oldv_2_newv;
 	delete[] bone_list;
 	

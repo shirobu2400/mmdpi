@@ -213,7 +213,7 @@ public:
 	{ 
 		if( id < 0 || getDiscreteDynamicsWorld()->getCollisionObjectArray().size() <= id )
 			return 0x00;
-		return ( btRigidBody * )getDiscreteDynamicsWorld()->getCollisionObjectArray()[ id ]; 
+		return ( btRigidBody* )getDiscreteDynamicsWorld()->getCollisionObjectArray()[ id ]; 
 	}
 	
 	//	重力設定
@@ -230,7 +230,7 @@ public:
 	int create_softbody( mmdpiVector3d *vertices, int *index, int index_num, btTransform &trans );
 
 	// ジョイント操作
-	int create_joint_p2p( int bodyId_a, int bodyId_b, btTransform *trans, MMDPI_BULLET_CONSTRAINT_INFO_PTR joint_info = 0 );
+	int create_joint_p2p( int bodyId_a, int bodyId_b, btTransform* trans, MMDPI_BULLET_CONSTRAINT_INFO_PTR joint_info = 0x00 );
 
 	// 変換系
 	btTransform matrix_to_btTrans( float *pos, float *dir );

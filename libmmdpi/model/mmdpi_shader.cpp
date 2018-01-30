@@ -32,9 +32,9 @@ int mmdpiShader::default_shader( void )
 	static GLchar vertex_shader_src[ 0x1000 ] = { 0 };
 	sprintf( vertex_shader_src, 
 #if defined( _MMDPI_OPENGL_ES_DEFINES_ ) || defined( _MMDPI_PRIJECTION_MATRIX_SELF_ )
-	"uniform   mat4		ProjectionMatrix;\n"
+	"uniform   mat4			ProjectionMatrix;\n"
 #else
-	"mat4			ProjectionMatrix = gl_ModelViewProjectionMatrix;\n"
+	"mat4				ProjectionMatrix = gl_ModelViewProjectionMatrix;\n"
 #endif
 	"attribute	vec3		Vertex;		\n"
 #ifdef _MMDPI_OUTLINE_

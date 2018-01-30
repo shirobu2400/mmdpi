@@ -17,28 +17,27 @@ int mmdpiMesh::draw( void )
 	//	GLSL
 	//	Input shader infomation
 
-	////	裏面描画
-	//glDisable( GL_DEPTH_TEST );
-	//glCullFace( GL_FRONT );
-	//draw_main( 0 );
-
 	//	本処理
 	glEnable( GL_DEPTH_TEST );
-	if( b_piece->is_cullface )	
+	if( b_piece->is_draw_both )	
 	{	
-		//	表面のみ描画
-		glEnable( GL_CULL_FACE );	//	CCWでカリング(反時計回り)
-		glFrontFace( GL_CCW );
-		glCullFace( GL_BACK );
+		//	両面描画
+		glDisable( GL_CULL_FACE );	//	カリング無効
+		draw_main( 1 );
 	}
 	else			
 	{
-		//	両面描画
-		glDisable( GL_CULL_FACE );	//	カリング無効
+		//	表面のみ描画
+		glEnable( GL_CULL_FACE );	//	CCWでカリング(反時計回り)
+		glFrontFace( GL_CCW );
+		
+		//glCullFace( GL_FRONT );
+		//draw_main( 0 );
+		
+		glCullFace( GL_BACK );
+		draw_main( 1 );
 	}
-
-	draw_main( 1 );
-
+	
 	return 0;
 }
 
@@ -120,7 +119,7 @@ int mmdpiMesh::set_material( dword raw_material_id, MMDPI_MATERIAL* raw_material
 	b_piece->has_texture		= 0;
 	
 	//	最初は表面のみの表示とする
-	b_piece->is_cullface		= 1;
+	b_piece->is_draw_both		= 0;
 
 	return 0;
 }

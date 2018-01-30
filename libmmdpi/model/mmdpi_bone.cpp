@@ -119,20 +119,18 @@ int mmdpiBone::advance_time_physical( int fps )
 	return 0;
 }
 
-//==================
-// ボーン位置あわせ
-//==================
-// ボーンに剛体の位置をあわせ
+//	ボーンの位置に剛体の位置をあわせる
 int mmdpiBone::fix_position( dword rigid_id, float fElapsedFrame )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	if( bullet_flag <= 0 )
 		return -1;
 
-	if( physics[ rigid_id ].rigidbody_type != 2 )
-		return -1;
+	////	ボーン追従のみ終了
+	//if( physics[ rigid_id ].rigidbody_type == 1 )
+	//	return -1;
 	
-	// 剛体取得
+	//	剛体取得
 	btRigidBody* body = getRigidBody( rigid_id );
 	if( !body )
 		return -1;
@@ -157,20 +155,20 @@ int mmdpiBone::fix_position( dword rigid_id, float fElapsedFrame )
 	return 0;
 }
 
-//==================================================================================
-// ボーンの姿勢を剛体の姿勢と一致させる(そのフレームのシミュレーション終了後に呼ぶ)
-//==================================================================================
+//	ボーンの姿勢を剛体の姿勢と一致させる(そのフレームのシミュレーション終了後に呼ぶ)
 int mmdpiBone::update_bone_physical( dword rigid_id )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	if( bullet_flag <= 0 )
 		return -1;
 
-	if( physics[ rigid_id ].rigidbody_type == 0 ) 
-		return -1;
-
+	//	ボーンを剛体に合わせないフラグがたっているときは強制終了
 	if( physics_sys[ rigid_id ].m_bNoCopyToBone )
 		return -1;
+
+	////	物理演算のみ終了
+	//if( physics[ rigid_id ].rigidbody_type == 1 ) 
+	//	return -1;
 
 	dword bone_id = physics[ rigid_id ].bone_index;
 
@@ -185,19 +183,22 @@ int mmdpiBone::update_bone_physical( dword rigid_id )
 	return 0;
 }
 
-//========================================
-// 剛体をボーンの位置へ強制的に移動させる
-//========================================
+//	剛体をボーンの位置へ強制的に移動させる
 int mmdpiBone::move_to_bone_pos( dword rigid_id )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	if( !bullet_flag )
 		return -1;
 
-	if( physics[ rigid_id ].rigidbody_type == 0 )
+	//	ボーンを剛体に合わせないフラグがたっているときは強制終了
+	if( physics_sys[ rigid_id ].m_bNoCopyToBone )
 		return -1;
 
-	dword bone_id = physics[ rigid_id ].bone_index;
+	////	ボーン追従のみ終了
+	//if( physics[ rigid_id ].rigidbody_type == 0 )
+	//	return -1;
+
+	dword	bone_id = physics[ rigid_id ].bone_index;
 	if( bone_num <= bone_id ) 
 		return -1;
 		
@@ -234,9 +235,13 @@ int mmdpiBone::move_to_bone_pos( dword rigid_id )
 int mmdpiBone::create_physical_info( void )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
+
+	// 剛体が存在しない
+	if( rigidbody_count == 0 )
+		return 0;
+
 	// 重力設定
-	if( rigidbody_count > 0 )
-		setGravity( 9.8f * 8 );
+	setGravity( 9.8f );
 
 	uint	center_index;
 	for( center_index = 0; center_index < bone_num; center_index ++ )
@@ -258,11 +263,14 @@ int mmdpiBone::create_physical_info( void )
 		}
 	}
 
-	physics_sys = ( rigidbody_count )? new MMDPI_PHYSICAL_INFO[ rigidbody_count ] : 0x00 ;
+	physics_sys = new MMDPI_PHYSICAL_INFO[ rigidbody_count ];
+	if( physics_sys == 0x00 )
+		return -1;
+
 	// 剛体情報
 	for( uint i = 0; i < rigidbody_count; i ++ )
 	{
-		tagMMDPI_BULLET_TYPE rigid_type = MMDPI_BULLET_SHERE;
+		tagMMDPI_BULLET_TYPE	rigid_type = MMDPI_BULLET_SHERE;
 
 		switch( physics[ i ].type )
 		{
@@ -278,7 +286,10 @@ int mmdpiBone::create_physical_info( void )
 		if( j < bone_num )  
 			bone_matrix_l = &bone[ j ].matrix;
 		else
+		{
 			bone_matrix_l = &bone[ center_index ].matrix;
+			j = center_index;
+		}
 
 		mmdpiVector3d		vec3;
 		float			delta_pos[ 3 ];
@@ -296,10 +307,11 @@ int mmdpiBone::create_physical_info( void )
 		physics_sys[ i ].offset_trans = bttrBoneOffset;
 		physics_sys[ i ].offset_trans_inv = physics_sys[ i ].offset_trans.inverse();
 		
-		float mass = physics[ i ].mass;
-		//// キネマティック剛体は重さ、なし
-		//if( physics[ i ].rigidbody_type == 0 )
-		//	mass = 0;
+		float	mass = physics[ i ].mass;
+		
+		// キネマティック剛体は重さ、なし
+		if( physics[ i ].rigidbody_type == 0 )
+			mass = 0;
 	
 		// 拡張情報
 		physics_sys[ i ].rbInfo.fLinearDamping		= physics[ i ].ac_t;
@@ -335,19 +347,17 @@ int mmdpiBone::create_physical_info( void )
 		btTransform btt = matrix_to_btTrans( bone_pos, physics[ i ].rot );
 		
 		// 他の情報
+		physics_sys[ i ].m_bNoCopyToBone = 0;	// 基本的にボーンを剛体へ合わせる
 		if( physics[ i ].bone_index == 0xffff )
-			physics_sys[ i ].m_bNoCopyToBone = 1;
-		else
-		{
-			// 剛体セット
-			create_rigidbody( 
-				rigid_type, &btt, mass,
-				( physics[ i ].rigidbody_type == 0 ), 
-				physics[ i ].size[ 0 ], physics[ i ].size[ 1 ], physics[ i ].size[ 2 ],
-				&physics_sys[ i ].rbInfo 
-			);
-			physics_sys[ i ].m_bNoCopyToBone = 0;
-		}
+			physics_sys[ i ].m_bNoCopyToBone = 1;	// Bone を合わせないフラグ
+	
+		// 剛体セット
+		create_rigidbody( 
+			rigid_type, &btt, mass,
+			( physics[ i ].rigidbody_type == 0 ), 
+			physics[ i ].size[ 0 ], physics[ i ].size[ 1 ], physics[ i ].size[ 2 ],
+			&physics_sys[ i ].rbInfo 
+		);
 	}
 	
 	//	ジョイント
@@ -385,9 +395,9 @@ int mmdpiBone::create_physical_info( void )
 			joint[ i ].spring_trans[ 2 ] );
 
 		j_info.spring_rot = btVector3( 
-			joint[ i ].spring_rotate[ 0 ] * ( float )M_PI / 180.0f,
-			joint[ i ].spring_rotate[ 1 ] * ( float )M_PI / 180.0f,
-			joint[ i ].spring_rotate[ 2 ] * ( float )M_PI / 180.0f );
+			joint[ i ].spring_rotate[ 0 ],
+			joint[ i ].spring_rotate[ 1 ],
+			joint[ i ].spring_rotate[ 2 ] );
 
 		create_joint_p2p( joint[ i ].a_index, joint[ i ].b_index, &trans, &j_info );
 	}

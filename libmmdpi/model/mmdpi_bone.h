@@ -16,8 +16,8 @@ class mmdpiBone : public mmdpiAdjust
 
 protected :
 
-	uint				bone_num;				//	ボーン数 ( ushort でＯＫ )
-	MMDPI_BONE_INFO_PTR		bone;					//	ボーン
+	uint				bone_num;				// ボーン数 ( ushort でＯＫ )
+	MMDPI_BONE_INFO_PTR		bone;					// ボーン
 
 	//	姿勢行列合成用
 	mmdpiMatrix*			bone_comb_mat;
@@ -26,7 +26,7 @@ protected :
 	mmdpiMatrix			init_mat_calc_bottom( MMDPI_BONE_INFO_PTR now_bone );
 
 	//	物理演算用
-	int				bullet_flag;				//	物理演算実行
+	int				bullet_flag;				// 物理演算実行
 	int				phy_load_flag;				// 物理演算を読み込む
 	dword				rigidbody_count;			// 剛体数
 	MMDPI_PHYSICAL_RIGID_INFO_PTR	physics;				// 物理演算	// 剛体

@@ -285,8 +285,8 @@ typedef struct tagMMDPI_PIECE
 
 	int				has_texture;
 
-	//	片面のみの表示とするフラグ
-	int				is_cullface;
+	//	両面描画フラグ
+	int				is_draw_both;
 	
 } MMDPI_PIECE;
 
@@ -367,7 +367,10 @@ typedef struct tagMMDPI_PHYSICAL_RIGID_INFO
 	float		repulsion;	//	反発力
 	float		friction;	//	摩擦力
 
-	BYTE		rigidbody_type;	//	剛体の物理演算 - 0:ボーン追従(static) 1:物理演算(dynamic) 2:物理演算 + Bone位置合わせ
+	BYTE		rigidbody_type;	//	剛体の物理演算 -
+	// 0:ボーン追従(static)		ボーンを剛体に合わせる
+	// 1:物理演算(dynamic)		物理演算のみを行い、ボーンは合わせない
+	// 2:物理演算 + Bone位置合わせ
 
 	//4 + n : TextBuf	| 剛体名
 	//4 + n : TextBuf	| 剛体名英

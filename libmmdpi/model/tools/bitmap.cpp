@@ -20,7 +20,8 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		
 
 	//　ファイルを開く
-	if ( ( fp = fopen( filename, "rb" ) ) == 0x00 )
+	fp = fopen( filename, "rb" );
+	if( fp == 0x00 )
 	{
 		//cout << "Error : Connot open.\n";
 		//cout << "File Name : " << filename << endl;
@@ -88,7 +89,6 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	if( bits == 0x00 )
 	{
 		//　エラーチェック
-		delete[] bits;
 		fclose( fp );
 		return -1;
 	}

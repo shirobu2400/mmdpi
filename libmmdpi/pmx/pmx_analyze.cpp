@@ -89,8 +89,9 @@ int mmdpiPmxAnalyze::analyze( void )
 			m->color.a = 0;
 
 		//	表示面の設定
+		m->is_draw_both = 0;
 		if( mpmx->bit_flag & 0x01 )
-			m->is_cullface = 0;
+			m->is_draw_both = 1;
 	}
 
 	return 0;
@@ -109,11 +110,11 @@ void mmdpiPmxAnalyze::load_texture( void )
 	toon_texture		= new MMDPI_IMAGE[ material_num ];
 
 	texture00		= new MMDPI_IMAGE[ texture_num ];
-	toon_texture00		= new MMDPI_IMAGE[ 10 ];
+	//toon_texture00		= new MMDPI_IMAGE[ 10 ];
 	for( dword i = 0; i < texture_num; i ++ )
 	{
 		char*	texture_file_name;
-		char	texture_file_name_full[ 0xffff ];
+		char	texture_file_name_full[ 0x1000 ];
 		int	j, k;	
 
 		texture_file_name = mmdpiPmxLoad::texture[ i ].name;
@@ -152,13 +153,13 @@ void mmdpiPmxAnalyze::load_texture( void )
 		texture00[ i ].load( texture_file_name_full );
 	}
 
-	//	Toon texture
-	for( dword i = 0; i < 10; i ++ )
-	{
-		char	texture_file_name_full[ 0xff ];
-		sprintf( texture_file_name_full, "toon/toon%02d.bmp", ( int )i + 1 );
-		toon_texture00[ i ].load( texture_file_name_full );
-	}
+	////	Toon texture
+	//for( dword i = 0; i < 10; i ++ )
+	//{
+	//	char	texture_file_name_full[ 0x200 ];
+	//	sprintf( texture_file_name_full, "toon/toon%02d.bmp", ( int )i + 1 );
+	//	toon_texture00[ i ].load( texture_file_name_full );
+	//}
 
 	for( dword j = 0; j < mesh.size(); j ++ )
 	{
@@ -173,8 +174,8 @@ void mmdpiPmxAnalyze::load_texture( void )
 			m->has_texture = 1;
 		}
 
-		if( mpmx->toon_texture_number < 10 )
-			m->raw_material->toon_texture.copy( toon_texture00[ mpmx->toon_texture_number ] );
+		//if( mpmx->toon_texture_number < 10 )
+		//	m->raw_material->toon_texture.copy( toon_texture00[ mpmx->toon_texture_number ] );
 	}
 
 	//	Pmx はモーフによる材質制御が存在する。
@@ -182,17 +183,16 @@ void mmdpiPmxAnalyze::load_texture( void )
 	//	応急処置
 	for( dword i = 0; i < morph_num; i ++ )
 	{
-		if( morph[ i ].material )
+		if( morph[ i ].material == 0x00 )
+			continue;
+		for( dword j = 0; j < morph[ i ].offset_num; j ++ )
 		{
-			for( dword j = 0; j < morph[ i ].offset_num; j ++ )
-			{
-				//float	alpha = 0;
-				//for( int k = 0; k < 4; k ++ )
-				//	alpha += morph[ i ].material[ j ].texture_alpha[ k ];
-				uint		material_id = morph[ i ].material[ j ].material_id;
-				if( material_id < material_num )
-					material[ material_id ].anti_clear_rate = 1 - morph[ i ].material[ j ].diffuse[ 3 ];
-			}
+			//float	alpha = 0;
+			//for( int k = 0; k < 4; k ++ )
+			//	alpha += morph[ i ].material[ j ].texture_alpha[ k ];
+			uint		material_id = morph[ i ].material[ j ].material_id;
+			if( material_id < material_num )
+				material[ material_id ].anti_clear_rate = 1 - morph[ i ].material[ j ].diffuse[ 3 ];
 		}
 	}
 }

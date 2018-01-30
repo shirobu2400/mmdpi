@@ -16,6 +16,8 @@ int mmdpiPmdAnalyze::load( const char *file_name )
 int mmdpiPmdAnalyze::analyze( void )
 {
 	adjust_material = new MMDPI_MATERIAL[ material_num ];
+	if( adjust_material == 0x00 )
+		return -1;
 	dword	face_top = 0;
 	for( dword i = 0; i < material_num; i ++ )
 	{
@@ -25,6 +27,8 @@ int mmdpiPmdAnalyze::analyze( void )
 	}
 
 	adjust_vertex = new MMDPI_BLOCK_VERTEX();
+	if( adjust_vertex == 0x00 )
+		return -1;
 	adjust_vertex->alloc( mmdpiPmdLoad::vertex_num );
 
 	for( dword i = 0; i < mmdpiPmdLoad::vertex_num; i ++ )
@@ -52,7 +56,7 @@ int mmdpiPmdAnalyze::analyze( void )
 			
 		//	重み
 		adjust_vertex->weight[ i ].x = ver->bone_weight / 100.0f;
-		adjust_vertex->weight[ i ].y = 1.0f - adjust_vertex->weight[ i ].x;
+		adjust_vertex->weight[ i ].y = 1 - adjust_vertex->weight[ i ].x;
 		adjust_vertex->weight[ i ].z = 0;
 		adjust_vertex->weight[ i ].w = 0;
 	}
@@ -91,6 +95,10 @@ int mmdpiPmdAnalyze::analyze( void )
 		m->color.a = m->opacity;
 		if( m->has_texture )
 			m->color.a = 0;
+
+		m->is_draw_both = 0;
+		if( m->opacity < 1 - 1e-8 )
+			m->is_draw_both = 1;
 	}
 	
 	return 0;
@@ -104,24 +112,35 @@ void mmdpiPmdAnalyze::load_texture( void )
 	dword	pi = 0;
 
 	//	一時的に読み込み
-	texture		= new MMDPI_IMAGE[ material_num ];
-	toon_texture	= new MMDPI_IMAGE[ material_num ];
-	int*	loaded_flag = new int[ material_num ];
-	if( loaded_flag == 0x00 || toon_texture == 0x00 || texture == 0x00 )
+	texture = new MMDPI_IMAGE[ material_num ];
+	if( texture == 0x00 )
+		return ;
+
+	toon_texture = new MMDPI_IMAGE[ material_num ];
+	if( toon_texture == 0x00 )
+		return ;
+
+	//	読み込み済みテクスチャのリスト
+	char**	loaded_texture_name = new char*[ material_num ];
+	if( loaded_texture_name == 0x00 )
 		return ;
 	for( uint i = 0; i < material_num; i ++ )
-		loaded_flag[ i ] = 0;
+	{
+		loaded_texture_name[ i ] = new char[ 0x200 ];
+		for( uint j = 0; j < 0x200; j ++ )
+			loaded_texture_name[ i ][ j ] = '\0';
+	}
 
 	for( dword i = 0; i < mesh.size(); i ++ )
 	{		
 		MMDPI_PIECE*		m	= mesh[ i ]->b_piece;
 		MMDPI_PMD_MATERIAL_PTR	mpmx	= &material[ m->raw_material_id ];
-		int	ri = m->raw_material_id;
-		char*	texture_file_name;
+		int			ri;
+		char*			texture_file_name;
 
 		texture_file_name = mpmx->texture_file_name;
 
-		char	texture_file_name_full[ 0xffff ];
+		char	texture_file_name_full[ 0x1000 ];
 		int	j, k;	
 		for( k = 0; directory[ k ]; k ++ )
 			texture_file_name_full[ k ] = directory[ k ];
@@ -134,15 +153,27 @@ void mmdpiPmdAnalyze::load_texture( void )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 	
-		if( loaded_flag[ ri ] == 0 )
+		//	今までにテクスチャが読み込まれていればその位置を取得
+		for( ri = m->raw_material_id; ri >= 0; ri -- )
+		{
+			if( strcmp( loaded_texture_name[ ri ], texture_file_name_full ) == 0 )
+				break;
+		}
+		if( ri < 0 )	//	読み込まれたことがない
+		{
+			ri = m->raw_material_id;
+			strcpy( loaded_texture_name[ ri ], texture_file_name_full );
 			texture[ ri ].load( texture_file_name_full );
+		}
 		
 		//	テクスチャの関連付け
 		m->raw_material->texture.copy( texture[ ri ] );
 		if( texture[ ri ].type )
 			m->has_texture = 1;
-		loaded_flag[ ri ] ++;
 	}
+	for( uint i = 0; i < material_num; i ++ )
+		delete[] loaded_texture_name[ i ];
+	delete[] loaded_texture_name;
 }
 
 //	ボーン関係処理

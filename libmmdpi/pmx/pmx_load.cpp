@@ -9,13 +9,14 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	if( get_header( buf ) )
 		return -1;
 
-	int		vertex_index_size = head.byte[ 2 ];
+	int			vertex_index_size = head.byte[ 2 ];
+	int			bone_index_size = head.byte[ 5 ];
+	MMDPI_PMX_VERTEX_PTR	nv;
+	
 	// vertex
 	buf->get_bin( &vertex_num, sizeof( vertex_num ) );
 	vertex = new MMDPI_PMX_VERTEX[ vertex_num ];
-	int		bone_index_size = head.byte[ 5 ];
-	MMDPI_PMX_VERTEX_PTR	nv;
-	
+
 	for( dword i = 0; i < vertex_num; i ++ )
 	{
 		nv = &vertex[ i ];
@@ -514,6 +515,9 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	
 		buf->get_bin( joint->spring_trans, sizeof( float ) * 3 );
 		buf->get_bin( joint->spring_rotate, sizeof( float ) * 3 );
+
+		for( int k = 0; k < 3; k ++ )
+			joint->spring_rotate[ k ] = joint->spring_rotate[ k ] * ( float )M_PI / 180.0f;
 	}
 
 	return 0;

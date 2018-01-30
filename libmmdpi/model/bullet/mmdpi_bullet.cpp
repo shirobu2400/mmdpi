@@ -35,12 +35,12 @@ int mmdpiBullet::set_matrix( int object_id, mmdpiMatrix *mIn )
 
 mmdpiMatrix mmdpiBullet::get_matrix( mmdpiMatrix *mOut, int object_id )
 {
-	mmdpiMatrix matrix, matrix_t;
+	mmdpiMatrix		matrix, matrix_t;
 
-	//btCollisionObject* obj = getDiscreteDynamicsWorld()->getCollisionObjectArray()[ rigidbody_id ];
-	btCollisionObject* obj = getDynamicsWorld()->getCollisionObjectArray()[ object_id ];
-	btTransform trans;  // bulletから情報を取得
-	btRigidBody* body = btRigidBody::upcast( obj );
+	//btCollisionObject*	obj = getDiscreteDynamicsWorld()->getCollisionObjectArray()[ rigidbody_id ];
+	btCollisionObject*	obj = getDynamicsWorld()->getCollisionObjectArray()[ object_id ];
+	btTransform		trans;  // bulletから情報を取得
+	btRigidBody*		body = btRigidBody::upcast( obj );
 	body->getMotionState()->getWorldTransform( trans );
 
 	// 行列取得
@@ -65,7 +65,7 @@ mmdpiMatrix mmdpiBullet::get_matrix( mmdpiMatrix *mOut, int object_id )
 	return matrix;
 }
 
-int mmdpiBullet::create_joint_p2p( int bodyId_a, int bodyId_b, btTransform *trans, MMDPI_BULLET_CONSTRAINT_INFO_PTR joint_info )
+int mmdpiBullet::create_joint_p2p( int bodyId_a, int bodyId_b, btTransform* trans, MMDPI_BULLET_CONSTRAINT_INFO_PTR joint_info )
 {
 	//btVector3	jb_a( joint_a->x, joint_a->y, joint_a->z );
 	//btVector3	jb_b( joint_b->x, joint_b->y, joint_b->z );
@@ -129,7 +129,9 @@ int mmdpiBullet::create_joint_p2p( int bodyId_a, int bodyId_b, btTransform *tran
 		p2p->enableSpring( 5, true );	p2p->setStiffness( 5, joint_info->spring_rot.getZ() );
 	}
 
-	getDynamicsWorld()->addConstraint( p2p );
+	//　ワールドに追加
+	getDynamicsWorld()->addConstraint( p2p, true );
+
 	return 0;
 }
 
@@ -248,7 +250,7 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	if( kinematic_flag )
 		mass = 0;
 
-	bool		is_dynamic = ( mass != 0.0f );
+	bool		is_dynamic = ( mass != 0 );
 
 	btVector3	localInertia( 0, 0, 0 );
 	if( is_dynamic )
@@ -292,29 +294,29 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 }
 
 // 姿勢、移動
-btTransform mmdpiBullet::matrix_to_btTrans( float *pos, float *dir )
+btTransform mmdpiBullet::matrix_to_btTrans( float* position, float* direction )
 {
-	btTransform trans;
+	btTransform	transform;
 
 	// 初期化
-	trans.setIdentity();
+	transform.setIdentity();
 
 	// 角度
-	if( dir )
+	if( direction )
 	{
-		btMatrix3x3 btmat;
-		btmat.setIdentity();
-		btmat.setEulerZYX( dir[ 0 ], dir[ 1 ], dir[ 2 ] );
-		trans.setBasis( btmat );
+		btMatrix3x3		bt_matrix;
+		bt_matrix.setIdentity();
+		bt_matrix.setEulerZYX( direction[ 0 ], direction[ 1 ], direction[ 2 ] );
+		transform.setBasis( bt_matrix );
 	}
 
 	// 位置
-	if( pos )
+	if( position )
 	{
-		trans.setOrigin( btVector3( pos[ 0 ], pos[ 1 ], pos[ 2 ] ) );
+		transform.setOrigin( btVector3( position[ 0 ], position[ 1 ], position[ 2 ] ) );
 	}
 
-	return trans;
+	return transform;
 }
 
 // 姿勢、移動 => 行列
@@ -363,7 +365,7 @@ mmdpiBullet::mmdpiBullet()
 			);
 
 	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	solver = new btSequentialImpulseConstraintSolver;
+	solver = new btSequentialImpulseConstraintSolver();
 
 	//dynamicsWorld = ( btDynamicsWorld* )( new btSoftRigidDynamicsWorld( dispatcher, overlappingPairCache, solver, collisionConfiguration ) );
 	dynamicsWorld = new btDiscreteDynamicsWorld( dispatcher, overlappingPairCache, solver, collisionConfiguration );

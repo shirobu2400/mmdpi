@@ -29,6 +29,8 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 	// Matrial
 	buf->get_bin( &material_num, sizeof( material_num ) );
 	material = new MMDPI_PMD_MATERIAL[ material_num ];
+	if( material == 0x00 )
+		return -1;
 	for( dword i = 0; i < material_num; i ++ )
 	{
 		buf->get_bin( &material[ i ], sizeof( material[ i ] ) );
@@ -38,6 +40,8 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 	// Bone
 	buf->get_bin( &bone_num, sizeof( bone_num ) );
 	bone = new MMDPI_PMD_BONE_INFO[ bone_num ];
+	if( bone == 0x00 )
+		return -1;
 	for( ushort i = 0; i < bone_num; i ++ )
 	{
 		buf->get_bin( &bone[ i ], sizeof( bone[ i ] ) );
@@ -46,6 +50,8 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 	// ik
 	buf->get_bin( &ik_num, sizeof( ik_num ) );
 	ik = new MMDPI_PMD_IK_INFO[ ik_num ];
+	if( ik == 0x00 )
+		return -1;
 	for( ushort i = 0; i < ik_num; i ++ )
 	{
 		buf->get_bin( &ik[ i ].ik_bone_index, sizeof( ik[ i ].ik_bone_index ) );
@@ -133,6 +139,8 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 
 	// toon
 	toon_name = new MMDPI_PMD_TOON_NAME[ 1 ];
+	if( toon_name == 0x00 )
+		return -1;
 	//if( buf->get_bin( toon_name, sizeof( MMDPI_PMD_TOON_NAME ) ) )
 	//	;
 	buf->get_bin( toon_name, sizeof( MMDPI_PMD_TOON_NAME ) );
@@ -144,6 +152,8 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 		// 剛体情報
 		MMDPI_PMD_PHYSICAL_OBJECT	rigid;
 		p_rigid = new MMDPI_PHYSICAL_RIGID_INFO[ p_rigid_num ];
+		if( p_rigid == 0x00 )
+			return -1;
 		for( dword i = 0; i < p_rigid_num; i ++ )
 		{
 			MMDPI_PHYSICAL_RIGID_INFO*	r = &p_rigid[ i ];
@@ -188,6 +198,8 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 		MMDPI_PMD_PHYSICAL_JOINT	joint;
 		buf->get_bin( &p_joint_num, sizeof( p_joint_num ) );
 		p_joint = new MMDPI_PHYSICAL_JOINT_INFO[ p_joint_num ];
+		if( p_joint == 0x00 )
+			return -1;
 		for( dword i = 0; i < p_joint_num; i ++ )
 		{
 			MMDPI_PHYSICAL_JOINT_INFO*	j = &p_joint[ i ];
@@ -217,7 +229,7 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 
 			//	弧度法=>度数法
 			for( int k = 0; k < 3; k ++ )
-				j->spring_rotate[ k ] = joint.spring_rot[ k ] * 180.0f / ( float )M_PI;
+				j->spring_rotate[ k ] = joint.spring_rot[ k ] * ( float )M_PI / 180.0f;
 			for( int k = 0; k < 3; k ++ )
 				j->spring_trans[ k ] = joint.spring_pos[ k ];
 						
