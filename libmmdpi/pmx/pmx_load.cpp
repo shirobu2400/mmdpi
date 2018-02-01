@@ -240,14 +240,10 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		}
 
 		if( bone_flag & 0x0002 )	//	回転可能
-		{
 			tbone->rotation_flag = 1;
-		}
 
 		if( bone_flag & 0x0004 )	//	移動可能
-		{
 			tbone->translate_flag = 1;
-		}
 
 		if( bone_flag & 0x0008 )	//	表示 
 			tbone->show_flag = 1;
@@ -265,8 +261,12 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		if( bone_flag & 0x0200 )	//	移動付与
 		{
-			buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
-			buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
+			if( tbone->rotation_grant_flag == 0 )
+			{
+				//	回転付与と情報は共有なので読み込む必要性はない
+				buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
+				buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
+			}
 
 			tbone->translate_grant_flag = 1;
 		}
