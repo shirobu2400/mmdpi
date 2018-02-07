@@ -61,29 +61,12 @@ int mmdpiShader::default_shader( void )
 	"	mat4	skinTransform;\n"
 	"	vec3	vertex00;\n"
 	"\n"
-	//"	skinTransform = mat4( 0 );\n"
 	"\n"
-	//"	float	weight[ 4 ];\n"
-	//"	weight[ 0 ] = BoneWeights.x;\n"
-	//"	weight[ 1 ] = BoneWeights.y;\n"
-	//"	weight[ 2 ] = BoneWeights.z;\n"
-	//"	weight[ 3 ] = BoneWeights.w;\n"
-	//"\n"
-	//"	float	indices[ 4 ];\n"
-	//"	indices[ 0 ] = BoneIndices.x;\n"
-	//"	indices[ 1 ] = BoneIndices.y;\n"
-	//"	indices[ 2 ] = BoneIndices.z;\n"
-	//"	indices[ 3 ] = BoneIndices.w;\n"
 	"\n"
 	"	skinTransform  = BoneWeights[ 0 ] * BoneMatrix[ int( BoneIndices[ 0 ] ) ];\n"
 	"	skinTransform += BoneWeights[ 1 ] * BoneMatrix[ int( BoneIndices[ 1 ] ) ];\n"
 	"	skinTransform += BoneWeights[ 2 ] * BoneMatrix[ int( BoneIndices[ 2 ] ) ];\n"
 	"	skinTransform += BoneWeights[ 3 ] * BoneMatrix[ int( BoneIndices[ 3 ] ) ];\n"
-	//"	for( int i = 0; i < 4; i ++ )\n"
-	//"	{\n"
-	//"		int bone_index = int( indices[ i ] );\n"
-	//"		skinTransform += weight[ i ] * BoneMatrix[ bone_index ];\n"
-	//"	}\n"
 	"\n"
 #ifdef _MMDPI_OUTLINE_
 	"	vertex00 = Vertex + SkinVertex + Normal * Edge_size * 0.02;\n"
@@ -307,35 +290,35 @@ void mmdpiShader::set_buffer( int buffer_id )
 	
 // vertex
 	glVertexAttribPointer( vertex_id, 3, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( ( size_t )vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector3d );
 
 // uv
 	glVertexAttribPointer( uv_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector4d );
 	
 // bone index
 	glVertexAttribPointer( bone_indices_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector4d );
 
 // bone weight
 	glVertexAttribPointer( bone_weights_id, 4, GL_FLOAT, GL_FALSE,
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector4d );
 
 #ifdef _MMDPI_OUTLINE_
 	//	法線ベクトル
 	glVertexAttribPointer( normal_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector4d );
 #endif
 	
 #ifdef _MMDPI_USINGSKIN_
 	//	スキン
 	glVertexAttribPointer( skinvertex_id, 3, GL_FLOAT, GL_FALSE, 
-		sizeof( MMDPI_VERTEX ), ( const void * )( vertex_start ) );
+		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector3d );
 #endif
 
