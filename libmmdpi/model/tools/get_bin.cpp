@@ -32,7 +32,7 @@ unsigned char* GetBin::get_bin( void *bin, int size )
 
 unsigned char* GetBin::get_bin2( void* bin, int bin_size, int buf_size )
 {
-	unsigned int	bin_i = ( unsigned int )bin;
+	unsigned int	bin_i = ( uint32_t )bin;
 
 	if( ( unsigned int )( buf - buf_base + ( unsigned int )bin_size ) > ( unsigned int )buf_len )
 	{
