@@ -108,7 +108,7 @@ Bullet Physics インストール済みおよび、-Dbullet=on オプション�
   <p> =>  unsigned short 型に収まるようにメッシュ分割しました。</p><br>
   
   
-# ご質問、ご指摘、ご要望などがありましたら気軽にご連絡ください。
+# 気軽にご連絡ください。
   
   Twitter : @2400kskm<br>
   ニコニコ: shirobu<br>
