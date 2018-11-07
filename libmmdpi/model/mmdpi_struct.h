@@ -5,7 +5,7 @@
 #include "tools/tga_image.h"
 #include "jpeglib.h"
 #include "png.h"
-
+#include "tools/dds.h"
 
 #ifndef		__MMDPI__STRUCT__DEFINES__
 #define		__MMDPI__STRUCT__DEFINES__	( 1 )
@@ -37,7 +37,7 @@ typedef struct tagMMDPI_VERTEX
 
 //#pragma pack( pop )	//アラインメント制御エンド
 
-//	頂点集合データ型
+// 頂点集合データ型
 typedef struct tagMMDPI_BLOCK_VERTEX
 {
 	//	各変数は個数が同期している。
@@ -115,12 +115,11 @@ struct MMDPI_PNG
 	{
 		glDeleteTextures( 1, &texture );
 	}
-} ;
+};
 
-//	jpeg lib
+// jpeg lib
 struct MMDPI_JPG
 {
-	//pngInfo 		info;
 	GLuint			texture;
 		
 	GLuint get_id( void )
@@ -137,18 +136,19 @@ struct MMDPI_JPG
 	{
 		glDeleteTextures( 1, &texture );
 	}
-} ;
+};
 
-//	イメージ管理
+// イメージ管理
 typedef struct tagMMDPI_IMAGE
 {
-	int		type;		//	0->bmp, 1->tga
-	int		ref;		//	参照しているか
+	int		type;		// 0->bmp, 1->tga
+	int		ref;		// 参照しているか
 
 	MMDPI_BMP*	bmp;
 	MMDPI_TGA*	tga;
 	MMDPI_PNG*	png;
 	MMDPI_JPG*	jpg;
+	MMDPI_DDS*	dds;
 
 	GLint		id;
 	
@@ -157,7 +157,7 @@ typedef struct tagMMDPI_IMAGE
 		uint	len = strlen( file_name );
 		ref = 0;
 
-		if( strncmp( file_name + len - 4, ".tga", 3 ) == 0 )
+		if( strncmp( file_name + len - 4, ".tga", 3 ) == 0 || strncmp( file_name + len - 4, ".TGA", 3 ) == 0 )
 		{
 			tga = new MMDPI_TGA();
 			if( tga && ( int )tga->load( file_name ) < 0 )
@@ -168,7 +168,7 @@ typedef struct tagMMDPI_IMAGE
 			type = 1;
 			id = tga->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".png", 3 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".png", 3 ) == 0 || strncmp( file_name + len - 4, ".PNG", 3 ) == 0 )
 		{
 			png = new MMDPI_PNG();
 			if( png && ( int )png->load( file_name ) < 0 )
@@ -179,7 +179,7 @@ typedef struct tagMMDPI_IMAGE
 			type = 2;
 			id = png->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".bmp", 3 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".bmp", 3 ) == 0 || strncmp( file_name + len - 4, ".BMP", 3 ) == 0 )
 		{
 			bmp = new MMDPI_BMP();
 			if( bmp && ( int )bmp->load( file_name ) < 0 )
@@ -190,7 +190,8 @@ typedef struct tagMMDPI_IMAGE
 			type = 3;
 			id = bmp->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".jpg", 3 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 4 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".jpg", 3 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 4 ) == 0 ||
+			strncmp( file_name + len - 4, ".JPG", 3 ) == 0 || strncmp( file_name + len - 5, ".JPEG", 4 ) == 0 )
 		{
 			jpg = new MMDPI_JPG();
 			if( jpg && ( int )jpg->load( file_name ) < 0 ) 
@@ -201,12 +202,25 @@ typedef struct tagMMDPI_IMAGE
 			type = 4;
 			id = jpg->get_id();
 		}
+		else if( strncmp( file_name + len - 4, ".dds", 3 ) == 0 || strncmp( file_name + len - 4, ".DDS", 3 ) == 0 )
+		{
+			dds = new MMDPI_DDS();
+			if( dds && ( int )dds->load( file_name ) < 0 ) 
+			{
+				delete dds;
+				return -1;
+			}
+			type = 5;
+			id = dds->get_id();
+		}
 
 		return type;
 	}
 
 	GLuint copy( const tagMMDPI_IMAGE& c )
 	{
+		if( c.id < 0 )
+			return -1;
 		type = c.type;
 		ref = 1;
 		return id = c.id;
@@ -227,6 +241,7 @@ typedef struct tagMMDPI_IMAGE
 		png = 0x00;
 		bmp = 0x00;
 		jpg = 0x00;
+		dds = 0x00;
 	}
 
 	~tagMMDPI_IMAGE()
@@ -250,6 +265,11 @@ typedef struct tagMMDPI_IMAGE
 		{
 			delete jpg;
 			jpg = 0x00;
+		}
+		if( dds )
+		{
+			delete dds;
+			dds = 0x00;
 		}
 	}
 
@@ -285,31 +305,31 @@ typedef struct tagMMDPI_PIECE
 
 	int				has_texture;
 
-	//	両面描画フラグ
+	// 両面描画フラグ
 	int				is_draw_both;
 	
 } MMDPI_PIECE;
 
 typedef struct tagMMDPI_BONE_INFO
 {
-	int					id;			//	ボーンID（通し番号）
+	int					id;			// ボーンID（通し番号）
 
 	char*					name;
 	char*					sjis_name;
 
 	int					level;
 	
-	int					visible;		//	表示するか否か
-	float					length;			//	表示用ボーンの長さ
+	int					visible;		// 表示するか否か
+	float					length;			// 表示用ボーンの長さ
 	
-	tagMMDPI_BONE_INFO*			parent;			//	親ボーン
+	tagMMDPI_BONE_INFO*			parent;			// 親ボーン
 	
-	tagMMDPI_BONE_INFO*			first_child;		//	第1子ボーン
-	tagMMDPI_BONE_INFO*			sibling;		//	次の兄弟ボーン
+	tagMMDPI_BONE_INFO*			first_child;		// 第1子ボーン
+	tagMMDPI_BONE_INFO*			sibling;		// 次の兄弟ボーン
 
-	int					child_flag;		//	0:座標オフセットで指定 1:ボーンで指定
+	int					child_flag;		// 0:座標オフセットで指定 1:ボーンで指定
 	tagMMDPI_BONE_INFO*			child_bone;
-	mmdpiMatrix				posoffset_matrix;	//	child_flag == 0 の時のみ
+	mmdpiMatrix				posoffset_matrix;	// child_flag == 0 の時のみ
 
 
 	mmdpiMatrix				init_mat;		// 親ボーンから見た初期姿勢行列
@@ -335,7 +355,7 @@ typedef struct tagMMDPI_BONE_INFO
 	
 } MMDPI_BONE_INFO, *MMDPI_BONE_INFO_PTR;
 
-//	Skin
+// Skin
 typedef struct tagMMDPI_SKIN_INFO
 {
 	dword	skin_flag;
@@ -343,31 +363,31 @@ typedef struct tagMMDPI_SKIN_INFO
 } MMDPI_SKIN_INFO, *MMDPI_SKIN_INFO_PTR;
 
 
-//	剛体
+// 剛体
 typedef struct tagMMDPI_PHYSICAL_RIGID_INFO
 {
 	char*		name;
 	char*		eng_name;
 
-	dword		bone_index;	//	関連ボーンIndex - 関連なしの場合は-1
+	dword		bone_index;	// 関連ボーンIndex - 関連なしの場合は-1
 
 	BYTE		group;
 	ushort		not_touch_group_flag;
 
-	BYTE		type;		//	形状 - 0:球 1:箱 2:カプセル
+	BYTE		type;		// 形状 - 0:球 1:箱 2:カプセル
 
 	float		size[ 3 ];
 
 	float		pos[ 3 ];
 	float		rot[ 3 ];
 
-	float		mass;		//	質量
-	float		ac_t;		//	移動減衰
-	float		ac_r;		//	回転減衰
-	float		repulsion;	//	反発力
-	float		friction;	//	摩擦力
+	float		mass;		// 質量
+	float		ac_t;		// 移動減衰
+	float		ac_r;		// 回転減衰
+	float		repulsion;	// 反発力
+	float		friction;	// 摩擦力
 
-	BYTE		rigidbody_type;	//	剛体の物理演算 -
+	BYTE		rigidbody_type;	// 剛体の物理演算 -
 	// 0:ボーン追従(static)		ボーンを剛体に合わせる
 	// 1:物理演算(dynamic)		物理演算のみを行い、ボーンは合わせない
 	// 2:物理演算 + Bone位置合わせ

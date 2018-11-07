@@ -29,12 +29,10 @@ using namespace std;
 typedef int32_t		integer;
 typedef uint32_t	dword;
 
-
-typedef dword dword;
-typedef integer INTEGER;
-typedef unsigned char uchar, BYTE;
-typedef unsigned short ushort;
-typedef short SHORT;
+typedef integer		INTEGER;
+typedef unsigned char	uchar, BYTE;
+typedef unsigned short	ushort;
+typedef short		SHORT;
 
 typedef unsigned int uint;
 

@@ -12,7 +12,7 @@ int mmdpiPmdAnalyze::load( const char *file_name )
 	return analyze();
 }
 
-//	PMD解析
+// PMD解析
 int mmdpiPmdAnalyze::analyze( void )
 {
 	adjust_material = new MMDPI_MATERIAL[ material_num ];
@@ -48,23 +48,23 @@ int mmdpiPmdAnalyze::analyze( void )
 		adjust_vertex->nor[ i ].y = ver->nor[ 1 ];
 		adjust_vertex->nor[ i ].z = ver->nor[ 2 ];
 
-		//	ボーン
+		// ボーン
 		adjust_vertex->index[ i ].x = ( float )ver->bone_num[ 0 ];
 		adjust_vertex->index[ i ].y = ( float )ver->bone_num[ 1 ];
 		adjust_vertex->index[ i ].z = ( float )0;
 		adjust_vertex->index[ i ].w = ( float )0;
 			
-		//	重み
+		// 重み
 		adjust_vertex->weight[ i ].x = ver->bone_weight / 100.0f;
 		adjust_vertex->weight[ i ].y = 1 - adjust_vertex->weight[ i ].x;
 		adjust_vertex->weight[ i ].z = 0;
 		adjust_vertex->weight[ i ].w = 0;
 	}
 
-	//	最適化
+	// 最適化
 	mmdpiAdjust::adjust( adjust_vertex, mmdpiPmdLoad::vertex_num, face, face_num, adjust_material, material_num, mmdpiBone::bone, mmdpiPmdLoad::bone_num );
 
-	//	テクスチャ
+	// テクスチャ
 	load_texture();
 		
 	//skin = new MMDPI_SKIN_INFO[ skin_num ];
@@ -74,7 +74,7 @@ int mmdpiPmdAnalyze::analyze( void )
 	//	a_skin[ i ].skin_name = skin[ i ].skin_name;
 	//}
 
-	//	マテリアル情報の保存
+	// マテリアル情報の保存
 	for( dword j = 0; j < mesh.size(); j ++ )
 	{		
 		MMDPI_PIECE*			m	= mesh[ j ]->b_piece;
@@ -106,12 +106,12 @@ int mmdpiPmdAnalyze::analyze( void )
 
 void mmdpiPmdAnalyze::load_texture( void )
 {
-	//	テクスチャ
+	// テクスチャ
 	dword	fver_num_base = 0;
 	long	ppid = -1;
 	dword	pi = 0;
 
-	//	一時的に読み込み
+	// 一時的に読み込み
 	texture = new MMDPI_IMAGE[ material_num ];
 	if( texture == 0x00 )
 		return ;
@@ -120,7 +120,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 	if( toon_texture == 0x00 )
 		return ;
 
-	//	読み込み済みテクスチャのリスト
+	// 読み込み済みテクスチャのリスト
 	char**	loaded_texture_name = new char*[ material_num ];
 	if( loaded_texture_name == 0x00 )
 		return ;
@@ -153,20 +153,20 @@ void mmdpiPmdAnalyze::load_texture( void )
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
 	
-		//	今までにテクスチャが読み込まれていればその位置を取得
+		// 今までにテクスチャが読み込まれていればその位置を取得
 		for( ri = m->raw_material_id; ri >= 0; ri -- )
 		{
 			if( strcmp( loaded_texture_name[ ri ], texture_file_name_full ) == 0 )
 				break;
 		}
-		if( ri < 0 )	//	読み込まれたことがない
+		if( ri < 0 )	// 読み込まれたことがない
 		{
 			ri = m->raw_material_id;
 			strcpy( loaded_texture_name[ ri ], texture_file_name_full );
 			texture[ ri ].load( texture_file_name_full );
 		}
 		
-		//	テクスチャの関連付け
+		// テクスチャの関連付け
 		m->raw_material->texture.copy( texture[ ri ] );
 		if( texture[ ri ].type )
 			m->has_texture = 1;
@@ -176,7 +176,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 	delete[] loaded_texture_name;
 }
 
-//	ボーン関係処理
+// ボーン関係処理
 int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len )
 {
 	mmdpiModel::bone_num = pbone_len;
@@ -193,11 +193,11 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 	{
 		mmdpiModel::bone[ i ].id = i;
 
-		//	親ボーン設定
+		// 親ボーン設定
 		if( pbone[ i ].parent_bone_index < mmdpiModel::bone_num )
 			mmdpiModel::bone[ i ].parent = &mmdpiModel::bone[ pbone[ i ].parent_bone_index ];
 
-		//	子供ボーン設定
+		// 子供ボーン設定
 		int child_id = -1;
 		for( dword j = 0; j < mmdpiModel::bone_num && child_id == -1; j ++ )
 		{
@@ -207,7 +207,7 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 		if( child_id != -1 ) 
 			mmdpiModel::bone[ i ].first_child = &mmdpiModel::bone[ child_id ];
 
-		//	兄弟ボーン設定
+		// 兄弟ボーン設定
 		int sibling_id = -1;
 		for( dword j = i + 1; j < mmdpiModel::bone_num && sibling_id == -1; j ++ )
 		{
@@ -230,10 +230,10 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )
 		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
 
-	//	init_mat 初期化
+	// init_mat 初期化
 	init_mat_calc( &mmdpiModel::bone[ 0 ], 0 );
 
-	//	初期設定
+	// 初期設定
 	refresh_bone_mat();
 	make_matrix( &mmdpiModel::bone[ 0 ], 0 );
 		

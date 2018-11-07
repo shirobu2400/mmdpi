@@ -43,24 +43,24 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		return -1;
 	}
 
-	//　ヘッダー情報の読み取り
+	// ヘッダー情報の読み取り
 	if( fread( &bitmapInfoHeader, sizeof( BITMAPINFOHEADER ), 1, fp ) == 0 )
 	{
 		fclose( fp );
 		return -1;
 	}
 
-	//　幅と高さを取得
+	// 幅と高さを取得
 	width	= bitmapInfoHeader.biWidth;
 	height	= bitmapInfoHeader.biHeight;
 
-	//	bit幅
+	// bit幅
 	bitc = bitmapInfoHeader.biBitCount / 8;
 	
 	if( bitmapInfoHeader.biSizeImage == 0 )
 		bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * bitc;
 	
-	//	マスク読み込み
+	// マスク読み込み
 	if( bitmapInfoHeader.biCompression == 3 )
 	{
 		if( fread( mask_color, 4, bitc, fp ) == 0 )
@@ -69,8 +69,8 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 			return -1;
 		}
 
-		//	マスクはシフトしなくてはいけないので
-		//	シフトする値を算出
+		// マスクはシフトしなくてはいけないので
+		// シフトする値を算出
 		//	
 		for( int i = 0; i < bitc; i ++ )
 		{
@@ -79,10 +79,10 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 		}
 	}
 
-	//	pixel 情報の最初へ
+	// pixel 情報の最初へ
 	fseek( fp, header.bfOffBits, SEEK_SET );
 
-	//　データサイズを決定し，メモリを確保
+	// データサイズを決定し，メモリを確保
 	bit_size = bitmapInfoHeader.biSizeImage;
 
 	bits = new GLubyte[ bit_size + 1 ];	
@@ -260,8 +260,8 @@ int MMDPI_BMP::draw( void )
 		return -1;
 
 	glBitmap( width, height, 0, 0, 0, 0, bits );
-	//	テクスチャ作成
-    //gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, bits );
+	// テクスチャ作成
+	//gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, bits );
 	//glTexImage2D( GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB,GL_UNSIGNED_BYTE, bits );
 
 	return 0;
@@ -272,9 +272,9 @@ int MMDPI_BMP::draw( void )
 	if( bits == 0x00 )
 		return -1;
 
-//	glBitmap( width, height, 0, 0, 0, 0, bits );
-	//	テクスチャ作成
-    //gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, bits );
+	// glBitmap( width, height, 0, 0, 0, 0, bits );
+	// テクスチャ作成
+	//gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, bits );
 	//glTexImage2D( GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB,GL_UNSIGNED_BYTE, bits );
 
 	return 0;

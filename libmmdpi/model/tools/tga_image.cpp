@@ -151,14 +151,14 @@ GLuint MMDPI_TGA::load( const char *filename )
 	glBindTexture( GL_TEXTURE_2D, texture );
 
 	//　
-	if( bpp == 24 ) 
-		glPixelStorei( GL_UNPACK_ALIGNMENT, 4 );
-	else if( bpp == 32 ) 
+	//if( bpp == 24 ) 
+	//	glPixelStorei( GL_UNPACK_ALIGNMENT, 4 );
+	//else if( bpp == 32 ) 
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 	//　テクスチャの割り当て
 	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, bits );
-
+	
 	////　テクスチャを拡大・縮小する方法の指定
 	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );

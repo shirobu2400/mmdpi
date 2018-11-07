@@ -2,7 +2,7 @@
 #include "mmdpi_bone.h"
 
 
-//	matrix 分だけ変換する
+// matrix 分だけ変換する
 int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	if( mmdpiBone::bone_num <= bone_index )
@@ -11,20 +11,20 @@ int mmdpiBone::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 	return 0;
 }
 
-//	ボーンローカルマテリックス生成
+// ボーンローカルマテリックス生成
 void mmdpiBone::make_local_matrix( void )
 {
 	for( uint i = 0; i < mmdpiBone::bone_num; i ++ )
 		bone[ i ].local_matrix = bone[ i ].offset_mat * bone[ i ].matrix;
 }
 
-//	マトリックス生成
+// マトリックス生成
 int mmdpiBone::global_matrix( void )
 {
 	return make_matrix( &bone[ 0 ], 0x00 );
 }
 
-//	グローバル行列生成
+// グローバル行列生成
 int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offset )
 {
 	if( my_bone == 0x00 )
@@ -43,7 +43,7 @@ int mmdpiBone::make_matrix( MMDPI_BONE_INFO_PTR my_bone, const mmdpiMatrix* offs
 	return 0;
 }
 
-//	PMX
+// PMX
 mmdpiMatrix mmdpiBone::make_global_matrix( int index )
 {
 	if( bone[ index ].parent == 0x00 )
@@ -51,7 +51,7 @@ mmdpiMatrix mmdpiBone::make_global_matrix( int index )
 	return bone[ index ].bone_mat * bone[ index ].parent->matrix * bone[ index ].delta_matrix;
 }
 
-//	ボーンのモデル上のローカル座標系の取得
+// ボーンのモデル上のローカル座標系の取得
 mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone )	
 {
 	if( bone->parent )	
@@ -64,7 +64,7 @@ mmdpiMatrix mmdpiBone::get_global_matrix( MMDPI_BONE_INFO_PTR bone )
 
 void mmdpiBone::refresh_bone_mat( void )
 {
-	//	初期化
+	// 初期化
 	for( uint i = 0; i < bone_num; i ++ )
 	{
 		bone[ i ].bone_mat = bone[ i ].init_mat;
@@ -90,7 +90,7 @@ mmdpiMatrix mmdpiBone::init_mat_calc_bottom( MMDPI_BONE_INFO_PTR now_bone )
 	return now_bone->init_mat;
 }
 
-//	物理演算再生
+// 物理演算再生
 int mmdpiBone::advance_time_physical( int fps )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
@@ -119,14 +119,14 @@ int mmdpiBone::advance_time_physical( int fps )
 	return 0;
 }
 
-//	ボーンの位置に剛体の位置をあわせる
+// ボーンの位置に剛体の位置をあわせる
 int mmdpiBone::fix_position( dword rigid_id, float fElapsedFrame )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	if( bullet_flag <= 0 )
 		return -1;
 
-	////	ボーン追従のみ終了
+	//// ボーン追従のみ終了
 	//if( physics[ rigid_id ].rigidbody_type == 1 )
 	//	return -1;
 	
@@ -155,18 +155,18 @@ int mmdpiBone::fix_position( dword rigid_id, float fElapsedFrame )
 	return 0;
 }
 
-//	ボーンの姿勢を剛体の姿勢と一致させる(そのフレームのシミュレーション終了後に呼ぶ)
+// ボーンの姿勢を剛体の姿勢と一致させる(そのフレームのシミュレーション終了後に呼ぶ)
 int mmdpiBone::update_bone_physical( dword rigid_id )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	if( bullet_flag <= 0 )
 		return -1;
 
-	//	ボーンを剛体に合わせないフラグがたっているときは強制終了
+	// ボーンを剛体に合わせないフラグがたっているときは強制終了
 	if( physics_sys[ rigid_id ].m_bNoCopyToBone )
 		return -1;
 
-	////	物理演算のみ終了
+	//// 物理演算のみ終了
 	//if( physics[ rigid_id ].rigidbody_type == 1 ) 
 	//	return -1;
 
@@ -183,18 +183,18 @@ int mmdpiBone::update_bone_physical( dword rigid_id )
 	return 0;
 }
 
-//	剛体をボーンの位置へ強制的に移動させる
+// 剛体をボーンの位置へ強制的に移動させる
 int mmdpiBone::move_to_bone_pos( dword rigid_id )
 {
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
 	if( !bullet_flag )
 		return -1;
 
-	//	ボーンを剛体に合わせないフラグがたっているときは強制終了
+	// ボーンを剛体に合わせないフラグがたっているときは強制終了
 	if( physics_sys[ rigid_id ].m_bNoCopyToBone )
 		return -1;
 
-	////	ボーン追従のみ終了
+	//// ボーン追従のみ終了
 	//if( physics[ rigid_id ].rigidbody_type == 0 )
 	//	return -1;
 

@@ -24,6 +24,7 @@ set(libmmdpi_src
 	model/tools/bitmap.cpp
 	model/tools/png.cpp
 	model/tools/jpg.cpp
+	model/tools/dds.cpp
 	model/tools/tga_image.cpp
 	model/tools/utf8_sjis.cpp
 
@@ -64,6 +65,7 @@ set(libmmdpi_header
 	model/tools/bitmap.h
 	model/tools/get_bin.h
 	model/tools/raw_table.h
+	model/tools/dds.h
 	model/tools/tga_image.h
 	model/tools/utf8_sjis.h
 
@@ -87,24 +89,24 @@ set(libmmdpi_header
 )
 
 
-#	Include Directory
+# Include Directory
 set(libmmdpi_inc
-	/usr/local/include/
-	/usr/include/bullet/
-	/usr/include/bullet/BulletDynamics/
-	/usr/include/bullet/BulletSoftBody/
-	/usr/include/bullet/LinearMath/
-	/usr/include/bullet/BulletCollision/
+	/usr/local/include
+	/usr/include/bullet
+	/usr/include/bullet/BulletDynamics
+	/usr/include/bullet/BulletSoftBody
+	/usr/include/bullet/LinearMath
+	/usr/include/bullet/BulletCollision
 )
 
-#	Raspberry Pi
+# Raspberry Pi
 set(libmmdpi_inc_raspi
 	/opt/vc/include/interface/vmcs_host/linux
 	/opt/vc/include
 	/opt/vc/include/interface/vcos/pthreads
 )
 
-#	Bullet Physics Source
+# Bullet Physics Source
 set(libmmdpi_bullet_src
 	model/bullet/mmdpi_bullet.cpp
 	model/bullet/mmdpi_bullet.h
@@ -122,7 +124,7 @@ if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
 	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
 endif()
 
-##	Bullet
+## Bullet
 #find_package( Bullet )
 #if( bullet AND Bullet_FOUND )
 if( bullet )
@@ -132,8 +134,8 @@ if( bullet )
 	include_directories( Bullet_INCLUDE_DIRS /usr/local/include/bullet )
 endif()
 
-#	Outline
-#	It needs a lot of VRAM.
+# Outline
+# It needs a lot of VRAM.
 if( outline )
 	add_definitions( -D_MMDPI_OUTLINE_ )
 endif()

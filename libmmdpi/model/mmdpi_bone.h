@@ -14,7 +14,7 @@ class mmdpiBone : public mmdpiAdjust
 #endif	
 {
 
-protected :
+protected:
 
 	uint				bone_num;				// ボーン数 ( ushort でＯＫ )
 	MMDPI_BONE_INFO_PTR		bone;					// ボーン
@@ -38,7 +38,7 @@ protected :
 
 	int				create_physical_info( void );
 
-public :
+public:
 	
 	static mmdpiMatrix		get_global_matrix( MMDPI_BONE_INFO_PTR bone );
 	
@@ -78,6 +78,6 @@ public :
 
 	mmdpiBone();
 	~mmdpiBone();
-} ;
+};
 
 #endif	//	__MMDPI__ADJUST__DEFINES__
