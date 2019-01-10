@@ -172,6 +172,7 @@ install(FILES
 	model/tools/raw_table.h
 	model/tools/tga_image.h
 	model/tools/utf8_sjis.h
+	model/tools/dds.h
 DESTINATION include/mmdpi/model/tools)
 install(FILES
 	model/bullet/mmdpi_bullet.h
