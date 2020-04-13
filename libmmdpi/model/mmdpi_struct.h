@@ -157,7 +157,7 @@ typedef struct tagMMDPI_IMAGE
 		uint	len = strlen( file_name );
 		ref = 0;
 
-		if( strncmp( file_name + len - 4, ".tga", 3 ) == 0 || strncmp( file_name + len - 4, ".TGA", 3 ) == 0 )
+		if( strncmp( file_name + len - 4, ".tga", 4 ) == 0 || strncmp( file_name + len - 4, ".TGA", 4 ) == 0 )
 		{
 			tga = new MMDPI_TGA();
 			if( tga && ( int )tga->load( file_name ) < 0 )
@@ -168,7 +168,7 @@ typedef struct tagMMDPI_IMAGE
 			type = 1;
 			id = tga->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".png", 3 ) == 0 || strncmp( file_name + len - 4, ".PNG", 3 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".png", 4 ) == 0 || strncmp( file_name + len - 4, ".PNG", 4 ) == 0 )
 		{
 			png = new MMDPI_PNG();
 			if( png && ( int )png->load( file_name ) < 0 )
@@ -179,7 +179,7 @@ typedef struct tagMMDPI_IMAGE
 			type = 2;
 			id = png->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".bmp", 3 ) == 0 || strncmp( file_name + len - 4, ".BMP", 3 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".bmp", 4 ) == 0 || strncmp( file_name + len - 4, ".BMP", 4 ) == 0 )
 		{
 			bmp = new MMDPI_BMP();
 			if( bmp && ( int )bmp->load( file_name ) < 0 )
@@ -190,8 +190,8 @@ typedef struct tagMMDPI_IMAGE
 			type = 3;
 			id = bmp->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".jpg", 3 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 4 ) == 0 ||
-			strncmp( file_name + len - 4, ".JPG", 3 ) == 0 || strncmp( file_name + len - 5, ".JPEG", 4 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".jpg", 4 ) == 0 || strncmp( file_name + len - 5, ".jpeg", 5 ) == 0 ||
+			strncmp( file_name + len - 4, ".JPG", 4 ) == 0 || strncmp( file_name + len - 5, ".JPEG", 5 ) == 0 )
 		{
 			jpg = new MMDPI_JPG();
 			if( jpg && ( int )jpg->load( file_name ) < 0 ) 
@@ -202,7 +202,7 @@ typedef struct tagMMDPI_IMAGE
 			type = 4;
 			id = jpg->get_id();
 		}
-		else if( strncmp( file_name + len - 4, ".dds", 3 ) == 0 || strncmp( file_name + len - 4, ".DDS", 3 ) == 0 )
+		else if( strncmp( file_name + len - 4, ".dds", 4 ) == 0 || strncmp( file_name + len - 4, ".DDS", 4 ) == 0 )
 		{
 			dds = new MMDPI_DDS();
 			if( dds && ( int )dds->load( file_name ) < 0 ) 
