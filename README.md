@@ -74,16 +74,6 @@ Bullet Physics インストール済みおよび、-Dbullet=on オプション�
 <tr><td>void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
 </table>
 
-# Docker
-## Build
-```bash
-$ docker build -t mmdpi .
-```
-## run
-```bash
-$ docker run -it -t mmdpi bash
-```
-
 # その他、注意事項など
 
   ~~Raspberry Piの Raspbian 上での動作を想定にプログラムされています。~~<br>
