@@ -1,10 +1,6 @@
-
-//
-//　include
-//
 #define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
-#include "bitmap.h"
+#include "bitmap.hpp"
 
 
 int MMDPI_BMP::ReadBMP( const char *filename )
@@ -17,7 +13,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	dword			mask_color[ 4 ] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
 	dword			mask_shift[ 4 ] = { 0 };
 	int			result = 0;
-		
+
 
 	//　ファイルを開く
 	fp = fopen( filename, "rb" );
@@ -56,10 +52,10 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 
 	// bit幅
 	bitc = bitmapInfoHeader.biBitCount / 8;
-	
+
 	if( bitmapInfoHeader.biSizeImage == 0 )
 		bitmapInfoHeader.biSizeImage = bitmapInfoHeader.biWidth * bitmapInfoHeader.biHeight * bitc;
-	
+
 	// マスク読み込み
 	if( bitmapInfoHeader.biCompression == 3 )
 	{
@@ -71,7 +67,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 
 		// マスクはシフトしなくてはいけないので
 		// シフトする値を算出
-		//	
+		//
 		for( int i = 0; i < bitc; i ++ )
 		{
 			while( ( dword )( mask_color[ i ] >> mask_shift[ i ] ) > ( dword )0xff )
@@ -85,7 +81,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	// データサイズを決定し，メモリを確保
 	bit_size = bitmapInfoHeader.biSizeImage;
 
-	bits = new GLubyte[ bit_size + 1 ];	
+	bits = new GLubyte[ bit_size + 1 ];
 	if( bits == 0x00 )
 	{
 		//　エラーチェック
@@ -94,7 +90,7 @@ int MMDPI_BMP::ReadBMP( const char *filename )
 	}
 
 	switch( bitmapInfoHeader.biCompression )
-	{	
+	{
 	case 0:
 		//　ピクセルデータの読み込み
 		if( fread( bits, 1, bitmapInfoHeader.biSizeImage, fp ) == 0 )
@@ -178,8 +174,8 @@ int MMDPI_BMP::load( const char *filename )
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 	//	テクスチャの割り当て
-	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, bits );  
-  
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, bits );
+
 	//	テクスチャの拡大、縮小方法
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -204,7 +200,7 @@ int MMDPI_BMP::load( const char *filename )
 GLuint	MMDPI_BMP::load( char *file_name )
 {
 	FILE*	 fp = fopen( file_name, "rb" );
-	if( fp == 0x00 ) 
+	if( fp == 0x00 )
 	{
 		printf( "stream did not open.\nFile is %s.\n", file_name );
 		return -1;
@@ -220,7 +216,7 @@ GLuint	MMDPI_BMP::load( char *file_name )
 
 	//	数を知らせる
     glGenTextures( 1, &texture );
-	
+
 	//	テクスチャをバインドします。
 	//	テクスチャのバインドとは、指定した名前のテクスチャを有効にする作業を表します。
 	//	初めて使われたテクスチャ名が指定された場合は、自動的にオブジェクトが生成されます。

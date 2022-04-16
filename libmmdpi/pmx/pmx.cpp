@@ -1,37 +1,37 @@
 
-#include "pmx.h"
+#include "pmx.hpp"
 
 int mmdpiPmx::load( const char* pmx_name )
 {
-	//	読み込みと解析
-	if( mmdpiPmxAnalyze::load( pmx_name ) )
+	// 読み込みと解析
+	if( this->mmdpiPmxAnalyze::load( pmx_name ) )
 		return -1;
 
-	mmdpiPmxAnalyze::create_bone( mmdpiPmxLoad::bone, mmdpiPmxLoad::bone_num );
-		
-	//	bullet
-	//	Make bone matrix
+	this->mmdpiPmxAnalyze::create_bone( mmdpiPmxLoad::bone, mmdpiPmxLoad::bone_num );
+
+	// bullet
+	// Make bone matrix
 	this->global_matrix();
-	phy_load_flag = 0;
-	if( bullet_flag == 0 )
+	this->phy_load_flag = 0;
+	if( this->bullet_flag == 0 )
 		return 0;
 #ifdef _MMDPI_USING_PHYSICS_ENGINE_
-	mmdpiBone::bullet_flag = 0;
-	if( mmdpiPmxLoad::p_rigid_num > 0 )
+	this->mmdpiBone::bullet_flag = 0;
+	if( this->mmdpiPmxLoad::p_rigid_num > 0 )
 	{
-		mmdpiBone::bullet_flag = 1;
-		phy_load_flag = 1;
+		this->mmdpiBone::bullet_flag = 1;
+		this->phy_load_flag = 1;
 
-		mmdpiBone::rigidbody_count	= mmdpiPmxLoad::p_rigid_num;
-		mmdpiBone::joint_count		= mmdpiPmxLoad::p_joint_num;
-		mmdpiBone::physics		= mmdpiPmxLoad::p_rigid;
-		mmdpiBone::joint		= mmdpiPmxLoad::p_joint;
+		this->mmdpiBone::rigidbody_count	= this->mmdpiPmxLoad::p_rigid_num;
+		this->mmdpiBone::joint_count		= this->mmdpiPmxLoad::p_joint_num;
+		this->mmdpiBone::physics		= this->mmdpiPmxLoad::p_rigid;
+		this->mmdpiBone::joint			= this->mmdpiPmxLoad::p_joint;
 
 		create_physical_info();
 	}
-#endif	
+#endif
 
-	//	成功
+	// 成功
 	return 0;
 }
 

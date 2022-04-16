@@ -17,7 +17,7 @@ extern "C"
 }
 #endif
 
-//int 	usec = 16 * 1000;//1000 / 30 * 1000 ;	//	30 fps
+//int 	usec = 16 * 1000;//1000 / 30 * 1000 ;	// 30 fps
 int		_fps_ = 60;
 
 extern "C"
@@ -53,7 +53,7 @@ extern "C"
 	ScreenSettings  	g_sc;
 }
 
-#include "mmdpi.h"
+#include "mmdpi.hpp"
 mmdpi*		p = 0x00;
 mmdpiMatrix	Model_offset;
 
@@ -62,13 +62,14 @@ mmdpiMatrix	Model_offset;
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+#include <string>
 
 
 class Fps
 {
-	static const int	sample_average	= 60;		//平均を取るサンプル数
+	static const int	sample_average = 60;		//平均を取るサンプル数
 
-	float			start_time;         //測定開始時刻
+	float			start_time;        		//測定開始時刻
 	int			count;				//カウンタ
 	float			m_fps;				//fps
 	int			fps;				//設定したFPS
@@ -177,7 +178,7 @@ void init( int argc, char *argv[] )
 	if( model_name && model_name[ 0 ] )
 	{
 		p = new mmdpi();
-		if( p->load( model_name ) )
+		if( p->load( std::string( model_name ) ) )
 		{
 			printf( "Not found %s.\n", model_name );
 			exit( 0 );
@@ -188,7 +189,7 @@ void init( int argc, char *argv[] )
 	vmd_name = get_command_option( "-v", argc, argv );
 	if( p && vmd_name && vmd_name[ 0 ] )
 	{
-		if( p->vmd_load( vmd_name ) )
+		if( p->vmd_load( std::string( "motion" ), std::string( vmd_name ) ) )
 		{
 			printf( "Not found %s.\n", vmd_name );
 			exit( 0 );
@@ -237,15 +238,15 @@ void draw( void )
 	fps->update();
 	if( p )
 	{
-		if( p->get_vmd( 0 ) )
+		if( p->vmd( std::string( "motion" ) ) )
 		{
 			float	frame = 30.0f / fps->get_mfps();
 			//	フレームを進める関数
 			//	（MMD は１秒間に３０フレームがデフォルト）
 			//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
-			( *p->get_vmd( 0 ) ) += frame;
+			( *p->vmd( std::string( "motion" ) ) ) += frame;
 		}
-		p->set_bone_matrix( 0, Model_offset );
+		p->set_bone_matrix( std::string( "motion" ), Model_offset );
 		p->draw();
 	}
 }
@@ -268,7 +269,7 @@ char get_keyboard( void )
 	char c;
 	struct termios term, default_term;
 
-	//	non cannonical mode
+	// non cannonical mode
 	tcgetattr( fileno( stdin ), &default_term );
 	term.c_lflag &= ~ICANON;
 	tcsetattr( fileno( stdin ), TCSANOW, &term );
@@ -575,7 +576,7 @@ int main( int argc, char *argv[] )
 	glClearColor( 0, 0, 0, 0 );
 
 	/* 1200frame / 60fps = 20sec */
-	while( !p->get_vmd( 0 ) || !p->get_vmd( 0 )->is_end() )
+	while( !p->vmd( std::string( "motion" ) ) || !p->vmd( std::string( "motion" ) )->is_end() )
 	{
 		Mat4	pl_matrix;
 		Mat4	delta_key_mat;
@@ -614,7 +615,7 @@ int main( int argc, char *argv[] )
 		//	あまり速くCPUが動くと描画が追い付かない
 		usleep( 1800 );
 		//usleep( 3200 );
-		
+
 		if( debug_flag )
 			fps->draw();
 	}

@@ -1,5 +1,5 @@
 
-#include "pmd_analyze.h"
+#include "pmd_analyze.hpp"
 
 
 // 読み込み
@@ -53,7 +53,7 @@ int mmdpiPmdAnalyze::analyze( void )
 		adjust_vertex->index[ i ].y = ( float )ver->bone_num[ 1 ];
 		adjust_vertex->index[ i ].z = ( float )0;
 		adjust_vertex->index[ i ].w = ( float )0;
-			
+
 		// 重み
 		adjust_vertex->weight[ i ].x = ver->bone_weight / 100.0f;
 		adjust_vertex->weight[ i ].y = 1 - adjust_vertex->weight[ i ].x;
@@ -66,7 +66,7 @@ int mmdpiPmdAnalyze::analyze( void )
 
 	// テクスチャ
 	load_texture();
-		
+
 	//skin = new MMDPI_SKIN_INFO[ skin_num ];
 	//for( uint i = 0; i < skin_num; i ++ )
 	//{
@@ -76,10 +76,10 @@ int mmdpiPmdAnalyze::analyze( void )
 
 	// マテリアル情報の保存
 	for( dword j = 0; j < mesh.size(); j ++ )
-	{		
+	{
 		MMDPI_PIECE*			m	= mesh[ j ]->b_piece;
 		MMDPI_PMD_MATERIAL_PTR		mpmx	= &material[ m->raw_material_id ];
-		
+
 		m->edge_size = mpmx->edge_flag * 0.02f;
 
 		m->edge_color.r = 0;
@@ -100,7 +100,7 @@ int mmdpiPmdAnalyze::analyze( void )
 		if( m->opacity < 1 - 1e-8 )
 			m->is_draw_both = 1;
 	}
-	
+
 	return 0;
 }
 
@@ -132,7 +132,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 	}
 
 	for( dword i = 0; i < mesh.size(); i ++ )
-	{		
+	{
 		MMDPI_PIECE*		m	= mesh[ i ]->b_piece;
 		MMDPI_PMD_MATERIAL_PTR	mpmx	= &material[ m->raw_material_id ];
 		int			ri;
@@ -141,18 +141,18 @@ void mmdpiPmdAnalyze::load_texture( void )
 		texture_file_name = mpmx->texture_file_name;
 
 		char	texture_file_name_full[ 0x1000 ];
-		int	j, k;	
+		int	j, k;
 		for( k = 0; directory[ k ]; k ++ )
 			texture_file_name_full[ k ] = directory[ k ];
 
 		for( j = 0;
-			texture_file_name[ j ] 
+			texture_file_name[ j ]
 			&& texture_file_name[ j ] != '*';
-			j ++, k ++ 
+			j ++, k ++
 		)
 			texture_file_name_full[ k ] = texture_file_name[ j ];
 		texture_file_name_full[ k ] = '\0';
-	
+
 		// 今までにテクスチャが読み込まれていればその位置を取得
 		for( ri = m->raw_material_id; ri >= 0; ri -- )
 		{
@@ -165,7 +165,7 @@ void mmdpiPmdAnalyze::load_texture( void )
 			strcpy( loaded_texture_name[ ri ], texture_file_name_full );
 			texture[ ri ].load( texture_file_name_full );
 		}
-		
+
 		// テクスチャの関連付け
 		m->raw_material->texture.copy( texture[ ri ] );
 		if( texture[ ri ].type )
@@ -181,7 +181,7 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 {
 	mmdpiModel::bone_num = pbone_len;
 	mmdpiModel::bone = new MMDPI_BONE_INFO[ mmdpiModel::bone_num ];
-	
+
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
 		mmdpiModel::bone[ i ].parent		= 0x00;
@@ -202,9 +202,9 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 		for( dword j = 0; j < mmdpiModel::bone_num && child_id == -1; j ++ )
 		{
 			if( pbone[ j ].parent_bone_index == i )
-				child_id = j;				
+				child_id = j;
 		}
-		if( child_id != -1 ) 
+		if( child_id != -1 )
 			mmdpiModel::bone[ i ].first_child = &mmdpiModel::bone[ child_id ];
 
 		// 兄弟ボーン設定
@@ -212,21 +212,21 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 		for( dword j = i + 1; j < mmdpiModel::bone_num && sibling_id == -1; j ++ )
 		{
 			if( pbone[ j ].parent_bone_index == pbone[ i ].parent_bone_index )
-				sibling_id = j;				
+				sibling_id = j;
 		}
-		if( sibling_id != -1 ) 
+		if( sibling_id != -1 )
 			mmdpiModel::bone[ i ].sibling = &mmdpiModel::bone[ sibling_id ];
 
 		mmdpiModel::bone[ i ].init_mat.transelation( pbone[ i ].bone_head_pos[ 0 ], pbone[ i ].bone_head_pos[ 1 ], pbone[ i ].bone_head_pos[ 2 ] );
 		mmdpiModel::bone[ i ].visible = 0;
 		mmdpiModel::bone[ i ].length = 0;
 
-	
+
 		mmdpiModel::bone[ i ].name = new char[ 32 ];
-		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name ); 
+		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name );
 		mmdpiModel::bone[ i ].name[ 20 ] = '\0';
 	}
-	
+
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )
 		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
 
@@ -236,7 +236,7 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 	// 初期設定
 	refresh_bone_mat();
 	make_matrix( &mmdpiModel::bone[ 0 ], 0 );
-		
+
 	return 0;
 }
 

@@ -1,5 +1,5 @@
 
-#include "get_bin.h"
+#include "get_bin.hpp"
 
 
 int GetBin::change_enmark( char* _string_ )
@@ -119,9 +119,9 @@ char* GetBin::text_buf( char byte_size, uint* length )
 //バイナリ用文字列抜き出し
 char* GetBin::bin_string( void )
 {
-	char*		result;
-	vector<char>	_string;
-	char		c[ 8 ];
+	char*			result;
+	std::vector<char>	_string;
+	char			c[ 8 ];
 
 	while( get_bin( c, 1 ) && c[ 0 ] )
 		_string.push_back( c[ 0 ] );

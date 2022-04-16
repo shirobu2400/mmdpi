@@ -1,19 +1,21 @@
 
-#include "mmdpi_shader.h"
+#include "mmdpi_shader.hpp"
 
 
 const int _send_gpu_data_num_ = 4;
 
 int mmdpiShader::shader_on( void )
 {
-	if( program )
-		glUseProgram( program );
+	if( this->program )
+		glUseProgram( this->program );
 	else
 	{
 		GLint	length;
 		GLchar*	log;
 		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &length );
 		log = new GLchar[ length ];
+		if( log == 0x00 )
+			return -1;
 		glGetShaderInfoLog( bone_size_id, length, &length, log );
 		fprintf( stderr, "Linked log = \"%s\"", log );
 		delete[] log;
@@ -28,9 +30,9 @@ void mmdpiShader::shader_off( void )
 }
 
 int mmdpiShader::default_shader( void )
-{ 
+{
 	static GLchar vertex_shader_src[ 0x1000 ] = { 0 };
-	sprintf( vertex_shader_src, 
+	sprintf( vertex_shader_src,
 #if defined( _MMDPI_OPENGL_ES_DEFINES_ ) || defined( _MMDPI_PRIJECTION_MATRIX_SELF_ )
 	"uniform   mat4			ProjectionMatrix;\n"
 #else
@@ -39,8 +41,8 @@ int mmdpiShader::default_shader( void )
 	"attribute	vec3		Vertex;		\n"
 #ifdef _MMDPI_OUTLINE_
 	"attribute	vec3		Normal;		\n"
-	"uniform	float		Edge_size;	\n"		//	エッジサイズ
-	"uniform	vec4		Edge_color;	\n"		//	エッジカラー
+	"uniform	float		Edge_size;	\n"		// エッジサイズ
+	"uniform	vec4		Edge_color;	\n"		// エッジカラー
 #endif
 	"attribute	vec4		gUv;		\n"
 	"varying	vec4		vUv;		\n"
@@ -49,13 +51,13 @@ int mmdpiShader::default_shader( void )
 	//"	Bone Info\n"
 	//"ボーン姿勢情報\n"
 	"uniform	mat4		BoneMatrix[ %d ];\n"
-	"attribute	vec4		BoneWeights;	\n"	//	頂点ウェイト
-	"attribute	vec4		BoneIndices;	\n"	//	ボーンインデックス
+	"attribute	vec4		BoneWeights;	\n"	// 頂点ウェイト
+	"attribute	vec4		BoneIndices;	\n"	// ボーンインデックス
 	"\n"
 	"uniform	vec4		gColor;		\n"
 	"varying	vec4		Color;		\n"
 	"\n"
-	//	頂点シェーダメイン関数
+	// 頂点シェーダメイン関数
 	"void main( void )\n"
 	"{\n"
 	"	mat4	skinTransform;\n"
@@ -84,7 +86,7 @@ int mmdpiShader::default_shader( void )
 	"}\n"
 	"\n", _MMDPI_MATERIAL_USING_BONE_NUM_ );
 
-	static GLchar fragment_shader_src[] = 
+	static GLchar fragment_shader_src[] =
 	"//precision lowp 	float;\n"
 	"\n"
 	"uniform	sampler2D	Tex01;\n"
@@ -109,86 +111,118 @@ int mmdpiShader::default_shader( void )
 	//"	gl_FragColor = color;\n"
 	"}\n"
 	;
-	
-#ifndef _MMDPI_OPENGL_ES_DEFINES_
-	glewInit();
-#endif
-	program = glCreateProgram();
 
 	int	result;
+	GLenum	err;
+#ifndef _MMDPI_OPENGL_ES_DEFINES_
+	err = glewInit();
+	if( err != GLEW_OK )
+	{
+		std::cout << "GLEW Error : " << glewGetErrorString( err ) << std::endl;
+		return -1;
+	}
+	if( GLEW_VERSION_2_1 != GL_TRUE )
+	{
+		std::cout << "GLEW_VERSION_2_1 Error : " << std::endl;
+		std::cout << "  Glew Ver. " << glewGetString(GLEW_VERSION) << std::endl;
+		std::cout << "  OpenGL Ver. " << glGetString(GL_VERSION) << "(<= 2.0)" << std::endl;
+		return -1;
+	}
+#endif
+
+	this->program = glCreateProgram();
+	if( this->program == 0 )
+	{
+		puts( "glCreateProgram Error." );
+		return result;
+	}
+
 	result = create_shader( GL_VERTEX_SHADER, vertex_shader_src );
-	result = create_shader( GL_FRAGMENT_SHADER, fragment_shader_src ) || result;
+	if( result )
+	{
+		puts( "GL_VERTEX_SHADER Error." );
+		return result;
+	}
+	result = create_shader( GL_FRAGMENT_SHADER, fragment_shader_src );
+	if( result )
+	{
+		puts( "GL_FRAGMENT_SHADER Error." );
+		return result;
+	}
 
-	//	Link
-	result = result || link();
+	// Link
+	result = this->link();
+	if( result )
+	{
+		puts( "GLSL link Error." );
+		return result;
+	}
 
-	if( result == 0 )
-		shader_setting();
-
-	return result; 
+	shader_setting();
+	return result;
 }
 
 void mmdpiShader::shader_setting( void )
 {
-	//	設定
+	// 設定
 	shader_on();
 
-	//	マトリックス
-	pm_id = glGetUniformLocation( program, ( GLchar* )"ProjectionMatrix" );
+	// マトリックス
+	pm_id = glGetUniformLocation( this->program, ( GLchar* )"ProjectionMatrix" );
 
-	//	頂点
-	vertex_id = glGetAttribLocation( program, ( GLchar* )"Vertex" );
+	// 頂点
+	vertex_id = glGetAttribLocation( this->program, ( GLchar* )"Vertex" );
 	glEnableVertexAttribArray( vertex_id );
 
-	//	UV
-	uv_id = glGetAttribLocation( program, ( GLchar* )"gUv" );
+	// UV
+	uv_id = glGetAttribLocation( this->program, ( GLchar* )"gUv" );
 	glEnableVertexAttribArray( uv_id );
 
-	//	法線
+	// 法線
 #ifdef _MMDPI_OUTLINE_
-	normal_id = glGetAttribLocation( program, ( GLchar* )"Normal" );
+	normal_id = glGetAttribLocation( this->program, ( GLchar* )"Normal" );
 	glEnableVertexAttribArray( normal_id );
 #endif
-	//	色
-	color_id = glGetUniformLocation( program, ( GLchar* )"gColor" );
+	// 色
+	color_id = glGetUniformLocation( this->program, ( GLchar* )"gColor" );
 	mmdpiColor	color;
 	set_color( &color );
 
-	//	基本的なテクスチャ
-	tex2d_01_id = glGetUniformLocation( program, ( GLchar* )"Tex01" );
+	// 基本的なテクスチャ
+	tex2d_01_id = glGetUniformLocation( this->program, ( GLchar* )"Tex01" );
 
-	//	アルファ
-	alpha_id = glGetUniformLocation( program, ( GLchar* )"Alpha" );
-	
-	//	テクスチャサイズ
-	bone_size_id = glGetUniformLocation( program, ( GLchar* )"BoneTextureSize" );
-	
-	//	Attribute1にindices変数、Attribute2にweights変数を割り当てる
-	bone_weights_id = glGetAttribLocation( program, ( GLchar* )"BoneWeights" );
+	// アルファ
+	alpha_id = glGetUniformLocation( this->program, ( GLchar* )"Alpha" );
+
+	// テクスチャサイズ
+	bone_size_id = glGetUniformLocation( this->program, ( GLchar* )"BoneTextureSize" );
+
+	// Attribute1にindices変数、Attribute2にweights変数を割り当てる
+	bone_weights_id = glGetAttribLocation( this->program, ( GLchar* )"BoneWeights" );
 	glEnableVertexAttribArray( bone_weights_id );
-	
-	bone_indices_id = glGetAttribLocation( program, ( GLchar* )"BoneIndices" );
+
+	bone_indices_id = glGetAttribLocation( this->program, ( GLchar* )"BoneIndices" );
 	glEnableVertexAttribArray( bone_indices_id );
 
-	bone_matrix_id = glGetUniformLocation( program, ( GLchar* )"BoneMatrix" );
-	
-	tex2d_toon_id = glGetUniformLocation( program, ( GLchar* )"TexToon" );		
+	bone_matrix_id = glGetUniformLocation( this->program, ( GLchar* )"BoneMatrix" );
+
+	tex2d_toon_id = glGetUniformLocation( this->program, ( GLchar* )"TexToon" );
 	glUniform1i( tex2d_toon_id, 0 );
 
-	tex2d_toon_flag = glGetUniformLocation( program, ( GLchar* )"TexToonFlag" );	
+	tex2d_toon_flag = glGetUniformLocation( this->program, ( GLchar* )"TexToonFlag" );
 	glUniform1f( tex2d_toon_flag, 0 );
-		
-	edge_size_id = glGetUniformLocation( program, ( GLchar* )"Edge_size" );
+
+	edge_size_id = glGetUniformLocation( this->program, ( GLchar* )"Edge_size" );
 	glUniform1f( edge_size_id, 0 );
 
-	edge_color_id = glGetUniformLocation( program, ( GLchar* )"Edge_color" );
+	edge_color_id = glGetUniformLocation( this->program, ( GLchar* )"Edge_color" );
 	glUniform4f( edge_color_id, 0, 0, 0, 0 );
-		
-	//	スキン
-	skinvertex_id = glGetAttribLocation( program, ( GLchar* )"SkinVertex" );
+
+	// スキン
+	skinvertex_id = glGetAttribLocation( this->program, ( GLchar* )"SkinVertex" );
 	glEnableVertexAttribArray( skinvertex_id );
 
-	//	Uniform Variable
+	// Uniform Variable
 	glActiveTexture( GL_TEXTURE0 );
 	glUniform1i( tex2d_01_id, 0 );
 
@@ -198,7 +232,7 @@ void mmdpiShader::shader_setting( void )
 	shader_off();
 }
 
-//	シェーダ生成
+// シェーダ生成
 int mmdpiShader::create_shader( GLuint shader_type, const GLchar* src )
 {
 	int		shader_size = strlen( ( const char * )src );
@@ -219,44 +253,43 @@ int mmdpiShader::create_shader( GLuint shader_type, const GLchar* src )
 		delete[] log;
 	}
 
-	glAttachShader( program, shader );
+	glAttachShader( this->program, shader );
 	glDeleteShader( shader );
-	
+
 	return 0;
 }
 
-//	シェーダリンク
+// シェーダリンク
 int mmdpiShader::link( void )
 {
-	if( program )
-		glLinkProgram( program );
-	glGetProgramiv( program, GL_LINK_STATUS, &linked );
-	if( linked == 0 ) 
+	glLinkProgram( this->program );
+	glGetProgramiv( this->program, GL_LINK_STATUS, &linked );
+	if( linked == 0 )
 	{ // error
 		GLint	infoLen = 0;
-		glGetProgramiv( program, GL_INFO_LOG_LENGTH, &infoLen );
-		if( infoLen > 0 ) 
+		glGetProgramiv( this->program, GL_INFO_LOG_LENGTH, &infoLen );
+		if( infoLen > 0 )
 		{
 			char* infoLog = new char[ infoLen ];
-			glGetProgramInfoLog( program, infoLen, 0x00, infoLog );
-			printf( "Error linking program:\n%s\n", infoLog );
+			glGetProgramInfoLog( this->program, infoLen, 0x00, infoLog );
+			printf( "Error linking this->program:\n%s\n", infoLog );
 			delete[] infoLog;
 		}
-		glDeleteProgram( program );
+		glDeleteProgram( this->program );
 		return -1;
 	}
-	glGetProgramiv( program, GL_LINK_STATUS, &linked_fragment );
-	glGetProgramiv( program, GL_LINK_STATUS, &linked_vertex );
+	glGetProgramiv( this->program, GL_LINK_STATUS, &linked_fragment );
+	glGetProgramiv( this->program, GL_LINK_STATUS, &linked_vertex );
 
 	return 0;
 }
 
-//	シェーダバッファに頂点データを設定
+// シェーダバッファに頂点データを設定
 void mmdpiShader::set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p, dword vertex_num )
 {
 	this->vertex_num = vertex_num;
 
-	//	Buffer 
+	// Buffer
 	if( buffers.size() <= ( uint )buffer_id )
 	{
 		buffers.push_back( new mmdpiShaderBuffer() );
@@ -266,28 +299,28 @@ void mmdpiShader::set_vertex_buffers( int buffer_id, MMDPI_VERTEX_PTR a_vertex_p
 			return ;
 		}
 	}
-	
+
 	/* バッファオブジェクトの名前を作る */
 	glBindBuffer( GL_ARRAY_BUFFER, buffers[ buffer_id ]->get_vertex() );
 	glBufferData( GL_ARRAY_BUFFER, sizeof( MMDPI_VERTEX ) * vertex_num, a_vertex_p, GL_STATIC_DRAW );
 }
 
-//	シェーダバッファに面データを設定
+// シェーダバッファに面データを設定
 void mmdpiShader::set_face_buffers( int buffer_id, mmdpiShaderIndex* face_p, dword face_num )
 {
-	//	Face
+	// Face
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffers[ buffer_id ]->get_face() );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( mmdpiShaderIndex ) * face_num, face_p, GL_STATIC_DRAW );
 }
 
-//	シェーダバッファにデータ領域を設定
+// シェーダバッファにデータ領域を設定
 void mmdpiShader::set_buffer( int buffer_id )
 {
 	dword		vertex_start	= 0;
-	
+
 
 	glBindBuffer( GL_ARRAY_BUFFER, buffers[ buffer_id ]->get_vertex() );
-	
+
 // vertex
 	glVertexAttribPointer( vertex_id, 3, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
@@ -297,7 +330,7 @@ void mmdpiShader::set_buffer( int buffer_id )
 	glVertexAttribPointer( uv_id, 4, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector4d );
-	
+
 // bone index
 	glVertexAttribPointer( bone_indices_id, 4, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
@@ -309,15 +342,15 @@ void mmdpiShader::set_buffer( int buffer_id )
 	vertex_start += sizeof( mmdpiVector4d );
 
 #ifdef _MMDPI_OUTLINE_
-	//	法線ベクトル
-	glVertexAttribPointer( normal_id, 3, GL_FLOAT, GL_FALSE, 
+	// 法線ベクトル
+	glVertexAttribPointer( normal_id, 3, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector4d );
 #endif
-	
+
 #ifdef _MMDPI_USINGSKIN_
-	//	スキン
-	glVertexAttribPointer( skinvertex_id, 3, GL_FLOAT, GL_FALSE, 
+	// スキン
+	glVertexAttribPointer( skinvertex_id, 3, GL_FLOAT, GL_FALSE,
 		sizeof( MMDPI_VERTEX ), ( const void * )( ( uintptr_t )vertex_start ) );
 	vertex_start += sizeof( mmdpiVector3d );
 #endif
@@ -334,7 +367,7 @@ void mmdpiShader::draw( int buffer_id, dword fver_num_base, dword face_num )
 {
 	set_buffer( buffer_id );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffers[ buffer_id ]->get_face() );
-	
+
 	now_buffer_id = buffer_id;
 
 	glDrawElements( GL_TRIANGLES, face_num, GL_UNSIGNED_SHORT, ( const void * )( sizeof( mmdpiShaderIndex ) * fver_num_base ) );
@@ -383,7 +416,7 @@ void mmdpiShader::set_edge_color( float* edge_color )
 {
 #ifdef _MMDPI_OUTLINE_
 	float	def_edge_color[ 4 ] = { 0, 0, 0, 1 };
-		
+
 	if( edge_color == 0x00 )
 		edge_color = def_edge_color;
 
@@ -404,7 +437,7 @@ mmdpiShader::mmdpiShader()
 	bone_indices_id	= 0;
 	skinvertex_id	= 0;
 
-	program = 0;
+	this->program = 0;
 }
 
 mmdpiShader::~mmdpiShader()
@@ -429,6 +462,6 @@ mmdpiShader::~mmdpiShader()
 	if( skinvertex_id > 0 )
 		glDisableVertexAttribArray( skinvertex_id );
 #endif
-	if( program )
-		glDeleteProgram( program );
+	if( this->program )
+		glDeleteProgram( this->program );
 }

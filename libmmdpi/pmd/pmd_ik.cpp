@@ -1,5 +1,5 @@
 
-#include "pmd_ik.h"
+#include "pmd_ik.hpp"
 
 
 //	IK
@@ -8,23 +8,23 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 	const int		_ik_range_ = 255;	// 255 // MMDの仕様では255
 	MMDPI_PMD_IK_INFO_PTR	ik_one = ik;
 
-	uint			_iteration_num_ = ik_one->iterations;	//	
+	uint			_iteration_num_ = ik_one->iterations;	//
 
 	_iteration_num_ = ( _iteration_num_ > _ik_range_ )? _ik_range_ : _iteration_num_ ;
 	mmdpiVector4d	v0( 0, 0, 0, 1 ), v1( 0, 0, 0, 1 );
-		
+
 	mmdpiVector4d	effect_pos_base	= mmdpiBone::get_global_matrix( &bone[ ik_one->ik_bone_index ] ) * ( v0 );	// Effector
-			
+
 	for( uint j = 0; j < _iteration_num_; j ++ )
 	{
 		float	rotation_distance = 0;	//	移動した距離
-	
+
 		for( uint i = 0; i < ik_one->ik_chain_length; i ++ )
-		{		
+		{
 			ushort		attention_index		= ik_one->ik_child_bone_index[ i ];
 
 			mmdpiVector4d	target_pos_base		= mmdpiBone::get_global_matrix( &bone[ ik_one->ik_target_bone_index ] )	* ( v1 );	// Target
-		
+
 			mmdpiMatrix	attention_localmat	= mmdpiBone::get_global_matrix( &bone[ attention_index ] );
 			mmdpiMatrix	inv_coord		= attention_localmat.get_inverse();
 
@@ -46,9 +46,9 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			mmdpiVector3d effect_dir		( effect_pos.x, effect_pos.y, effect_pos.z );
 			mmdpiVector3d target_dir		( target_pos.x, target_pos.y, target_pos.z );
 
-			//if( strcmp( pbone[ attention_index ].bone_name + 2, "ひざ" ) == 0 )		//	
+			//if( strcmp( pbone[ attention_index ].bone_name + 2, "ひざ" ) == 0 )		//
 			//	Is knee?
-			if( ( unsigned char )pbone[ attention_index ].bone_name[ 2 ] == 0x82 
+			if( ( unsigned char )pbone[ attention_index ].bone_name[ 2 ] == 0x82
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 3 ] == 0xD0
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 4 ] == 0x82
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 5 ] == 0xB4 )
@@ -66,7 +66,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			float	angle = acos( p );
 			if( fabs( angle ) < 1e-4f )
 				break;
-			if( angle > 4.0f * ik_one->control_weight ) 
+			if( angle > 4.0f * ik_one->control_weight )
 				angle = 4.0f * ik_one->control_weight, radius_range = 0;
 
 			mmdpiVector3d	axis;
@@ -80,7 +80,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			rotation_matrix.rotation( axis.x, axis.y, axis.z, angle );
 
 			//	Is knee?
-			if( ( unsigned char )pbone[ attention_index ].bone_name[ 2 ] == 0x82 
+			if( ( unsigned char )pbone[ attention_index ].bone_name[ 2 ] == 0x82
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 3 ] == 0xD0
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 4 ] == 0x82
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 5 ] == 0xB4 )
@@ -92,7 +92,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 				if( t_vec.y < 0.1f )
 					rotation_matrix.rotation( axis.x, axis.y, axis.z, -angle );
 			}
-			
+
 			//	反映
 			bone[ attention_index ].bone_mat = rotation_matrix * bone[ attention_index ].bone_mat;
 

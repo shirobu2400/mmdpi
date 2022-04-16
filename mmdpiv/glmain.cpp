@@ -1,7 +1,9 @@
-﻿
+﻿#include "../libmmdpi/mmdpi.hpp"
+#include <string>
+#include <iostream>
+#include "GL/glut.h"
+#include "fps.hpp"
 
-#include "../libmmdpi/mmdpi.h"
-//#include "../libmmdpix/mmdpix.h"
 
 #if defined( _WIN32 )
 #	if defined( _DEBUG )
@@ -13,16 +15,12 @@
 #	endif
 #endif
 
-#include <iostream>
-#include "GL/glut.h"
-
-
 const int		_zoom_default_		= -1024 * 2 * 0.1f;// * 16;
 float			_y_pos_			= 11 * 0.1f;
 static mmdpi*		p;
 //static mmdpix*		xfile;
 
-int			_fps_			= 60 + 10;	//	+a はラグのため
+int			_fps_			= 60 + 10;	// +a はラグのため
 int 			motion_flag		= 0;
 float			Zoom;
 float			Rotate;
@@ -34,9 +32,6 @@ int			screen_width, screen_height;
 int			Argc;
 char**			Argv;
 
-
-#include "fps.h"
-
 Fps*			fps = 0x00;
 
 void end( void );
@@ -45,12 +40,12 @@ char* get_command_option( const char* option, int argc, char* argv[] );
 void display( void )
 {
 	GLfloat light0pos[] = { 4.0, 16.0, -8.0, 1.0 };
-	
+
 	glEnable( GL_DEPTH_TEST );
 
 	glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
-	
+
 	//glClearColor( 0.0, 0.0, 1.0, 1.0 );	//	bule
 	//glClearColor( 0.0, 0.2, 0.0, 1.0 );	//	bule
 	//glClearColor( 0.0, 0.0, 0.0, 1.0 );	//	black
@@ -71,7 +66,7 @@ void display( void )
 
 	// カメラ
 	glMatrixMode( GL_MODELVIEW );
-   
+
 	glPushMatrix();
 	{
 		glRotatef( RotationAxis[ 0 ], 1, 0, 0 );
@@ -84,10 +79,10 @@ void display( void )
 	glPopMatrix();
 
 	glPushMatrix();
-	{	
+	{
 		glRotatef( RotationAxis[ 0 ], 1, 0, 0 );
 		glRotatef( RotationAxis[ 1 ] + 180.0f, 0, 1, 0 );
-		
+
 		//if( xfile )
 		//	xfile->draw();
 	}
@@ -152,24 +147,21 @@ void idle( void )
 	//glutPostRedisplay();
 }
 
-void timer( int value ) 
+void timer( int value )
 {
 	//glutTimerFunc( fps->get_wait_time() * 1000.0f, timer, 0 );
 	glutTimerFunc( 1000.0f / fps->get_fps(), timer, 0 );
 	fps->draw();
 	fps->update();
-	
-	if( p && p->get_vmd( 0 ) )
+
+	if( p && p->vmd( std::string( "motion" ) ) )
 	{
 		float	frame = 30.0f / fps->get_mfps();	//fps->get_dframe();
 		//	フレームを進める関数
 		//（MMD は１秒間に３０フレームがデフォルト）
 		//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
-		*p->get_vmd( 0 ) += frame;
-		//*p->get_vmd( 0 ) ++;
-		//*p->get_vmd( 0 ) = 100;	// 指定したフレームで停止
-
-		if( p->get_vmd( 0 )->is_end() )
+		*p->vmd( std::string( "motion" ) ) += frame;
+		if( p->vmd( std::string( "motion" ) )->is_end() )
 		{
 			end();
 			exit( 0 );
@@ -190,7 +182,7 @@ void timer( int value )
 void resize( int w, int h )
 {
 	glViewport( 0, 0, w, h );
-	
+
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
 	//gluLookAt( 0.0f, _y_pos_, _zoom_default_, 0, _y_pos_, 0, 0, 1, 0 );
@@ -212,7 +204,7 @@ void resize( int w, int h )
 int		MousePushFlag = 0;
 int		MousePosX = 0, MousePosY = 0;
 void mouse_func( int button, int state, int x, int y )
-{			
+{
 	switch( button )
 	{
 	case GLUT_LEFT_BUTTON:
@@ -264,7 +256,7 @@ void init( int argc, char* argv[] )
 		if( p == 0x00 )
 			exit( 0 );
 		puts( model_name );
-		if( p->load( model_name ) )
+		if( p->load( std::string( model_name ) ) )
 			exit( 0 );
 	}
 
@@ -273,7 +265,7 @@ void init( int argc, char* argv[] )
 	{
 		motion_flag = 1;
 		puts( vmd_name );
-		if( p->vmd_load( vmd_name ) )
+		if( p->motion_load( std::string( "motion" ), std::string( vmd_name ) ) )
 			motion_flag = 0;
 	}
 
@@ -342,7 +334,7 @@ int main( int argc, char *argv[] )
 {
 	if( argc < 2 )
 	{
-		printf( 
+		printf(
 			"argment: -p [pmd or pmx file name] \n"
 			"argment: -v [vmd file name] \n"
 			//"argment: -x [x file name] \n"
@@ -350,13 +342,13 @@ int main( int argc, char *argv[] )
 			);
 		return 0;
 	}
-	
+
 	Zoom = _zoom_default_;
 	Rotate = 0;
 
 	Argc = argc;
 	Argv = argv;
-	
+
 	glutInitWindowPosition( 200, 200 );
 	glutInitWindowSize( 640, 480 );
 	glutInit( &argc, argv );
@@ -365,7 +357,7 @@ int main( int argc, char *argv[] )
 
 	glutDisplayFunc( display );
 	glutReshapeFunc( resize );
-	
+
 	glutKeyboardFunc( keyboard );
 	glutSpecialFunc( sp_keyboard );
 	glutMouseFunc( mouse_func );

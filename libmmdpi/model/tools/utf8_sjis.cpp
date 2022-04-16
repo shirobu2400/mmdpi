@@ -1,9 +1,9 @@
-#include "utf8_sjis.h"
-#include "raw_table.h"
+#include "utf8_sjis.hpp"
+#include "raw_table.hpp"
 
 
-static map<unsigned int, CharByte>	cc_sjis_to_utf8;
-static map<unsigned int, CharByte>	cc_utf8_to_sjis;
+static std::map<unsigned int, CharByte>	cc_sjis_to_utf8;
+static std::map<unsigned int, CharByte>	cc_utf8_to_sjis;
 
 
 int cc_char_sjis_to_utf8( char* utf8, int* utf8_step, const char* sjis, int* sjis_step )
@@ -39,7 +39,7 @@ int cc_char_sjis_to_utf8( char* utf8, int* utf8_step, const char* sjis, int* sji
 		*sjis_step = i;
 	if( utf8_step )
 		*utf8_step = utf8_cb.len;
-	
+
 	if( utf8 == 0x00 )
 		return 0;
 	for( i = ( signed )utf8_cb.len - 1; i >= 0; i -- )
@@ -86,7 +86,7 @@ int cc_char_utf8_to_sjis( char* sjis, int* sjis_step, const char* utf8, int* utf
 		*utf8_step = i;
 
 	if( sjis == 0x00 )
-		return 0;	
+		return 0;
 	for( i = ( signed )sjis_cb.len - 1; i >= 0; i -- )
 	{
 		*sjis = ( char )( ( sjis_cb.byte >> ( i * 8 ) ) & 0xff );
@@ -160,37 +160,6 @@ int cconv_utf8_to_sjis( char* sjis, const char* utf8 )
 	return j;
 }
 
-
-/**
- * 文字コードをUTF-16よりUTF-8へと変換。
- *
- * @param[out] dest 出力文字列UTF-8
- * @param[in]  dest_size destのバイト数
- * @param[in]  src 入力文字列UTF-16
- * @param[in]  src_size 入力文字列の文字数
- *
- * @return 成功時には出力文字列のバイト数を戻します。
- *         dest_size に0を指定し、こちらの関数を呼び出すと、変換された
- *         文字列を格納するのに必要なdestのバイト数を戻します。
- *         関数が失敗した場合には、FALSEを戻します。
- */
-/* ビットパターン
- * ┌───────┬───────┬───────────────────────────┬──────────────────┐
- * │フォーマット  │Unicode       │UTF-8ビット列                                         │Unicodeビット列                     │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │1バイトコード │\u0～\u7f     │0aaabbbb                                              │00000000 0aaabbbb                   │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │2バイトコード │\u80～\u7ff   │110aaabb 10bbcccc                                     │00000aaa bbbbcccc                   │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │3バイトコード │\u800～\uffff │1110aaaa 10bbbbcc 10ccdddd                            │aaaabbbb ccccdddd                   │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │4バイトコード │--------------│11110??? 10?????? 10?????? 10??????                   │未対応                              │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │5バイトコード │--------------│111110?? 10?????? 10?????? 10?????? 10??????          │未対応                              │
- * ├───────┼───────┼───────────────────────────┼──────────────────┤
- * │6バイトコード │--------------│1111110? 10?????? 10?????? 10?????? 10?????? 10?????? │未対応                              │
- * └───────┴───────┴───────────────────────────┴──────────────────┘
- */
 int cconv_utf16_to_utf8( char *utf8, const short *utf16 )
 {
 	int			j;
@@ -208,7 +177,7 @@ int cconv_utf16_to_utf8( char *utf8, const short *utf16 )
 	j = 0;
 	for( i = 0; utf16[ i ]; i ++ )
 	{
-		/* srcより1ワードのデータを読み出し */
+		/* src???1???[?h??f?[?^????o?? */
 		if( *( unsigned char* )utf16 + i == ( unsigned char )0x00 )
 			break;
 
@@ -234,10 +203,10 @@ int cconv_utf16_to_utf8( char *utf8, const short *utf16 )
 			return -1;
 		}
 
-	
+
 		j += byte_size;
 
-		/* sizeBytes毎に処理を分岐 */
+		/* sizeBytes?????????? */
 		if( utf8 == 0x00 )
 			continue;
 
@@ -245,7 +214,7 @@ int cconv_utf16_to_utf8( char *utf8, const short *utf16 )
 		{
 		case 1:
 			/*
-			* ビット列
+			* ?r?b?g??
 			* (0aaabbbb)UTF-8 ... (00000000 0aaabbbb)UTF-16
 			*/
 
@@ -254,7 +223,7 @@ int cconv_utf16_to_utf8( char *utf8, const short *utf16 )
 			break;
 		case 2:
 			/*
-			* ビット列
+			* ?r?b?g??
 			* (110aaabb 10bbcccc)UTF-8 ... (00000aaa bbbbcccc)UTF-16
 			*/
 			ch1 =  ( char )( a_word >> 6 );	/* 000aaabb */
@@ -270,7 +239,7 @@ int cconv_utf16_to_utf8( char *utf8, const short *utf16 )
 			break;
 		case 3:
 			/*
-			* ビット列
+			* ?r?b?g??
 			* (1110aaaa 10bbbbcc 10ccdddd)UTF-8 ... (aaaabbbb ccccdddd)UTF-16
 			*/
 			ch1 =  ( char )( a_word >> 12 );	/* ????aaaa */

@@ -1,25 +1,25 @@
 
-#include "mmdpi_bullet.h"
+#include "mmdpi_bullet.hpp"
 
 
 int mmdpiBullet::advance_time_physical( int fps, float frametime )
 {
-	// 1ループにかかった時間を計測  
+	// 1ループにかかった時間を計測
 	float	wait_time_local = 1.0f / fps;
 	float	fMilliSec = frametime * 1000.0f * wait_time_local;
-	getDynamicsWorld()->stepSimulation( fMilliSec, _MMDPI_BULLET_STEP_/*, wait_time_local / 1000.0f*/ ); 
-	return 0;  
+	getDynamicsWorld()->stepSimulation( fMilliSec, _MMDPI_BULLET_STEP_/*, wait_time_local / 1000.0f*/ );
+	return 0;
 }
 
 int mmdpiBullet::advance_time_physical( void )
 {
-	//1ループにかかった時間を計測  
+	//1ループにかかった時間を計測
 	//static dword prev_time = 0;
 	//dword curtime = GetTickCount();
-	//float frame_time = ( float )( curtime - prev_time ) / 1000.0f;  
- //   prev_time = curtime;  
-	//getDynamicsWorld()->stepSimulation( frame_time ); 
-	return 0;  
+	//float frame_time = ( float )( curtime - prev_time ) / 1000.0f;
+ 	//prev_time = curtime;
+	//getDynamicsWorld()->stepSimulation( frame_time );
+	return 0;
 }
 
 int mmdpiBullet::set_matrix( int object_id, mmdpiMatrix *mIn )
@@ -45,17 +45,17 @@ mmdpiMatrix mmdpiBullet::get_matrix( mmdpiMatrix *mOut, int object_id )
 
 	// 行列取得
 	//float m[ 16 ];
-	//trans.getOpenGLMatrix( m );  
+	//trans.getOpenGLMatrix( m );
 	//dxo_ConvertMatrixOpenGLToDirectx( ( float * )&matrix, m );
 	//trans.getOpenGLMatrix( ( btScalar * )&matrix );
 
-	//btMatrix3x3 rot = trans.getBasis();  
-	//btVector3 euler;  
-	//rot.getEulerZYX( euler[ 2 ], euler[ 1 ], euler[ 0 ] );  
+	//btMatrix3x3 rot = trans.getBasis();
+	//btVector3 euler;
+	//rot.getEulerZYX( euler[ 2 ], euler[ 1 ], euler[ 0 ] );
 
-	//dxo_MatrixTransRotate( &matrix, 
+	//dxo_MatrixTransRotate( &matrix,
 	//	trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ(),
-	//	euler[ 0 ], euler[ 1 ], euler[ 2 ] );  
+	//	euler[ 0 ], euler[ 1 ], euler[ 2 ] );
 
 	trans.getOpenGLMatrix( ( btScalar * )&matrix[ 0 ] );
 
@@ -76,16 +76,16 @@ int mmdpiBullet::create_joint_p2p( int bodyId_a, int bodyId_b, btTransform* tran
 		return -1;
 
 	//btTypedConstraint
-	btGeneric6DofSpringConstraint* 
+	btGeneric6DofSpringConstraint*
 		p2p = new btGeneric6DofSpringConstraint
-		( 
-			*rigid_a, *rigid_b, 
-			rigid_a->getWorldTransform().inverse() * ( *trans ), 
+		(
+			*rigid_a, *rigid_b,
+			rigid_a->getWorldTransform().inverse() * ( *trans ),
 			rigid_b->getWorldTransform().inverse() * ( *trans ),
 			true
 		);
-	//btTypedConstraint* p2p 
-	//	= new btPoint2PointConstraint( 
+	//btTypedConstraint* p2p
+	//	= new btPoint2PointConstraint(
 	//	*getRigidBody( bodyId_a ),
 	//	*getRigidBody( bodyId_b ),
 	//	jb_a, jb_b );
@@ -113,7 +113,7 @@ int mmdpiBullet::create_joint_p2p( int bodyId_a, int bodyId_b, btTransform* tran
 			p2p->enableSpring( 1, true );
 			p2p->setStiffness( 1, joint_info->spring_pos.getY() );
 		}
-		
+
 		// 2 : translation Z
 		if( fabs( joint_info->spring_pos.getZ() ) > 1e-4 )
 		{
@@ -171,7 +171,7 @@ int mmdpiBullet::create_softbody( mmdpiVector3d *vertices, int *index, int index
 	btSoftBody* softbody = btSoftBodyHelpers::CreateFromTriMesh( softWorldInfo, ( btScalar * )&vertices[ 0 ], index, index_num / 3 );
 	softbody->getCollisionShape()->setMargin( 0.01f );
 
-	////初期位置の設定 
+	////初期位置の設定
 	softbody->transform( trans );
 
 	softbody->setTotalMass( 1.0f );				// 全体の質量
@@ -187,8 +187,8 @@ int mmdpiBullet::create_softbody( mmdpiVector3d *vertices, int *index, int index
 	return softbody_num ++;
 }
 
-int mmdpiBullet::createShape( btCollisionShape **pColShape, 
-	tagMMDPI_BULLET_TYPE rigidbody_type, 
+int mmdpiBullet::createShape( btCollisionShape **pColShape,
+	tagMMDPI_BULLET_TYPE rigidbody_type,
 	float width, float height, float depth )
 {
 	const float _scale_ = 0.50f;	// 立方体のスケーリング
@@ -199,7 +199,7 @@ int mmdpiBullet::createShape( btCollisionShape **pColShape,
 		case MMDPI_BULLET_SHERE:	// 球
 		{
 			btScalar s( width );
-			*pColShape = new btSphereShape( s );	
+			*pColShape = new btSphereShape( s );
 		} break;
 		case MMDPI_BULLET_BOX:	// 箱
 		{
@@ -228,8 +228,8 @@ int mmdpiBullet::createShape( btCollisionShape **pColShape,
 
 int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	btTransform *trans,  float weight,
-	int kinematic_flag, 
-	float width, float height, float depth,  
+	int kinematic_flag,
+	float width, float height, float depth,
 	MMDPI_BULLET_RIGID_INFO_PTR rigid_info )
 {
 	btCollisionShape*	pColShape;
@@ -242,7 +242,7 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	if( kinematic_flag && rigid_info->kinematic_mode )
 		myMotionState = new btKinematicMotionState( rigid_trans, rigid_info->offset, rigid_info->kinematicMatrix );
 	else
-		myMotionState = new btDefaultMotionState( rigid_trans );  
+		myMotionState = new btDefaultMotionState( rigid_trans );
 
 	// シェープ作成
 	createShape( &pColShape, rigidbody_type, width, height, depth );
@@ -255,8 +255,8 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	btVector3	localInertia( 0, 0, 0 );
 	if( is_dynamic )
 		pColShape->calculateLocalInertia( mass, localInertia );
-		
-	btRigidBody::btRigidBodyConstructionInfo	rbInfo( mass, myMotionState, pColShape, localInertia );  
+
+	btRigidBody::btRigidBodyConstructionInfo	rbInfo( mass, myMotionState, pColShape, localInertia );
 
 	if( rigid_info )
 	{
@@ -268,7 +268,7 @@ int mmdpiBullet::create_rigidbody( tagMMDPI_BULLET_TYPE rigidbody_type,
 	}
 
 	// 剛体生成
-	btRigidBody*	body = new btRigidBody( rbInfo );  
+	btRigidBody*	body = new btRigidBody( rbInfo );
 
 	// キネマティクス剛体
 	if( kinematic_flag )
@@ -336,7 +336,7 @@ btTransform mmdpiBullet::matrix_to_btTransMatrix( mmdpiMatrix *matrix )
 mmdpiMatrix mmdpiBullet::btTrans_to_matrix( btTransform *trans )
 {
 	mmdpiMatrix matrix;
-	
+
 	trans->getOpenGLMatrix( ( float * )&matrix[ 0 ] );
 
 	return matrix;
@@ -359,9 +359,9 @@ mmdpiBullet::mmdpiBullet()
 	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 	//overlappingPairCache = new btDbvtBroadphase();
 	// 物理演算の有効領域の指定
-	overlappingPairCache = new btAxisSweep3( 
+	overlappingPairCache = new btAxisSweep3(
 				btVector3( -_MMDPI_BULLET_SPACE_, -_MMDPI_BULLET_SPACE_, -_MMDPI_BULLET_SPACE_ ),
-				btVector3(  _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_ ) 
+				btVector3(  _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_,  _MMDPI_BULLET_SPACE_ )
 			);
 
 	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
@@ -378,7 +378,7 @@ mmdpiBullet::mmdpiBullet()
 	softWorldInfo.m_sparsesdf.Initialize();
 	softWorldInfo.air_density = 1.2f;
 	softWorldInfo.water_density = 0.0f;
-	softWorldInfo.water_offset = 0.0f; 
+	softWorldInfo.water_offset = 0.0f;
 	softWorldInfo.water_normal.setValue( 0.0f, 0.0f, 0.0f );
 
 	softbody_num = rigidbody_num = 0;
@@ -387,7 +387,7 @@ mmdpiBullet::mmdpiBullet()
 }
 
 float mmdpiBullet::setGravity( float gravity )
-{	
+{
 	getDynamicsWorld()->setGravity( btVector3( 0, -gravity, 0 ) );
 	return gravity;
 }
@@ -395,19 +395,19 @@ float mmdpiBullet::setGravity( float gravity )
 mmdpiBullet::~mmdpiBullet()
 {
 	// ボディー
-	for( int i = 0; i < getDiscreteDynamicsWorld()->getNumCollisionObjects() - 1; i ++ )  
+	for( int i = 0; i < getDiscreteDynamicsWorld()->getNumCollisionObjects() - 1; i ++ )
 	{
 		btCollisionObject* obj = getDiscreteDynamicsWorld()->getCollisionObjectArray()[ i ];
 		btRigidBody* body = btRigidBody::upcast( obj );
 		getDiscreteDynamicsWorld()->removeCollisionObject( obj );
 		delete obj;
 	}
-	for( int j = 0; j < collisionShapes.size(); j ++ )  
-	{  
+	for( int j = 0; j < collisionShapes.size(); j ++ )
+	{
 		btCollisionShape* shape = collisionShapes[ j ];
-		delete shape;  
-	}  	
-	
+		delete shape;
+	}
+
 	// ジョイント
 	for( int i = 0; i < getDynamicsWorld()->getNumConstraints(); i ++ )
 	{
@@ -416,7 +416,7 @@ mmdpiBullet::~mmdpiBullet()
 		delete p2p;
 	}
 
-	collisionShapes.clear();  
+	collisionShapes.clear();
 
 	//delete dynamics world
 	delete dynamicsWorld;
@@ -431,6 +431,4 @@ mmdpiBullet::~mmdpiBullet()
 	delete dispatcher;
 
 	delete collisionConfiguration;
-
-	///-----cleanup_end-----
 }

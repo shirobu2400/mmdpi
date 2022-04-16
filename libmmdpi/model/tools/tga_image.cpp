@@ -1,19 +1,19 @@
-#include "tga_image.h"
+#include "tga_image.hpp"
 
 
 int MMDPI_TGA::ReadTGA( const char *filename )
 {
 	FILE*		fp;
-	GLubyte		header[ 18 ]; 
+	GLubyte		header[ 18 ];
 	GLubyte		pixel_size;
 	int		image_type;
 	int		result = 0;
-	
+
 
 	//　ファイルを開く
 	fp = fopen( filename, "rb" );
 	if( fp == 0x00 )
-	{	
+	{
 		//cout << "Error : Connot open!\n";
 		//cout << "File Name : " << filename << endl;
 		return -1;
@@ -33,11 +33,11 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 		fclose( fp );
 		return -1;
 	}
-    
+
 	//　幅と高さを決める
 	width	= header[ 13 ] * 0x100 + header[ 12 ];
 	height	= header[ 15 ] * 0x100 + header[ 14 ];
-    
+
 	//　ビットの深さ
 	bpp = header[ 16 ];
 
@@ -99,7 +99,7 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 		GLubyte*	elements = new GLubyte[ pixel_size ];
 		if( elements == 0x00 )
 			return -1;
-		
+
 		//	ラングレンス圧縮(RLE)
 		for( uint d = 0, o = 0; d < bit_length; )
 		{
@@ -123,7 +123,7 @@ int MMDPI_TGA::ReadTGA( const char *filename )
 		}
 
 		delete[] elements;
-	}	
+	}
 	else
 	{
 		result = -1;
@@ -151,14 +151,14 @@ GLuint MMDPI_TGA::load( const char *filename )
 	glBindTexture( GL_TEXTURE_2D, texture );
 
 	//　
-	//if( bpp == 24 ) 
+	//if( bpp == 24 )
 	//	glPixelStorei( GL_UNPACK_ALIGNMENT, 4 );
-	//else if( bpp == 32 ) 
+	//else if( bpp == 32 )
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 	//　テクスチャの割り当て
 	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, bits );
-	
+
 	////　テクスチャを拡大・縮小する方法の指定
 	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
@@ -166,7 +166,7 @@ GLuint MMDPI_TGA::load( const char *filename )
 	/* テクスチャを拡大・縮小する方法の指定 */
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-  
+
 	//　テクスチャ環境
 	//   glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
 

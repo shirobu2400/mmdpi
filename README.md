@@ -60,19 +60,29 @@ Bullet Physics インストール済みおよび、-Dbullet=on オプション�
 
 # mmdpi のリファレンス
 <table>
-<tr><td>int mmdpi::load( const char* model_name ) </td><td> モデルファイル(.pmd, .pmx)の読み込み(PATH で指定)</td></tr>
-<tr><td>int mmdpi::vmd_load( const char* file_name ) </td><td> モーションファイル(.vmd)の読み込み(PATH で指定)</td></tr>
+<tr><td>int mmdpi::load( std::string model_name ) </td><td> モデルファイル(.pmd, .pmx)の読み込み(PATH で指定)</td></tr>
+<tr><td>int mmdpi::vmd_load( std::string motion_name, std::string file_name ) </td><td> モーションファイル(.vmd)の読み込み(PATH で指定). motion_name にで motion を命名しその名前で今後呼び出し</td></tr>
 <tr><td>void mmdpi::draw( void ) </td><td> 表示</td></tr>
 <tr><td>void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix ) </td><td> 指定されたボーンのindexと対応するボーンの姿勢行列を matrix で上書き。</td></tr>
 <tr><td>void mmdpi::set_bone_matrix( const char* bone_name, mmdpiMatrix& matrix ) </td><td> 指定されたボーンの名と対応するボーンの姿勢行列を matrix で上書き。</td></tr>
-<tr><td>mmdpiVmd* mmdpi::get_vmd( int index ) </td><td> vmd情報の取得。indexはvmdを複数読み込んだうちの読み込んだ順番でvmdを変更できる。</td></tr>
-<tr><td>*mmdpi::get_vmd( int index ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
-<tr><td>*mmdpi::get_vmd( int index ) = frame </td><td>指定されたフレームにジャンプ </td></tr>
-<tr><td>mmdpi::get_vmd( int index )->is_end() </td><td>モーションの終了判定 </td></tr>
+<tr><td>mmdpiVmd* mmdpi::vmd( std::string name ) </td><td> vmd情報の取得。nameはvmdを複数読み込んだうちの命名したvmdを変更できる。</td></tr>
+<tr><td>*mmdpi::vmd( std::string name ) += frame </td><td> frame 分だけモーションフレームを進める </td></tr>
+<tr><td>*mmdpi::vmd( std::string name ) = frame </td><td>指定されたフレームにジャンプ </td></tr>
+<tr><td>mmdpi::vmd( std::string name )->is_end() </td><td>モーションの終了判定 </td></tr>
 <tr><td>void　mmdpi::set_fps( int fps ) </td><td> モーション実行時のfps を指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const GLfloat* p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
 <tr><td>void mmdpi::set_projection_matrix( const mmdpiMatrix_ptr p_projection_matrix ) </td><td> プロジェクション行列の指定。</td></tr>
 </table>
+
+# Docker
+## Build
+```bash
+$ docker build -t mmdpi .
+```
+## run
+```bash
+$ docker run -it -t mmdpi bash
+```
 
 # その他、注意事項など
 
@@ -82,10 +92,10 @@ Bullet Physics インストール済みおよび、-Dbullet=on オプション�
   OpenGL 2.0 以上で動作ができます。（頂点テクスチャを使用していないようになっています。）<br>
   一部モデルが正常に表示されない、IKが動作しない問題があります。<br>
   このプログラムで起きた問題等には責任を負いかねます。 <br>
-  
-  
+
+
 # 動作しない場合
-  
+
   Q.  何も画面に表示されない場合もしくは表示がおかしい場合<br>
   A.  VRAM が足りない場合があります。VRAM を増やして実行をしてみてください。<br>
       またはグラフィックドライバを変更してみてください。 <br>
@@ -96,19 +106,19 @@ Bullet Physics インストール済みおよび、-Dbullet=on オプション�
      raspi-config => Advanced Options => GL Driver => G3 Legacy を選択してください。
      また、-lEGL, -lGLESv2 などの存在がない場合には rpi-update を実行してください。
      <br>
-   
-# 余談  
-  
+
+# 余談
+
   Raspbian で OpenGL ES を扱う方へ<br>
-  
+
   Raspbian には頂点テクスチャが実装されてないのでボーンの割り当てに苦労しました。<br>
   <p>  =>  メッシュ分割で解決しました。GPUに渡せる行列は24が限界？</p><br>
-  
+
   Raspbian の頂点インデックスは unsigned int 以上の大きさの数値は扱えない。<br>
   <p> =>  unsigned short 型に収まるようにメッシュ分割しました。</p><br>
-  
-  
+
+
 # 気軽にご連絡ください。
-  
+
   Twitter : @2400kskm<br>
   ニコニコ: shirobu<br>

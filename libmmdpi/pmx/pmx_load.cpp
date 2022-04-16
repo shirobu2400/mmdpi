@@ -1,18 +1,17 @@
-
-#include "pmx_load.h"
+#include "pmx_load.hpp"
 
 
 // データ整列
 int mmdpiPmxLoad::reader( GetBin* buf )
 {
 	// head
-	if( get_header( buf ) )
+	if( this->get_header( buf ) )
 		return -1;
 
 	int			vertex_index_size = head.byte[ 2 ];
 	int			bone_index_size = head.byte[ 5 ];
 	MMDPI_PMX_VERTEX_PTR	nv;
-	
+
 	// vertex
 	buf->get_bin( &vertex_num, sizeof( vertex_num ) );
 	vertex = new MMDPI_PMX_VERTEX[ vertex_num ];
@@ -43,7 +42,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		switch( nv->weight_calc )
 		{
-		case 0:	//	BDEF1
+		case 0:	// BDEF1
 			{
 				//BDEF1 ->
 				//  n : ボーンIndexサイズ  | ウェイト1.0の単一ボーン(参照Index)
@@ -52,7 +51,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 				nv->bone_value[ 0 ] = 1;
 			}
 			break;
-		case 1:	//	BDEF2
+		case 1:	// BDEF2
 			{
 				//BDEF2 ->
 				//  n : ボーンIndexサイズ  | ボーン1の参照Index
@@ -66,7 +65,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 				nv->bone_value[ 1 ] = 1 - nv->bone_value[ 0 ];
 			}
 			break;
-		case 2:	//	BDEF4
+		case 2:	// BDEF4
 			{
 				//BDEF4 ->
 				//  n : ボーンIndexサイズ  | ボーン1の参照Index
@@ -85,7 +84,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 					buf->get_bin( &nv->bone_value[ vi ], sizeof( float ) );
 			}
 			break;
-		case 3:	//	SDEF
+		case 3:	// SDEF
 			{
 				//SDEF ->
 				//  n : ボーンIndexサイズ  | ボーン1の参照Index
@@ -107,7 +106,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		buf->get_bin( &nv->edge_scale, sizeof( float ) );
 	}
-	
+
 	// face
 	buf->get_bin( &face_num, sizeof( face_num ) );
 	//face = new MMDPI_PMX_FACE[ face_num ];
@@ -117,7 +116,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		buf->get_bin2( &face[ i ], sizeof( face[ i ] ), head.byte[ 2 ] );
 	}
 
-	//	Texture
+	// Texture
 	buf->get_bin( &texture_num, sizeof( dword ) );
 	texture = new MMDPI_PMX_TEXTURE[ texture_num ];
 	for( dword i = 0; i < texture_num; i ++ )
@@ -128,26 +127,26 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		cconv_utf8_to_sjis( texture[ i ].sjis_name, texture[ i ].name );
 	}
 
-	//	Material
+	// Material
 	buf->get_bin( &material_num, sizeof( dword ) );
 	material = new MMDPI_PMX_MATERIAL[ material_num ];
 	for( dword i = 0; i < material_num; i ++ )
 	{
-		//	Name
+		// Name
 		uint	buf_len;
 		material[ i ].name = text_buf( buf, &buf_len );
 		material[ i ].sjis_name = new char[ cconv_utf8_to_sjis( 0x00, material[ i ].name ) + 4 ];
 		cconv_utf8_to_sjis( material[ i ].sjis_name, material[ i ].name );
 
-		//	English name
+		// English name
 		material[ i ].eng_name = text_buf( buf );
 
-		//	
+		//
 		buf->get_bin( material[ i ].diffuse, sizeof( float ) * 4 );
 		buf->get_bin( material[ i ].specular, sizeof( float ) * 3 );
 		buf->get_bin( &material[ i ].specular_scale, sizeof( float ) );
 		buf->get_bin( material[ i ].ambient, sizeof( float ) * 3 );
-		
+
 		buf->get_bin( &material[ i ].bit_flag, sizeof( BYTE ) );
 		buf->get_bin( material[ i ].edge_color, sizeof( float ) * 4 );
 		buf->get_bin( &material[ i ].edge_size, sizeof( float ) );
@@ -155,10 +154,10 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		buf->get_bin2( &material[ i ].texture_index, sizeof( dword ), head.byte[ 3 ] );
 		buf->get_bin2( &material[ i ].sphere_texture_index, sizeof( dword ), head.byte[ 3 ] );
 
-		//	スフィアモード 0:無効 1:乗算(sph) 2:加算(spa) 3:サブテクスチャ(追加UV1のx,yをUV参照して通常テクスチャ描画を行う)
+		// スフィアモード 0:無効 1:乗算(sph) 2:加算(spa) 3:サブテクスチャ(追加UV1のx,yをUV参照して通常テクスチャ描画を行う)
 		buf->get_bin( &material[ i ].sphere_mode, sizeof( BYTE ) );
 
-		//	共有Toonフラグ 0:継続値は個別Toon 1:継続値は共有Toon
+		// 共有Toonフラグ 0:継続値は個別Toon 1:継続値は共有Toon
 		buf->get_bin( &material[ i ].toon_flag, sizeof( BYTE ) );
 
 		material[ i ].toon_name      = new char[ 0xff ];
@@ -186,10 +185,10 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		material[ i ].comment = text_buf( buf );
 
-		//	vertex num	4byte
+		// vertex num	4byte
 		buf->get_bin( &material[ i ].fver_num, sizeof( dword ) );
 
-		material[ i ].anti_clear_rate = 1;	//	非透明にする
+		material[ i ].anti_clear_rate = 1;	// 非透明にする
 	}
 
 	// Bone
@@ -198,37 +197,37 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 	ushort				bone_flag;
 	MMDPI_PMX_BONE_INFO_PTR		tbone;
-	
+
 	bone_level_range = 1;
 	for( dword i = 0; i < bone_num; i ++ )
 	{
 		tbone = &bone[ i ];
 
-		//	Name
+		// Name
 		uint		buf_len;
 		tbone->name = text_buf( buf, &buf_len );
 		tbone->sjis_name = new char[ cconv_utf8_to_sjis( 0x00, tbone->name ) + 4 ];
 		cconv_utf8_to_sjis( tbone->sjis_name, tbone->name );
 
-		//	English name
+		// English name
 		tbone->eng_name = text_buf( buf );
 
-		//	pos
+		// pos
 		buf->get_bin( tbone->pos, sizeof( float ) * 3 );
 
-		//	parent
+		// parent
 		buf->get_bin2( &tbone->parent_index, sizeof( dword ), head.byte[ 5 ] );
 
-		//	level
+		// level
 		buf->get_bin( &tbone->level, sizeof( dword ) );
 
-		//	flag
+		// flag
 		buf->get_bin( &tbone->bone_flag, sizeof( ushort ) );
 
-		//	switch
+		// switch
 		bone_flag = tbone->bone_flag;
-		
-		if( bone_flag & 0x0001 )	//	接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
+
+		if( bone_flag & 0x0001 )	// 接続先(PMD子ボーン指定)表示方法 -> 0:座標オフセットで指定 1:ボーンで指定
 		{
 			buf->get_bin2( &tbone->child_index, sizeof( dword ), head.byte[ 5 ] );
 			tbone->child_flag = 1;
@@ -239,19 +238,19 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			tbone->child_flag = 0;
 		}
 
-		if( bone_flag & 0x0002 )	//	回転可能
+		if( bone_flag & 0x0002 )	// 回転可能
 			tbone->rotation_flag = 1;
 
-		if( bone_flag & 0x0004 )	//	移動可能
+		if( bone_flag & 0x0004 )	// 移動可能
 			tbone->translate_flag = 1;
 
-		if( bone_flag & 0x0008 )	//	表示 
+		if( bone_flag & 0x0008 )	// 表示
 			tbone->show_flag = 1;
 
-		if( bone_flag & 0x0010 )	//	操作可能
+		if( bone_flag & 0x0010 )	// 操作可能
 			tbone->user_update_flag = 1;
 
-		if( bone_flag & 0x0100 )	//	回転付与
+		if( bone_flag & 0x0100 )	// 回転付与
 		{
 			buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
 			buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
@@ -259,11 +258,11 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			tbone->rotation_grant_flag = 1;
 		}
 
-		if( bone_flag & 0x0200 )	//	移動付与
+		if( bone_flag & 0x0200 )	// 移動付与
 		{
 			if( tbone->rotation_grant_flag == 0 )
 			{
-				//	回転付与と情報は共有なので読み込む必要性はない
+				// 回転付与と情報は共有なので読み込む必要性はない
 				buf->get_bin2( &tbone->grant_parent_index, sizeof( dword ), head.byte[ 5 ] );
 				buf->get_bin( &tbone->grant_parent_rate, sizeof( float ) );
 			}
@@ -271,13 +270,13 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			tbone->translate_grant_flag = 1;
 		}
 
-		if( bone_flag & 0x0400 )	//	軸固定
+		if( bone_flag & 0x0400 )	// 軸固定
 		{
 			buf->get_bin( tbone->axis_vector, sizeof( float ) * 3 );
 			tbone->const_axis_flag = 1;
 		}
 
-		if( bone_flag & 0x0800 )	//	ローカル軸
+		if( bone_flag & 0x0800 )	// ローカル軸
 		{
 			buf->get_bin( tbone->local_axis_x, sizeof( float ) * 3 );
 			buf->get_bin( tbone->local_axis_z, sizeof( float ) * 3 );
@@ -285,19 +284,19 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			tbone->local_axis_flag = 1;
 		}
 
-		if( bone_flag & 0x1000 )	//	物理後変形軸
+		if( bone_flag & 0x1000 )	// 物理後変形軸
 		{
 			tbone->physical_update_flag = 1;
 		}
 
-		if( bone_flag & 0x2000 )	//	外部親変形
+		if( bone_flag & 0x2000 )	// 外部親変形
 		{
 			buf->get_bin( &tbone->key_value, sizeof( dword ) );
 			tbone->out_parent_update_flag = 1;
 		}
 
 
-		if( bone_flag & 0x0020 )	//	IK
+		if( bone_flag & 0x0020 )	// IK
 		{
 			buf->get_bin2( &tbone->ik_target_bone_index, sizeof( dword ), head.byte[ 5 ] );
 			buf->get_bin( &tbone->ik_loop_num, sizeof( dword ) );
@@ -330,13 +329,13 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			bone_level_range = bone[ i ].level + 1;
 	}
 
-	//	モーフ
+	// モーフ
 	buf->get_bin( &morph_num, sizeof( dword ) );
 	morph = new MMDPI_PMX_MORPH_INFO[ morph_num ];
 	for( dword i = 0; i < morph_num; i ++ )
 	{
 		MMDPI_PMX_MORPH_INFO_PTR	m = &morph[ i ];
-		
+
 		m->name = text_buf( buf );
 		m->eng_name = text_buf( buf );
 
@@ -345,7 +344,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		buf->get_bin( &m->panel, sizeof( BYTE ) );
 		buf->get_bin( &m->type, sizeof( BYTE ) );
-		
+
 		buf->get_bin( &m->offset_num, sizeof( dword ) );
 
 		uint	uv_number = 0;
@@ -359,8 +358,8 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 				buf->get_bin( m->vertex[ j ].vertex, sizeof( float ) * 3 );
 			}
 			break;
-			
-		//	追加UV
+
+		// 追加UV
 		case 4:	uv_number = 0;
 		case 5:	uv_number = 1;
 		case 6:	uv_number = 2;
@@ -386,7 +385,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 			}
 			break;
 
-		case 8:		//	材質モーフ
+		case 8:		// 材質モーフ
 			m->material = new MMDPI_PMX_MORPH_INFO_MATERIAL[ m->offset_num ];
 			for( uint j = 0; j < m->offset_num; j ++ )
 			{
@@ -415,26 +414,26 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 		}
 	}
 
-	//	表示枠
+	// 表示枠
 	buf->get_bin( &show_num, sizeof( dword ) );
 	show = new MMDPI_PMX_SHOW_FRAME_INFO[ show_num ];
 	for( uint i = 0; i < show_num; i ++ )
 	{
 		MMDPI_PMX_SHOW_FRAME_INFO_PTR	s = &show[ i ];
-		
+
 		s->name = text_buf( buf );
 		s->eng_name = text_buf( buf );
-		
+
 		buf->get_bin( &s->frame_flag, sizeof( BYTE ) );
 		buf->get_bin2( &s->index_num, sizeof( dword ), 4 );
-		
+
 		s->target_index = new MMDPI_PMX_SHOW_FRAME_INFO_INLINE[ s->index_num ];
 		for( uint j = 0; j < s->index_num; j ++ )
 		{
 			buf->get_bin( &s->target_index[ j ].type, sizeof( BYTE ) );
 
 			int		index_size = head.byte[ 5 ];
-			if( s->target_index[ j ].type )	//	モーフ
+			if( s->target_index[ j ].type )	// モーフ
 				index_size = head.byte[ 6 ];
 			buf->get_bin2( &s->target_index[ j ].index, sizeof( dword ), index_size );
 		}
@@ -463,7 +462,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		rigid->name = text_buf( buf, &name_length );
 		rigid->eng_name = text_buf( buf );
-		
+
 		buf->get_bin2( &rigid->bone_index, sizeof( dword ), head.byte[ 5 ] );
 		buf->get_bin( &rigid->group, sizeof( BYTE ) );
 		buf->get_bin( &rigid->not_touch_group_flag, sizeof( ushort ) );
@@ -495,7 +494,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		joint->name = text_buf( buf, &name_length );
 		joint->eng_name = text_buf( buf );
-		
+
 		buf->get_bin( &joint->type, sizeof( BYTE ) );
 
 		if( joint->type )
@@ -512,7 +511,7 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 
 		buf->get_bin( joint->rotate_limit1, sizeof( float ) * 3 );
 		buf->get_bin( joint->rotate_limit2, sizeof( float ) * 3 );
-	
+
 		buf->get_bin( joint->spring_trans, sizeof( float ) * 3 );
 		buf->get_bin( joint->spring_rotate, sizeof( float ) * 3 );
 
@@ -521,66 +520,66 @@ int mmdpiPmxLoad::reader( GetBin* buf )
 	}
 
 	return 0;
-} 
+}
 
 // ヘッダ処理
 int mmdpiPmxLoad::get_header( GetBin* buf )
 {
-	char	magic[ 8 ];	//ファイル識別	"Pmd"		
-	
+	char	magic[ 8 ];	//ファイル識別	"Pmd"
+
 	buf->get_bin( magic, 4 );
-	if( strncmp( magic, "Pmx ", 4 ) != 0 && strncmp( magic, "PMX ", 4 ) != 0 ) 
+	if( strncmp( magic, "Pmx ", 4 ) != 0 && strncmp( magic, "PMX ", 4 ) != 0 )
 		return -1;	//ヘッダ違い	エラー
 
-	//	バージョン
+	// バージョン
 	buf->get_bin( &head.version, sizeof( head.version ) );
 
-	//	各種バイト情報
+	// 各種バイト情報
 	buf->get_bin( &head.byte_num, 1 );
 	head.byte = new BYTE[ head.byte_num + 1 ];
 	buf->get_bin( head.byte, head.byte_num );
 
-	byte_one_length = ( head.byte[ 0 ] == 1 )? 1 : 2 ;	//	utf8 or utf16
+	byte_one_length = ( head.byte[ 0 ] == 1 )? 1 : 2 ;	// utf8 or utf16
 
 	uint	name_length, name_eng_length, comment_length, comment_eng_length;
 
 	//setlocale( LC_CTYPE, "jpn" );
 	//setlocale( LC_CTYPE, "ja_JP.UTF-8" );
 
-	head.name = text_buf( buf, &name_length );			//	モデルネーム
-	head.name_eng = text_buf( buf, &name_eng_length );		//	英モデルネーム
-	head.comment = text_buf( buf, &comment_length );		//	コメント
-	head.comment_eng = text_buf( buf, &comment_eng_length );	//	英コメント
+	head.name = text_buf( buf, &name_length );			// モデルネーム
+	head.name_eng = text_buf( buf, &name_eng_length );		// 英モデルネーム
+	head.comment = text_buf( buf, &comment_length );		// コメント
+	head.comment_eng = text_buf( buf, &comment_eng_length );	// 英コメント
 
 #ifdef _WIN32
-	//	モデルネーム
+	// モデルネーム
 	if( head.name )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name ) + 4 ];		
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name ) + 4 ];
 		cconv_utf8_to_sjis( temp_name, head.name );
 		delete[] head.name;
 		head.name = temp_name;
 	}
-	//	英モデルネーム
+	// 英モデルネーム
 	if( head.name_eng )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name_eng ) + 4 ];		
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.name_eng ) + 4 ];
 		cconv_utf8_to_sjis( temp_name, head.name_eng );
 		delete[] head.name_eng;
 		head.name_eng = temp_name;
 	}
-	//	コメント
+	// コメント
 	if( head.comment )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment ) + 4 ];		
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment ) + 4 ];
 		cconv_utf8_to_sjis( temp_name, head.comment );
 		delete[] head.comment;
 		head.comment = temp_name;
 	}
-	//	英コメント
+	// 英コメント
 	if( head.comment_eng )
 	{
-		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment_eng ) + 4 ];	
+		char*	temp_name = new char[ cconv_utf8_to_sjis( 0x00, head.comment_eng ) + 4 ];
 		cconv_utf8_to_sjis( temp_name, head.comment_eng );
 		delete[] head.comment_eng;
 		head.comment_eng = temp_name;
@@ -592,7 +591,7 @@ int mmdpiPmxLoad::get_header( GetBin* buf )
 		puts( "Model:" );
 		puts( head.name );
 	}
-	
+
 	if( head.comment )
 	{
 		puts( "Comment:" );
@@ -626,7 +625,7 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 	buf->get_bin( &byte_len, 4 );
 	if( byte_len < 1 )
 		return 0x00;
-	
+
 	text1 = new char[ byte_len + 4 ];
 	if( text1 == 0x00 )
 	{
@@ -636,7 +635,7 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 	memset( text1, 0, byte_len + 4 );
 	buf->get_bin( text1, byte_len );
 	text1[ byte_len ] = '\0';
-		
+
 	if( head.byte[ 0 ] )
 		;
 	else
@@ -645,22 +644,21 @@ char* mmdpiPmxLoad::text_buf( GetBin* buf, uint* length )
 		text2 = new char[ byte_len * 2 + 4 ];
 		byte_len = cconv_utf16_to_utf8( text2, ( const short* )text1 );
 		delete[] text1;
-		text1 = text2;	
+		text1 = text2;
 	}
 
 	buf->change_enmark( text1 );
 
 	if( length )
 		*length = byte_len;
-	//
 	return text1;
 }
 
-	//バイナリ用文字列抜き出し
+//バイナリ用文字列抜き出し
 char* mmdpiPmxLoad::bin_string( GetBin* buf )
 {
 	char*			result;
-	vector<char>		_string;
+	std::vector<char>	_string;
 	char			c[ 8 ];
 
 	while( buf->get_bin( c, 1 ) && c[ 0 ] )
@@ -670,7 +668,7 @@ char* mmdpiPmxLoad::bin_string( GetBin* buf )
 	result = new char[ _string.size() + 1 ];
 	for( unsigned int i = 0; i < _string.size(); i ++ )
 		result[ i ] = _string[ i ];
-	
+
 	return result;
 }
 
@@ -681,19 +679,19 @@ int mmdpiPmxLoad::get_direcotory( const char *file_name )
 	int		d_line = len - 1;
 
 	directory[ 0 ] = '\0';
-	
+
 #ifdef UNIX
 	setlocale( LC_CTYPE, "ja_JP.UTF-8" );
 #else
 	setlocale( LC_CTYPE, "jpn" );
 #endif
 	for( i = 0; i < len; i += 1/*this->utf8mbleb( &file_name[ i ] )*/ )
-	{ 
+	{
 		if( file_name[ i ] == '/' || file_name[ i ] == '\\' )
 			d_line = i;
 	}
 	/*
-	for( i = len - 1; i >= 0 && ( file_name[ i ] != '/' && file_name[ i ] != '\\' ); i -- ) 
+	for( i = len - 1; i >= 0 && ( file_name[ i ] != '/' && file_name[ i ] != '\\' ); i -- )
 		;
 	d_line = i;
 	*/
@@ -713,7 +711,6 @@ int mmdpiPmxLoad::load( const char *file_name )
 	// ディレクトリ取得
 	get_direcotory( file_name );
 
-	//
 	GetBin* buf = new GetBin();
 	if( buf->load( file_name ) )
 		return -1;

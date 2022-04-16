@@ -1,11 +1,11 @@
 
-#include "pmx_draw.h"
+#include "pmx_draw.hpp"
 
 
 void mmdpiPmxDraw::draw( void )
 {
 	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
-	{	
+	{
 		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 		{
 			MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
@@ -19,10 +19,10 @@ void mmdpiPmxDraw::draw( void )
 				grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bonep->grant_parent_index );
 			}
 		}
-	}		
+	}
 
 	for( uint level = 0; level < mmdpiPmxLoad::bone_level_range; level ++ )
-	{	
+	{
 		for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 		{
 			MMDPI_PMX_BONE_INFO_PTR		bonep = &mmdpiPmxLoad::bone[ i ];
@@ -39,9 +39,9 @@ void mmdpiPmxDraw::draw( void )
 	}
 
 	//	物理演算
-	if( bullet_flag )	
+	if( bullet_flag )
 		this->advance_time_physical( mmdpiModel::get_fps() );
-	
+
 	mmdpiModel::draw();
 }
 
@@ -56,7 +56,7 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 			float			rate		= pbone[ bone_index ].grant_parent_rate;
 			MMDPI_BONE_INFO_PTR	target_bone	= &bone[ bone_index ];
 			MMDPI_BONE_INFO_PTR	grant_bone	= &bone[ grant_bone_index ];
-		
+
 			mmdpiMatrix		rotation1_matrix;
 			mmdpiVector3d		rotate1;
 			float			rate1 = rate;
@@ -64,7 +64,7 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 			grant_bone->bone_mat.get_rotation( &rotate1.x, &rotate1.y, &rotate1.z );
 			rotation1_matrix.rotation( rotate1.x * rate1, rotate1.y * rate1, rotate1.z * rate1 );
 			target_bone->bone_mat = rotation1_matrix * target_bone->bone_mat;
-			
+
 			//mmdpiVector3d			rotate2;
 			//mmdpiMatrix			rotation2_matrix;
 			//float				rate2 = rate;
@@ -80,7 +80,7 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 		float			rate		= pbone[ bone_index ].grant_parent_rate;
 		MMDPI_BONE_INFO_PTR	target_bone	= &bone[ bone_index ];
 		MMDPI_BONE_INFO_PTR	grant_bone	= &bone[ grant_bone_index ];
-		
+
 		mmdpiVector3d		position = grant_bone->bone_mat.get_transform();
 		position = position * rate;
 		target_bone->bone_mat.transelation( position.x, position.y, position.z );
@@ -136,8 +136,8 @@ int mmdpiPmxDraw::morph_exec( dword index, float rate )
 			trans_matrix
 				.transelation(
 				m->morph_step * m->bone[ i ].translate[ 0 ],
-				m->morph_step * m->bone[ i ].translate[ 1 ], 
-				m->morph_step * m->bone[ i ].translate[ 2 ] 
+				m->morph_step * m->bone[ i ].translate[ 1 ],
+				m->morph_step * m->bone[ i ].translate[ 2 ]
 			);
 
 			mmdpiBone::bone[ m->bone->bone_id ].matrix

@@ -1,5 +1,5 @@
 
-#include "../mmdpi_struct.h"
+#include "../mmdpi_struct.hpp"
 
 
 GLuint MMDPI_PNG::load( const char *filename )
@@ -24,13 +24,13 @@ GLuint MMDPI_PNG::load( const char *filename )
 		return -1;
 	png_init_io( pPng, fp );
 	png_read_info( pPng, pInfo );
-	png_get_IHDR( pPng, pInfo, ( png_uint_32* )&dwWidth, ( png_uint_32* )&dwHeight, 
+	png_get_IHDR( pPng, pInfo, ( png_uint_32* )&dwWidth, ( png_uint_32* )&dwHeight,
 			&pixel_depth, &color_type, &nInterlaceType, 0x00, 0x00 );
 	// ここまでで必要な情報が一通り取得できます
 
 	uint	width	= dwWidth;
 	uint	height	= dwHeight;
-			
+
 	// メモリ領域確保
 	int	rb		= png_get_rowbytes( pPng, pInfo );
 	BYTE	color_num	= rb / width;
@@ -44,7 +44,7 @@ GLuint MMDPI_PNG::load( const char *filename )
 
 	if( data == 0x00 || recv == 0x00 )
 		return -1;
-	
+
 	for( uint i = 0; i < height; i ++ )
 		recv[ i ] = &data[ ( height - i - 1 ) * rb ];
 	png_read_image( pPng, recv );
@@ -80,8 +80,8 @@ GLuint MMDPI_PNG::load( const char *filename )
 		format		= GL_RGB;
 		internal_format = GL_RGB;
 	}
-	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, data );  
-  
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, data );
+
 	delete[] data;
 	delete[] recv;
 

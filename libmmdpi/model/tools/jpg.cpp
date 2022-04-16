@@ -1,5 +1,5 @@
 
-#include "../mmdpi_struct.h"
+#include "../mmdpi_struct.hpp"
 #include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,13 +7,13 @@
 #include <string.h>
 
 
-typedef struct my_error_mgr 
+typedef struct my_error_mgr
 {
 	struct jpeg_error_mgr jerr;
 	jmp_buf jmpbuf;
 } my_error_mgr;
 
-static void error_exit( j_common_ptr cinfo ) 
+static void error_exit( j_common_ptr cinfo )
 {
 	my_error_mgr *err =  (my_error_mgr* )cinfo->err;
 	( *cinfo->err->output_message )( cinfo );
@@ -42,10 +42,10 @@ GLuint MMDPI_JPG::load( const char *filename )
 		return -1;
 	jpeg_create_decompress( &jpegd );
 	jpeg_stdio_src( &jpegd, fp );
-	if( jpeg_read_header( &jpegd, TRUE ) != JPEG_HEADER_OK ) 
+	if( jpeg_read_header( &jpegd, TRUE ) != JPEG_HEADER_OK )
 		return -1;
 	jpeg_start_decompress( &jpegd );
-	if( jpegd.out_color_space != JCS_RGB ) 
+	if( jpegd.out_color_space != JCS_RGB )
 		return -1;
 	stride = jpegd.output_width * jpegd.output_components;
 	buffer = new JSAMPLE[ stride ];
@@ -54,11 +54,11 @@ GLuint MMDPI_JPG::load( const char *filename )
 	image = new unsigned char[ jpegd.output_height * jpegd.output_width * color ];
 	if( image == 0x00 )
 		return -1;
-	for( y = 0; y < jpegd.output_height; y ++ ) 
+	for( y = 0; y < jpegd.output_height; y ++ )
 	{
 		jpeg_read_scanlines( &jpegd, &buffer, 1 );
 		row = buffer;
-		for( x = 0; x < jpegd.output_width; x ++ ) 
+		for( x = 0; x < jpegd.output_width; x ++ )
 		{
 			image[ ( ( jpegd.output_height - y - 1 ) * jpegd.output_width + x ) * color + 0 ] = *row ++;
 			image[ ( ( jpegd.output_height - y - 1 ) * jpegd.output_width + x ) * color + 1 ] = *row ++;
@@ -70,7 +70,7 @@ GLuint MMDPI_JPG::load( const char *filename )
 	delete[] buffer;
 	fclose( fp );
 
-	//	Add image	
+	//	Add image
 	uint		format = GL_RGB;
 	uint		internal_format = GL_RGB;
 	GLsizei		width = jpegd.output_width;
@@ -89,7 +89,7 @@ GLuint MMDPI_JPG::load( const char *filename )
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
 
-	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, image ); 
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, image );
 	delete[] image;
 
 	return texture;

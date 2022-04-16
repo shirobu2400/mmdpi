@@ -1,5 +1,5 @@
 
-#include "pmd_load.h"
+#include "pmd_load.hpp"
 
 
 // データ整列
@@ -133,7 +133,7 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 		if( bone_name_num > 1 )
 		{
 			en_bone_disp_name = new MMDPI_PMD_ENGLISH_BONE_DISP_NAME[ bone_name_num ];
-			buf->get_bin( en_bone_disp_name, sizeof( MMDPI_PMD_ENGLISH_BONE_DISP_NAME ) * ( bone_name_num ) );	
+			buf->get_bin( en_bone_disp_name, sizeof( MMDPI_PMD_ENGLISH_BONE_DISP_NAME ) * ( bone_name_num ) );
 		}
 	}
 
@@ -173,7 +173,7 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 			r->size[ 2 ] = rigid.shape_d;
 
 			r->type = rigid.shape_type;
-			
+
 			if( r->bone_index < bone_num )
 			{
 				for( int j = 0; j < 3; j ++ )
@@ -204,7 +204,7 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 		{
 			MMDPI_PHYSICAL_JOINT_INFO*	j = &p_joint[ i ];
 			buf->get_bin( &joint, sizeof( MMDPI_PMD_PHYSICAL_JOINT ) );
-	
+
 			j->name = new char[ 20 ];
 			strcpy( j->name, joint.joint_name );
 
@@ -216,7 +216,7 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 				j->pos[ k ] = joint.joint_pos[ k ];
 			for( int k = 0; k < 3; k ++ )
 				j->rot[ k ] = joint.joint_rot[ k ];
-		
+
 			for( int k = 0; k < 3; k ++ )
 				j->rotate_limit1[ k ] = joint.constrain_rot_1[ k ];
 			for( int k = 0; k < 3; k ++ )
@@ -232,25 +232,25 @@ int	mmdpiPmdLoad::reader( GetBin* buf )
 				j->spring_rotate[ k ] = joint.spring_rot[ k ] * ( float )M_PI / 180.0f;
 			for( int k = 0; k < 3; k ++ )
 				j->spring_trans[ k ] = joint.spring_pos[ k ];
-						
+
 			j->type = 0;
 		}
 	}
-		
+
 	return 0;
-} 
+}
 
 // ヘッダ処理
 int mmdpiPmdLoad::get_header( GetBin* buf )
 {
-	char magic[ 8 ];	//ファイル識別	"Pmd"		
+	char magic[ 8 ];	//ファイル識別	"Pmd"
 
 	bin_string( buf, magic, 3 );
-	if( strncmp( magic, "Pmd", 3 ) != 0 ) 
+	if( strncmp( magic, "Pmd", 3 ) != 0 )
 		return -1;	//ヘッダ違い	エラー
 
 	buf->get_bin( &head.version, sizeof( head.version ) );
-	
+
 	padding( buf );
 	bin_string( buf, head.modelName, 20 );		//モデルネーム
 	padding( buf );
@@ -305,7 +305,7 @@ int mmdpiPmdLoad::get_direcotory( const char *file_name )
 	int len = strlen( file_name );
 
 	directory[ 0 ] = '\0';
-	for( i = len; i >= 0 && ( file_name[ i ] != '/' && file_name[ i ] != '\\' ); i -- ) 
+	for( i = len; i >= 0 && ( file_name[ i ] != '/' && file_name[ i ] != '\\' ); i -- )
 		;
 
 	if( i > 0 )

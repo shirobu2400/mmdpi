@@ -1,5 +1,5 @@
 ﻿
-#include "dds.h"
+#include "dds.hpp"
 
 
 int MMDPI_DDS::readFile( const char *filename )
@@ -8,7 +8,7 @@ int MMDPI_DDS::readFile( const char *filename )
 	long			image_cur;
 	long			image_end;
 	int			block_size = 16;
-	
+
 	// ファイルを開く
 	fp = fopen( filename, "rb" );
 	if( fp == 0x00 )
@@ -17,7 +17,7 @@ int MMDPI_DDS::readFile( const char *filename )
 		//cout << "File Name : " << filename << endl;
 		return -1;
 	}
-	
+
 	// ヘッダ読み込み
 	fread( &this->head, sizeof( MMDPI_DDS_HEADER ), 1, fp );
 
@@ -27,7 +27,7 @@ int MMDPI_DDS::readFile( const char *filename )
 
 	//this->size   = this->head.size;
 	this->flag   = this->head.flag;
-	
+
 	this->width  = this->head.width;
 	this->height = this->head.height;
 	this->depth  = this->head.depth;
@@ -88,7 +88,7 @@ int MMDPI_DDS::readFile( const char *filename )
 			ushort	b1 = *( ( ushort* )p + 0x02 );
 			ushort	b2 = *( ( ushort* )p + 0x04 );
 			ushort	b3 = *( ( ushort* )p + 0x06 );
-			
+
 			GLubyte	c0_r = ( ( b0 >> 11 ) & 0x1f ) * 8;
 			GLubyte	c0_g = ( ( b0 >>  5 ) & 0x3f ) * 4;
 			GLubyte	c0_b = ( ( b0 >>  0 ) & 0x1f ) * 8;
@@ -133,7 +133,7 @@ int MMDPI_DDS::readFile( const char *filename )
 			}
 			p += 0x40;
 		}
-		
+
 		delete[] buffer;
 	}
 	else if( this->head.pixel_format.flag & ( MMDPI_DDPF_RGB | MMDPI_DDPF_ALPHAPIXELS | MMDPI_DDPF_ALPHA | MMDPI_DDPF_BUMPDUDV | MMDPI_DDPF_LUMINANCE ) )
@@ -206,7 +206,7 @@ int MMDPI_DDS::readFile( const char *filename )
 		{
 			GLubyte*	p = &buffer[ i ];
 			dword		color = *( dword* )p;
-			
+
 			r = ( r_mask & color ) >> r_shiftn;
 			g = ( g_mask & color ) >> g_shiftn;
 			b = ( b_mask & color ) >> b_shiftn;
@@ -228,7 +228,7 @@ int MMDPI_DDS::readFile( const char *filename )
 				int	j1 = this->height - j - 1;
 
 				for( int c = 0; c < color_size; c ++ )
-					buffer[ ( j1 * this->width + i1 ) * color_size + c ] = this->bits[ ( j * this->width + i ) * color_size + c ];	
+					buffer[ ( j1 * this->width + i1 ) * color_size + c ] = this->bits[ ( j * this->width + i ) * color_size + c ];
 			}
 		}
 		for( dword i = 0; i < this->size; i ++ )
@@ -274,8 +274,8 @@ int MMDPI_DDS::load( const char *filename )
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 	// テクスチャの割り当て
-	glTexImage2D( GL_TEXTURE_2D, 0, this->internal_format, this->width, this->height, 0, this->format, GL_UNSIGNED_BYTE, this->bits );  
-  
+	glTexImage2D( GL_TEXTURE_2D, 0, this->internal_format, this->width, this->height, 0, this->format, GL_UNSIGNED_BYTE, this->bits );
+
 	// テクスチャの拡大、縮小方法
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );

@@ -8,10 +8,11 @@ project(mmdpi C CXX)
 set(CMAKE_CXX_FLAG_RELEASE "-O2")
 
 # Debug options
-# set(CMAKE_CXX_FLAG_DEBUG "-g")
+set(CMAKE_CXX_FLAG_DEBUG "-O0 -ggdb3 -fno-inline")
 
 # compile option
-set(CMAKE_BUILD_TYPE Release)
+# set(CMAKE_BUILD_TYPE Release)
+# set(CMAKE_BUILD_TYPE Debug)
 
 # this version
 set(SERIAL "1.00.00")
@@ -51,41 +52,41 @@ set(libmmdpi_src
 
 # headers
 set(libmmdpi_header
-	mmdpi.h
+	mmdpi.hpp
 
-	model/mmdpi_bone.h
-	model/mmdpi_adjust.h
-	model/mmdpi_define.h
-	model/mmdpi_include.h
-	model/mmdpi_model.h
-	model/mmdpi_shader.h
-	model/mmdpi_struct.h
-	model/mmdpi_mesh.h
+	model/mmdpi_bone.hpp
+	model/mmdpi_adjust.hpp
+	model/mmdpi_define.hpp
+	model/mmdpi_include.hpp
+	model/mmdpi_model.hpp
+	model/mmdpi_shader.hpp
+	model/mmdpi_struct.hpp
+	model/mmdpi_mesh.hpp
 
-	model/tools/bitmap.h
-	model/tools/get_bin.h
-	model/tools/raw_table.h
-	model/tools/dds.h
-	model/tools/tga_image.h
-	model/tools/utf8_sjis.h
+	model/tools/bitmap.hpp
+	model/tools/get_bin.hpp
+	model/tools/raw_table.hpp
+	model/tools/dds.hpp
+	model/tools/tga_image.hpp
+	model/tools/utf8_sjis.hpp
 
-	model/bullet/mmdpi_bullet.h
+	model/bullet/mmdpi_bullet.hpp
 
-	pmd/pmd.h
-	pmd/pmd_analyze.h
-	pmd/pmd_draw.h
-	pmd/pmd_ik.h
-	pmd/pmd_load.h
-	pmd/pmd_struct.h
+	pmd/pmd.hpp
+	pmd/pmd_analyze.hpp
+	pmd/pmd_draw.hpp
+	pmd/pmd_ik.hpp
+	pmd/pmd_load.hpp
+	pmd/pmd_struct.hpp
 
-	pmx/pmx.h
-	pmx/pmx_analyze.h
-	pmx/pmx_draw.h
-	pmx/pmx_ik.h
-	pmx/pmx_load.h
-	pmx/pmx_struct.h
+	pmx/pmx.hpp
+	pmx/pmx_analyze.hpp
+	pmx/pmx_draw.hpp
+	pmx/pmx_ik.hpp
+	pmx/pmx_load.hpp
+	pmx/pmx_struct.hpp
 
-	vmd/vmd.h
+	vmd/vmd.hpp
 )
 
 
@@ -109,43 +110,53 @@ set(libmmdpi_inc_raspi
 # Bullet Physics Source
 set(libmmdpi_bullet_src
 	model/bullet/mmdpi_bullet.cpp
-	model/bullet/mmdpi_bullet.h
+	model/bullet/mmdpi_bullet.hpp
 )
 
-find_package( PNG REQUIRED )
-find_package( JPEG REQUIRED )
-find_package( GLUT )
-find_package( glut )
-find_package( freeglut )
+find_package(PNG REQUIRED)
+find_package(JPEG REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+find_package(GLEW REQUIRED)
+find_library(GLUT_glut_LIBRARY NAMES glut glut32 freeglut
+    PATHS
+    ${OPENGL_LIBRARY_DIR}
+    ${GLUT_ROOT_PATH}/Release
+)
 
 #	OpenGL
-if( NOT GLUT_FOUND AND NOT glut_FOUND AND NOT freeglut_FOUND )
-	add_definitions( -D_MMDPI_OPENGL_ES_DEFINES_ )
-	add_definitions( -D_MMDPI_PRIJECTION_MATRIX_SELF_ )
+if(GLUT_FOUND)
+	include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIR})
+else()
+	add_definitions(-D_MMDPI_OPENGL_ES_DEFINES_)
+	add_definitions(-D_MMDPI_PRIJECTION_MATRIX_SELF_)
 endif()
 
-## Bullet
-#find_package( Bullet )
-#if( bullet AND Bullet_FOUND )
-if( bullet )
-	set( libmmdpi_src ${libmmdpi_src} ${libmmdpi_bullet_src} )
+include_directories(${GLEW_INCLUDE_DIRS})
+link_libraries(${GLEW_LIBRARIES})
 
-	add_definitions( -D_MMDPI_USING_PHYSICS_ENGINE_ )
-	include_directories( Bullet_INCLUDE_DIRS /usr/local/include/bullet )
+# Bullet
+find_package(Bullet)
+# if(bullet AND Bullet_FOUND)
+if(Bullet_FOUND)
+	set(libmmdpi_src ${libmmdpi_src} ${libmmdpi_bullet_src})
+
+	add_definitions(-D_MMDPI_USING_PHYSICS_ENGINE_)
+	include_directories(Bullet_INCLUDE_DIRS /usr/local/include/bullet)
 endif()
 
 # Outline
 # It needs a lot of VRAM.
-if( outline )
-	add_definitions( -D_MMDPI_OUTLINE_ )
+if(outline)
+	add_definitions(-D_MMDPI_OUTLINE_)
 endif()
 
-set( CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} -m32 )
+set(CMAKE_CXX_FLAG ${CMAKE_CXX_FLAG} -m32)
 
 # static library
 add_library(mmdpi STATIC ${libmmdpi_src})
-include_directories( ${libmmdpi_inc} )
-include_directories( ${libmmdpi_inc_raspi} )
+include_directories(${libmmdpi_inc})
+include_directories(${libmmdpi_inc_raspi})
 
 # dynamic library
 add_library(mmdpis SHARED ${libmmdpi_src})
@@ -155,45 +166,45 @@ set_property(TARGET mmdpis PROPERTY POSITION_INDEPENDENT_CODE ON)
 install(TARGETS mmdpi ARCHIVE DESTINATION lib/mmdpi)
 install(TARGETS mmdpis LIBRARY DESTINATION lib/mmdpi)
 
-install(FILES mmdpi.h DESTINATION include/mmdpi)
+install(FILES mmdpi.hpp DESTINATION include/mmdpi)
 install(FILES
-	model/mmdpi_bone.h
-	model/mmdpi_adjust.h
-	model/mmdpi_define.h
-	model/mmdpi_include.h
-	model/mmdpi_model.h
-	model/mmdpi_shader.h
-	model/mmdpi_struct.h
-	model/mmdpi_mesh.h
+	model/mmdpi_bone.hpp
+	model/mmdpi_adjust.hpp
+	model/mmdpi_define.hpp
+	model/mmdpi_include.hpp
+	model/mmdpi_model.hpp
+	model/mmdpi_shader.hpp
+	model/mmdpi_struct.hpp
+	model/mmdpi_mesh.hpp
 DESTINATION include/mmdpi/model)
 install(FILES
-	model/tools/bitmap.h
-	model/tools/get_bin.h
-	model/tools/raw_table.h
-	model/tools/tga_image.h
-	model/tools/utf8_sjis.h
-	model/tools/dds.h
+	model/tools/bitmap.hpp
+	model/tools/get_bin.hpp
+	model/tools/raw_table.hpp
+	model/tools/tga_image.hpp
+	model/tools/utf8_sjis.hpp
+	model/tools/dds.hpp
 DESTINATION include/mmdpi/model/tools)
 install(FILES
-	model/bullet/mmdpi_bullet.h
+	model/bullet/mmdpi_bullet.hpp
 DESTINATION include/mmdpi/model/bullet)
 install(FILES
-	pmd/pmd.h
-	pmd/pmd_analyze.h
-	pmd/pmd_draw.h
-	pmd/pmd_ik.h
-	pmd/pmd_load.h
-	pmd/pmd_struct.h
+	pmd/pmd.hpp
+	pmd/pmd_analyze.hpp
+	pmd/pmd_draw.hpp
+	pmd/pmd_ik.hpp
+	pmd/pmd_load.hpp
+	pmd/pmd_struct.hpp
 DESTINATION include/mmdpi/pmd)
 install(FILES
-	pmx/pmx.h
-	pmx/pmx_analyze.h
-	pmx/pmx_draw.h
-	pmx/pmx_ik.h
-	pmx/pmx_load.h
-	pmx/pmx_struct.h
+	pmx/pmx.hpp
+	pmx/pmx_analyze.hpp
+	pmx/pmx_draw.hpp
+	pmx/pmx_ik.hpp
+	pmx/pmx_load.hpp
+	pmx/pmx_struct.hpp
 DESTINATION include/mmdpi/pmx)
 install(FILES
-	vmd/vmd.h
+	vmd/vmd.hpp
 DESTINATION include/mmdpi/vmd)
 
