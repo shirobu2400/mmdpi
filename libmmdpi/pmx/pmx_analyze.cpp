@@ -8,67 +8,70 @@ int mmdpiPmxAnalyze::load( const char *file_name )
 		return -1;
 	if( mmdpiModel::create() )
 		return -1;
-	return analyze();
+	return this->analyze();
 }
 
 // 解析
 int mmdpiPmxAnalyze::analyze( void )
 {
-	adjust_material = new MMDPI_MATERIAL[ material_num ];
+	adjust_material = new MMDPI_MATERIAL[ this->material_num ];
 	dword	face_top = 0;
-	for( dword i = 0; i < material_num; i ++ )
+	for( dword i = 0; i < this->material_num; i ++ )
 	{
-		adjust_material[ i ].face_top = face_top;
-		adjust_material[ i ].face_num = material[ i ].fver_num;
+		this->adjust_material[ i ].face_top = face_top;
+		this->adjust_material[ i ].face_num = material[ i ].fver_num;
 		face_top += material[ i ].fver_num;
 	}
 
-	adjust_vertex = new MMDPI_BLOCK_VERTEX();
-	if( adjust_vertex == 0x00 )
+	this->adjust_vertex = new MMDPI_BLOCK_VERTEX();
+	if( this->adjust_vertex == 0x00 )
 		return -1;
-	adjust_vertex->alloc( mmdpiPmxLoad::vertex_num );
+	this->adjust_vertex->alloc( mmdpiPmxLoad::vertex_num );
 
 	for( dword i = 0; i < mmdpiPmxLoad::vertex_num; i ++ )
 	{
-		MMDPI_PMX_VERTEX_PTR	ver = &vertex[ i ];
+		MMDPI_PMX_VERTEX_PTR	ver = &mmdpiPmxLoad::vertex[ i ];
 
-		adjust_vertex->ver[ i ].x = ver->pos[ 0 ];
-		adjust_vertex->ver[ i ].y = ver->pos[ 1 ];
-		adjust_vertex->ver[ i ].z = ver->pos[ 2 ];
+		this->adjust_vertex->ver[ i ].x = ver->pos[ 0 ];
+		this->adjust_vertex->ver[ i ].y = ver->pos[ 1 ];
+		this->adjust_vertex->ver[ i ].z = ver->pos[ 2 ];
 
-		adjust_vertex->uv[ i ].x = ver->uv[ 0 ];
-		adjust_vertex->uv[ i ].y = 1 - ver->uv[ 1 ];
-		adjust_vertex->uv[ i ].z = 0;
-		adjust_vertex->uv[ i ].w = 0;
+		this->adjust_vertex->uv[ i ].x = ver->uv[ 0 ];
+		this->adjust_vertex->uv[ i ].y = 1 - ver->uv[ 1 ];
+		this->adjust_vertex->uv[ i ].z = 0;
+		this->adjust_vertex->uv[ i ].w = 0;
 
-		adjust_vertex->nor[ i ].x = ver->nor[ 0 ];
-		adjust_vertex->nor[ i ].y = ver->nor[ 1 ];
-		adjust_vertex->nor[ i ].z = ver->nor[ 2 ];
+		this->adjust_vertex->nor[ i ].x = ver->nor[ 0 ];
+		this->adjust_vertex->nor[ i ].y = ver->nor[ 1 ];
+		this->adjust_vertex->nor[ i ].z = ver->nor[ 2 ];
 
 		// ボーン
-		adjust_vertex->index[ i ].x = ( float )ver->bone_index[ 0 ];
-		adjust_vertex->index[ i ].y = ( float )ver->bone_index[ 1 ];
-		adjust_vertex->index[ i ].z = ( float )ver->bone_index[ 2 ];
-		adjust_vertex->index[ i ].w = ( float )ver->bone_index[ 3 ];
+		this->adjust_vertex->index[ i ].x = ( float )ver->bone_index[ 0 ];
+		this->adjust_vertex->index[ i ].y = ( float )ver->bone_index[ 1 ];
+		this->adjust_vertex->index[ i ].z = ( float )ver->bone_index[ 2 ];
+		this->adjust_vertex->index[ i ].w = ( float )ver->bone_index[ 3 ];
 
 		// 重み
-		adjust_vertex->weight[ i ].x = ver->bone_value[ 0 ];
-		adjust_vertex->weight[ i ].y = ver->bone_value[ 1 ];
-		adjust_vertex->weight[ i ].z = ver->bone_value[ 2 ];
-		adjust_vertex->weight[ i ].w = ver->bone_value[ 3 ];
+		this->adjust_vertex->weight[ i ].x = ver->bone_value[ 0 ];
+		this->adjust_vertex->weight[ i ].y = ver->bone_value[ 1 ];
+		this->adjust_vertex->weight[ i ].z = ver->bone_value[ 2 ];
+		this->adjust_vertex->weight[ i ].w = ver->bone_value[ 3 ];
 	}
 
 	// 最適化
-	mmdpiAdjust::adjust( adjust_vertex, mmdpiPmxLoad::vertex_num, face, face_num, adjust_material, material_num, mmdpiBone::bone, mmdpiPmxLoad::bone_num );
+	mmdpiAdjust::adjust( this->adjust_vertex, mmdpiPmxLoad::vertex_num,
+				mmdpiPmxLoad::face, mmdpiPmxLoad::face_num,
+				this->adjust_material, this->material_num,
+				mmdpiBone::bone, mmdpiPmxLoad::bone_num );
 
 	// テクスチャ
-	load_texture();
+	this->load_texture();
 
 	// マテリアル情報の保存
-	for( dword j = 0; j < mesh.size(); j ++ )
+	for( dword j = 0; j < mmdpiAdjust::mesh.size(); j ++ )
 	{
-		MMDPI_PIECE*			m	= mesh[ j ]->b_piece;
-		MMDPI_PMX_MATERIAL_PTR		mpmx	= &material[ m->raw_material_id ];
+		MMDPI_PIECE*			m	= mmdpiAdjust::mesh[ j ]->b_piece;
+		MMDPI_PMX_MATERIAL_PTR		mpmx	= &mmdpiPmxLoad::material[ m->raw_material_id ];
 
 		m->edge_size = mpmx->edge_size;
 
@@ -103,7 +106,7 @@ void mmdpiPmxAnalyze::load_texture( void )
 	dword	fver_num_base = 0;
 	long	ppid = -1;
 	dword	pi = 0;
-	uint	material_num = mesh.size();
+	uint	material_num = mmdpiAdjust::mesh.size();
 
 	// 一時的に読み込み
 	texture			= new MMDPI_IMAGE[ material_num ];
@@ -217,7 +220,7 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 		mmdpiModel::bone[ i ].id = i;
 		mmdpiModel::bone[ i ].child_flag = pbone[ i ].child_flag;
 
-		mmdpiModel::bone[ i ].init_mat.transelation( pbone[ i ].pos[ 0 ], pbone[ i ].pos[ 1 ], pbone[ i ].pos[ 2 ] );
+		mmdpiModel::bone[ i ].init_matrix.transelation( pbone[ i ].pos[ 0 ], pbone[ i ].pos[ 1 ], pbone[ i ].pos[ 2 ] );
 
 		// 親ボーン設定
 		mmdpiModel::bone[ i ].visible = 0;
@@ -255,12 +258,12 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
-		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
+		mmdpiModel::bone[ i ].offset_matrix = mmdpiModel::bone[ i ].init_matrix.get_inverse();
 	}
 
 	// init_mat 初期化
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		mmdpiModel::bone[ i ].init_mat = init_mat_calc_bottom( &mmdpiModel::bone[ i ] );
+		mmdpiModel::bone[ i ].init_matrix = mmdpiBone::compute_init_matrix_bottom( &mmdpiModel::bone[ i ] );
 
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
 	{
@@ -272,31 +275,31 @@ int mmdpiPmxAnalyze::create_bone( MMDPI_PMX_BONE_INFO_PTR pbone, uint pbone_len 
 	}
 
 	// 初期設定
-	refresh_bone_mat();
+	mmdpiBone::refresh_bone_mat();
 	for( uint i = 0; i < mmdpiModel::bone_num; i ++ )
-		make_global_matrix( i );
+		mmdpiBone::update_temp_matrix( i );
 
 	return 0;
 }
 
 mmdpiPmxAnalyze::mmdpiPmxAnalyze()
 {
-	adjust_material = 0x00;
-	adjust_vertex	= 0x00;
+	this->adjust_material = 0x00;
+	this->adjust_vertex	= 0x00;
 
-	texture		= 0x00;
-	toon_texture	= 0x00;
-	texture00	= 0x00;
-	toon_texture00	= 0x00;
+	this->texture		= 0x00;
+	this->toon_texture	= 0x00;
+	this->texture00	= 0x00;
+	this->toon_texture00	= 0x00;
 }
 
 mmdpiPmxAnalyze::~mmdpiPmxAnalyze()
 {
-	delete[] adjust_material;
-	delete adjust_vertex;
+	delete[] this->adjust_material;
+	delete this->adjust_vertex;
 
-	delete[] texture;
-	delete[] toon_texture;
+	delete[] this->texture;
+	delete[] this->toon_texture;
 	//if( texture00 )
 	//{
 	// delete[] texture00;

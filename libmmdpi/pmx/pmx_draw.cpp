@@ -12,10 +12,10 @@ void mmdpiPmxDraw::draw( void )
 			MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
 			if( bonep->level == level )
 			{
-				//	ik
+				// ik
 				ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
 
-				//	付与
+				// 付与
 				grant_bone( mmdpiBone::bone, mmdpiPmxLoad::bone, i, bonep->grant_parent_index );
 			}
 		}
@@ -29,11 +29,11 @@ void mmdpiPmxDraw::draw( void )
 			MMDPI_BONE_INFO_PTR		bone  = &mmdpiBone::bone[ i ];
 			if( bonep->level == level )
 			{
-				//	ik
-				ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
+				// // ik
+				// ik_execute( mmdpiBone::bone, mmdpiPmxLoad::bone, i );
 
-				//	matrix
-				bone->matrix = make_global_matrix( i );
+				// matrix
+				bone->global_matrix = mmdpiBone::update_temp_matrix( i );
 			}
 		}
 	}
@@ -61,9 +61,9 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 			mmdpiVector3d		rotate1;
 			float			rate1 = rate;
 
-			grant_bone->bone_mat.get_rotation( &rotate1.x, &rotate1.y, &rotate1.z );
+			grant_bone->temp_matrix.get_rotation( &rotate1.x, &rotate1.y, &rotate1.z );
 			rotation1_matrix.rotation( rotate1.x * rate1, rotate1.y * rate1, rotate1.z * rate1 );
-			target_bone->bone_mat = rotation1_matrix * target_bone->bone_mat;
+			target_bone->temp_matrix = rotation1_matrix * target_bone->temp_matrix;
 
 			//mmdpiVector3d			rotate2;
 			//mmdpiMatrix			rotation2_matrix;
@@ -81,9 +81,9 @@ int mmdpiPmxDraw::grant_bone( MMDPI_BONE_INFO_PTR bone, MMDPI_PMX_BONE_INFO_PTR 
 		MMDPI_BONE_INFO_PTR	target_bone	= &bone[ bone_index ];
 		MMDPI_BONE_INFO_PTR	grant_bone	= &bone[ grant_bone_index ];
 
-		mmdpiVector3d		position = grant_bone->bone_mat.get_transform();
+		mmdpiVector3d		position = grant_bone->temp_matrix.get_transform();
 		position = position * rate;
-		target_bone->bone_mat.transelation( position.x, position.y, position.z );
+		target_bone->temp_matrix.transelation( position.x, position.y, position.z );
 	}
 
 	return 0;
@@ -140,8 +140,8 @@ int mmdpiPmxDraw::morph_exec( dword index, float rate )
 				m->morph_step * m->bone[ i ].translate[ 2 ]
 			);
 
-			mmdpiBone::bone[ m->bone->bone_id ].matrix
-				= rotate_matrix * trans_matrix * mmdpiBone::bone[ m->bone->bone_id ].matrix;
+			mmdpiBone::bone[ m->bone->bone_id ].global_matrix
+				= rotate_matrix * trans_matrix * mmdpiBone::bone[ m->bone->bone_id ].global_matrix;
 		}
 		break;
 	case 3:	//	ＵＶ

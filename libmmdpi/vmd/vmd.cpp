@@ -74,7 +74,7 @@ int mmdpiVmd::advance_time( float time_scale )
 
 		// 親ボーンからみた姿勢行列に
 		// 変更量 * 親ボーンからみた初期姿勢
-		bone[ i ].bone_mat = ( rot_matrix * pos_matrix ) * bone[ i ].init_mat;
+		bone[ i ].temp_matrix = ( rot_matrix * pos_matrix ) * bone[ i ].init_matrix;
 	}
 
 #ifdef _MMDPI_USINGSKIN_

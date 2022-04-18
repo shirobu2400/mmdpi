@@ -120,7 +120,7 @@ int mmdpiMesh::set_boneid( const dword* boneid, dword boneid_length )
 	return 0;
 }
 
-void mmdpiMesh::update_matrix( MMDPI_BONE_INFO_PTR bone, dword bone_num )
+void mmdpiMesh::update_gpu_cache_matrix( MMDPI_BONE_INFO_PTR bone, dword bone_num )
 {
 	for( uint j = 0; j < this->b_piece->bone_list_num; j ++ )
 	{

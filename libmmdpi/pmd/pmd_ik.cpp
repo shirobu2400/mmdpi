@@ -17,7 +17,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 
 	for( uint j = 0; j < _iteration_num_; j ++ )
 	{
-		float	rotation_distance = 0;	//	移動した距離
+		float	rotation_distance = 0;	// 移動した距離
 
 		for( uint i = 0; i < ik_one->ik_chain_length; i ++ )
 		{
@@ -85,8 +85,8 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 4 ] == 0x82
 				&& ( unsigned char )pbone[ attention_index ].bone_name[ 5 ] == 0xB4 )
 			{
-				mmdpiMatrix		inv_matrix = bone[ attention_index ].init_mat.get_inverse();
-				mmdpiMatrix		def_matrix = rotation_matrix * bone[ attention_index ].bone_mat * inv_matrix;
+				mmdpiMatrix		inv_matrix = bone[ attention_index ].init_matrix.get_inverse();
+				mmdpiMatrix		def_matrix = rotation_matrix * bone[ attention_index ].temp_matrix * inv_matrix;
 				mmdpiVector4d		t_vec( 0, 0, 1, 1 );
 				t_vec = def_matrix * ( t_vec );
 				if( t_vec.y < 0.1f )
@@ -94,7 +94,7 @@ int mmdpiPmdIk::ik_execute( MMDPI_PMD_IK_INFO_PTR ik, MMDPI_BONE_INFO_PTR bone, 
 			}
 
 			//	反映
-			bone[ attention_index ].bone_mat = rotation_matrix * bone[ attention_index ].bone_mat;
+			bone[ attention_index ].temp_matrix = rotation_matrix * bone[ attention_index ].temp_matrix;
 
 			//	移動した距離を計算
 			rotation_distance += fabs( angle ) * radius_range;

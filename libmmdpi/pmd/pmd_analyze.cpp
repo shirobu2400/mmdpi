@@ -5,67 +5,71 @@
 // 読み込み
 int mmdpiPmdAnalyze::load( const char *file_name )
 {
-	if( mmdpiPmdLoad::load( file_name ) )
+	if( this->mmdpiPmdLoad::load( file_name ) )
 		return -1;
-	if( mmdpiModel::create() )
+	if( this->mmdpiModel::create() )
 		return -1;
-	return analyze();
+	return this->mmdpiPmdAnalyze::analyze();
 }
 
 // PMD解析
 int mmdpiPmdAnalyze::analyze( void )
 {
-	adjust_material = new MMDPI_MATERIAL[ material_num ];
+	adjust_material = new MMDPI_MATERIAL[ this->material_num ];
 	if( adjust_material == 0x00 )
 		return -1;
+
 	dword	face_top = 0;
-	for( dword i = 0; i < material_num; i ++ )
+	for( dword i = 0; i < this->material_num; i ++ )
 	{
-		adjust_material[ i ].face_top = face_top;
-		adjust_material[ i ].face_num = material[ i ].face_vert_count;
-		face_top += material[ i ].face_vert_count;
+		this->adjust_material[ i ].face_top = face_top;
+		this->adjust_material[ i ].face_num = this->material[ i ].face_vert_count;
+		face_top += this->material[ i ].face_vert_count;
 	}
 
-	adjust_vertex = new MMDPI_BLOCK_VERTEX();
-	if( adjust_vertex == 0x00 )
+	this->adjust_vertex = new MMDPI_BLOCK_VERTEX();
+	if( this->adjust_vertex == 0x00 )
 		return -1;
-	adjust_vertex->alloc( mmdpiPmdLoad::vertex_num );
+	this->adjust_vertex->alloc( this->mmdpiPmdLoad::vertex_num );
 
-	for( dword i = 0; i < mmdpiPmdLoad::vertex_num; i ++ )
+	for( dword i = 0; i < this->mmdpiPmdLoad::vertex_num; i ++ )
 	{
-		MMDPI_PMD_VERTEX_PTR	ver = &vertex[ i ];
+		MMDPI_PMD_VERTEX_PTR	ver = &this->mmdpiPmdLoad::vertex[ i ];
 
-		adjust_vertex->ver[ i ].x = ver->pos[ 0 ];
-		adjust_vertex->ver[ i ].y = ver->pos[ 1 ];
-		adjust_vertex->ver[ i ].z = ver->pos[ 2 ];
+		this->adjust_vertex->ver[ i ].x = ver->pos[ 0 ];
+		this->adjust_vertex->ver[ i ].y = ver->pos[ 1 ];
+		this->adjust_vertex->ver[ i ].z = ver->pos[ 2 ];
 
-		adjust_vertex->uv[ i ].x = ver->uv[ 0 ];
-		adjust_vertex->uv[ i ].y = 1 - ver->uv[ 1 ];
-		adjust_vertex->uv[ i ].z = 0;
-		adjust_vertex->uv[ i ].w = 0;
+		this->adjust_vertex->uv[ i ].x = ver->uv[ 0 ];
+		this->adjust_vertex->uv[ i ].y = 1 - ver->uv[ 1 ];
+		this->adjust_vertex->uv[ i ].z = 0;
+		this->adjust_vertex->uv[ i ].w = 0;
 
-		adjust_vertex->nor[ i ].x = ver->nor[ 0 ];
-		adjust_vertex->nor[ i ].y = ver->nor[ 1 ];
-		adjust_vertex->nor[ i ].z = ver->nor[ 2 ];
+		this->adjust_vertex->nor[ i ].x = ver->nor[ 0 ];
+		this->adjust_vertex->nor[ i ].y = ver->nor[ 1 ];
+		this->adjust_vertex->nor[ i ].z = ver->nor[ 2 ];
 
 		// ボーン
-		adjust_vertex->index[ i ].x = ( float )ver->bone_num[ 0 ];
-		adjust_vertex->index[ i ].y = ( float )ver->bone_num[ 1 ];
-		adjust_vertex->index[ i ].z = ( float )0;
-		adjust_vertex->index[ i ].w = ( float )0;
+		this->adjust_vertex->index[ i ].x = ( float )ver->bone_num[ 0 ];
+		this->adjust_vertex->index[ i ].y = ( float )ver->bone_num[ 1 ];
+		this->adjust_vertex->index[ i ].z = ( float )0;
+		this->adjust_vertex->index[ i ].w = ( float )0;
 
 		// 重み
-		adjust_vertex->weight[ i ].x = ver->bone_weight / 100.0f;
-		adjust_vertex->weight[ i ].y = 1 - adjust_vertex->weight[ i ].x;
-		adjust_vertex->weight[ i ].z = 0;
-		adjust_vertex->weight[ i ].w = 0;
+		this->adjust_vertex->weight[ i ].x = ver->bone_weight / 100.0f;
+		this->adjust_vertex->weight[ i ].y = 1 - this->adjust_vertex->weight[ i ].x;
+		this->adjust_vertex->weight[ i ].z = 0;
+		this->adjust_vertex->weight[ i ].w = 0;
 	}
 
 	// 最適化
-	mmdpiAdjust::adjust( adjust_vertex, mmdpiPmdLoad::vertex_num, face, face_num, adjust_material, material_num, mmdpiBone::bone, mmdpiPmdLoad::bone_num );
+	mmdpiAdjust::adjust( this->adjust_vertex, this->mmdpiPmdLoad::vertex_num,
+				this->face,this-> face_num,
+				this->adjust_material, this->material_num,
+				mmdpiBone::bone, mmdpiPmdLoad::bone_num );
 
 	// テクスチャ
-	load_texture();
+	this->load_texture();
 
 	//skin = new MMDPI_SKIN_INFO[ skin_num ];
 	//for( uint i = 0; i < skin_num; i ++ )
@@ -75,10 +79,10 @@ int mmdpiPmdAnalyze::analyze( void )
 	//}
 
 	// マテリアル情報の保存
-	for( dword j = 0; j < mesh.size(); j ++ )
+	for( dword j = 0; j < this->mesh.size(); j ++ )
 	{
-		MMDPI_PIECE*			m	= mesh[ j ]->b_piece;
-		MMDPI_PMD_MATERIAL_PTR		mpmx	= &material[ m->raw_material_id ];
+		MMDPI_PIECE*			m	= this->mesh[ j ]->b_piece;
+		MMDPI_PMD_MATERIAL_PTR		mpmx	= &mmdpiPmdLoad::material[ m->raw_material_id ];
 
 		m->edge_size = mpmx->edge_flag * 0.02f;
 
@@ -112,19 +116,19 @@ void mmdpiPmdAnalyze::load_texture( void )
 	dword	pi = 0;
 
 	// 一時的に読み込み
-	texture = new MMDPI_IMAGE[ material_num ];
-	if( texture == 0x00 )
+	this->texture = new MMDPI_IMAGE[ this->material_num ];
+	if( this->texture == 0x00 )
 		return ;
 
-	toon_texture = new MMDPI_IMAGE[ material_num ];
-	if( toon_texture == 0x00 )
+	this->toon_texture = new MMDPI_IMAGE[ this->material_num ];
+	if( this->toon_texture == 0x00 )
 		return ;
 
 	// 読み込み済みテクスチャのリスト
-	char**	loaded_texture_name = new char*[ material_num ];
+	char**	loaded_texture_name = new char*[ this->material_num ];
 	if( loaded_texture_name == 0x00 )
 		return ;
-	for( uint i = 0; i < material_num; i ++ )
+	for( uint i = 0; i < this->material_num; i ++ )
 	{
 		loaded_texture_name[ i ] = new char[ 0x200 ];
 		for( uint j = 0; j < 0x200; j ++ )
@@ -133,8 +137,8 @@ void mmdpiPmdAnalyze::load_texture( void )
 
 	for( dword i = 0; i < mesh.size(); i ++ )
 	{
-		MMDPI_PIECE*		m	= mesh[ i ]->b_piece;
-		MMDPI_PMD_MATERIAL_PTR	mpmx	= &material[ m->raw_material_id ];
+		MMDPI_PIECE*		m	= this->mesh[ i ]->b_piece;
+		MMDPI_PMD_MATERIAL_PTR	mpmx	= &mmdpiPmdLoad::material[ m->raw_material_id ];
 		int			ri;
 		char*			texture_file_name;
 
@@ -142,8 +146,8 @@ void mmdpiPmdAnalyze::load_texture( void )
 
 		char	texture_file_name_full[ 0x1000 ];
 		int	j, k;
-		for( k = 0; directory[ k ]; k ++ )
-			texture_file_name_full[ k ] = directory[ k ];
+		for( k = 0; mmdpiPmdLoad::directory[ k ]; k ++ )
+			texture_file_name_full[ k ] = mmdpiPmdLoad::directory[ k ];
 
 		for( j = 0;
 			texture_file_name[ j ]
@@ -217,10 +221,9 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 		if( sibling_id != -1 )
 			mmdpiModel::bone[ i ].sibling = &mmdpiModel::bone[ sibling_id ];
 
-		mmdpiModel::bone[ i ].init_mat.transelation( pbone[ i ].bone_head_pos[ 0 ], pbone[ i ].bone_head_pos[ 1 ], pbone[ i ].bone_head_pos[ 2 ] );
+		mmdpiModel::bone[ i ].init_matrix.transelation( pbone[ i ].bone_head_pos[ 0 ], pbone[ i ].bone_head_pos[ 1 ], pbone[ i ].bone_head_pos[ 2 ] );
 		mmdpiModel::bone[ i ].visible = 0;
 		mmdpiModel::bone[ i ].length = 0;
-
 
 		mmdpiModel::bone[ i ].name = new char[ 32 ];
 		strcpy( mmdpiModel::bone[ i ].name, pbone[ i ].bone_name );
@@ -228,32 +231,32 @@ int mmdpiPmdAnalyze::create_bone( MMDPI_PMD_BONE_INFO_PTR pbone, uint pbone_len 
 	}
 
 	for( dword i = 0; i < mmdpiModel::bone_num; i ++ )
-		mmdpiModel::bone[ i ].offset_mat = mmdpiModel::bone[ i ].init_mat.get_inverse();
+		mmdpiModel::bone[ i ].offset_matrix = mmdpiModel::bone[ i ].init_matrix.get_inverse();
 
 	// init_mat 初期化
-	init_mat_calc( &mmdpiModel::bone[ 0 ], 0 );
+	mmdpiBone::compute_init_matrix( &mmdpiModel::bone[ 0 ], 0x00 );
 
 	// 初期設定
-	refresh_bone_mat();
-	make_matrix( &mmdpiModel::bone[ 0 ], 0 );
+	mmdpiBone::refresh_bone_mat();
+	mmdpiBone::update_global_matrix( &mmdpiModel::bone[ 0 ], 0x00 );
 
 	return 0;
 }
 
 mmdpiPmdAnalyze::mmdpiPmdAnalyze()
 {
-	adjust_material = 0x00;
-	adjust_vertex	= 0x00;
+	this->adjust_material = 0x00;
+	this->adjust_vertex	= 0x00;
 
-	texture		= 0x00;
-	toon_texture	= 0x00;
+	this->texture		= 0x00;
+	this->toon_texture	= 0x00;
 }
 
 mmdpiPmdAnalyze::~mmdpiPmdAnalyze()
 {
-	delete[] adjust_material;
-	delete adjust_vertex;
+	delete[] this->adjust_material;
+	delete this->adjust_vertex;
 
-	delete[] texture;
-	delete[] toon_texture;
+	delete[] this->texture;
+	delete[] this->toon_texture;
 }

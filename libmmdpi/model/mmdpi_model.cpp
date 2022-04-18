@@ -23,12 +23,12 @@ void mmdpiModel::draw( void )
 	//skin_update( 0 );
 
 	// ローカル行列に変換
-	this->make_local_matrix();
+	this->update_local_matrix();
 	this->refresh_bone_mat();
 
 	// ボーン行列をシェーダに送る準備
 	for( dword i = 0; i < this->mesh.size(); i ++ )
-		this->mesh[ i ]->update_matrix( this->mmdpiBone::bone, this->mmdpiBone::bone_num );
+		this->mesh[ i ]->update_gpu_cache_matrix( this->mmdpiBone::bone, this->mmdpiBone::bone_num );
 
 	// Using My Shader
 	this->shader_on();

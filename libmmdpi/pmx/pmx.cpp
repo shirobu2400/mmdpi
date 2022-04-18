@@ -11,7 +11,7 @@ int mmdpiPmx::load( const char* pmx_name )
 
 	// bullet
 	// Make bone matrix
-	this->global_matrix();
+	mmdpiBone::update_global_matrix_all();
 	this->phy_load_flag = 0;
 	if( this->bullet_flag == 0 )
 		return 0;

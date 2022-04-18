@@ -4,12 +4,11 @@ cmake_minimum_required(VERSION 2.6)
 # project name option(C=C, CXX=C++)
 project(mmdpiv CXX)
 
+# # Release options
+# set(CMAKE_CXX_FLAG_RELEASE "-O2")
 
-# Release options
-set(CMAKE_CXX_FLAG_RELEASE "-O2")
-
-# Debug options
-set(CMAKE_CXX_FLAG_DEBUG "-O0 -ggdb3 -fno-inline")
+# # Debug options
+# set(CMAKE_CXX_FLAG_DEBUG "-O0 -ggdb3 -fno-inline")
 
 # compile type
 # set(CMAKE_BUILD_TYPE Release)
