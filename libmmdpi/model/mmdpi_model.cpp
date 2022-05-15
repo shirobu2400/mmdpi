@@ -100,6 +100,21 @@ int mmdpiModel::option_disable( void )
 	return 0;
 }
 
+MMDPI_BONE_INFO_PTR mmdpiModel::get_bone( std::string bonename )
+{
+	int	index = this->get_bonename2index( bonename );
+	if( index < 0 || mmdpiBone::bone_num <= index )
+		return 0x00;
+	return &mmdpiBone::bone[ index ];
+}
+
+MMDPI_BONE_INFO_PTR mmdpiModel::get_bone( int index )
+{
+	if( index < 0 || mmdpiBone::bone_num <= index )
+		return 0x00;
+	return &mmdpiBone::bone[ index ];
+}
+
 void mmdpiModel::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	mmdpiBone::set_bone_matrix( bone_index, matrix );
@@ -123,11 +138,21 @@ int mmdpiModel::get_bone_num( void )
 	return ( signed int )this->bone_num;
 }
 
+int mmdpiModel::get_bonename2index( std::string name )
+{
+	for( int i = 0; i < mmdpiBone::bone_num; i ++ )
+	{
+		std::string	bonename = std::string( mmdpiBone::bone[ i ].name );
+		if( bonename == name )
+			return i;
+	}
+	return -1;
+}
+
 char* mmdpiModel::get_bone_name( int index, int coding_is_sjis )
 {
 	if( index < 0 || ( signed )this->bone_num <= index )
 		return 0x00;
-
 	MMDPI_BONE_INFO_PTR	this_bone = &mmdpiBone::bone[ index ];
 	if( coding_is_sjis && !is_pmd )
 		return this_bone->sjis_name;

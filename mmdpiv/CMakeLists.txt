@@ -63,14 +63,16 @@ endif()
 find_package(PNG REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
-find_package(GLEW REQUIRED)
-find_library(GLUT_glut_LIBRARY NAMES GLUT glut32 freeglut
-    PATHS
-    ${OPENGL_LIBRARY_DIR}
-    ${GLUT_ROOT_PATH}/Release
-)
+if(NOT pi)
+	find_package(OpenGL REQUIRED)
+	find_package(GLUT REQUIRED)
+	find_package(GLEW REQUIRED)
+	find_library(GLUT_glut_LIBRARY NAMES GLUT glut32 freeglut
+		PATHS
+		${OPENGL_LIBRARY_DIR}
+		${GLUT_ROOT_PATH}/Release
+	)
+endif()
 
 #find_package(GLESv2)
 #find_package(EGL)

@@ -94,13 +94,13 @@ int mmdpi::vmd_load( std::string motion_name, std::string file_name )
 
 	if( this->pmx )
 	{
-		bone = this->pmx->get_bone();
+		bone = this->pmx->get_bone( 0x00 );
 		lvmd->create_bone_map_pmx( pmx->get_pmx_bone(), pmx->get_bone_num() );
 		//lvmd->create_morph_map_pmx( mmdpiPmxLoad::morph, mmdpiPmxLoad::morph_num );
 	}
 	else if( pmd )
 	{
-		bone = this->pmd->get_bone();
+		bone = this->pmd->get_bone( 0x00 );
 		lvmd->create_bone_map( this->pmd->get_pmd_bone(), this->pmd->get_bone_num() );
 		//lvmd->create_morph_map_pmx( mmdpiPmxLoad::morph, mmdpiPmxLoad::morph_num );
 	}
