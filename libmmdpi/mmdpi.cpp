@@ -42,14 +42,14 @@ void mmdpi::draw( void )
 		this->pmd->draw();
 }
 
-void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix )
+void mmdpi::set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix )
 {
 	this->pmm->set_bone_matrix( bone_index, matrix );
 }
 
-void mmdpi::set_bone_matrix( const char* bone_name, mmdpiMatrix& matrix )
+void mmdpi::set_bone_matrix( std::string bone_name, const mmdpiMatrix& matrix )
 {
-	this->pmm->set_bone_matrix( bone_name, matrix );
+	this->pmm->set_bone_matrix( bone_name.c_str(), matrix );
 }
 
 int mmdpi::get_bone_num( void )

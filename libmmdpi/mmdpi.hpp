@@ -30,8 +30,8 @@ public:
 
 	virtual void		draw( void );
 
-	virtual void		set_bone_matrix( uint bone_index, mmdpiMatrix& matrix );
-	virtual void		set_bone_matrix( const char* bone_name, mmdpiMatrix& matrix );	// set bone matrix
+	virtual void		set_bone_matrix( uint bone_index, const mmdpiMatrix& matrix );
+	virtual void		set_bone_matrix( std::string bone_name, const mmdpiMatrix& matrix );	// set bone matrix
 	virtual	int		get_bone_num( void );
 	virtual	char*		get_bone_name( int index, int coding_is_sjis = __MMDPI__SJIS__FLAG__ );
 
