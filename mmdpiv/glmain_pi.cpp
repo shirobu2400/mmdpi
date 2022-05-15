@@ -246,7 +246,7 @@ void draw( void )
 			//	60fpsで実行の場合、0.5frame ずつフレームにたいしてモーションを進める
 			( *p->vmd( std::string( "motion" ) ) ) += frame;
 		}
-		p->set_bone_matrix( std::string( "motion" ), Model_offset );
+		p->set_bone_matrix( 0, Model_offset );
 		p->draw();
 	}
 }
