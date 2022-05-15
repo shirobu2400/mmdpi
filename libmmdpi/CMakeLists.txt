@@ -29,6 +29,8 @@ set(libmmdpi_src
 	model/tools/tga_image.cpp
 	model/tools/utf8_sjis.cpp
 
+	model/bullet/mmdpi_bullet.cpp
+
 	model/mmdpi_model.cpp
 	model/mmdpi_shader.cpp
 	model/mmdpi_adjust.cpp
