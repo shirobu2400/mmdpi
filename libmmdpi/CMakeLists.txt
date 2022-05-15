@@ -115,14 +115,16 @@ set(libmmdpi_bullet_src
 
 find_package(PNG REQUIRED)
 find_package(JPEG REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
-find_package(GLEW REQUIRED)
-find_library(GLUT_glut_LIBRARY NAMES glut glut32 freeglut
-    PATHS
-    ${OPENGL_LIBRARY_DIR}
-    ${GLUT_ROOT_PATH}/Release
-)
+if(NOT pi)
+	find_package(OpenGL REQUIRED)
+	find_package(GLUT REQUIRED)
+	find_package(GLEW REQUIRED)
+	find_library(GLUT_glut_LIBRARY NAMES glut glut32 freeglut
+		PATHS
+		${OPENGL_LIBRARY_DIR}
+		${GLUT_ROOT_PATH}/Release
+	)
+endif()
 
 #	OpenGL
 if(GLUT_FOUND)
