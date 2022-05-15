@@ -566,7 +566,7 @@ int main( int argc, char *argv[] )
 	Mat4	delta_mat;
 	makeUnit( &delta_mat );
 
-	glViewport(0, 0, g_sc.width, g_sc.height);
+	glViewport( 0, 0, g_sc.width, g_sc.height );
 
 	if( p == 0x00 )
 		return -1;

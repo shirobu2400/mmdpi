@@ -47,7 +47,7 @@ void mmdpi::set_bone_matrix( uint bone_index, mmdpiMatrix& matrix )
 	this->pmm->set_bone_matrix( bone_index, matrix );
 }
 
-void mmdpi::set_bone_matrix( const char* bone_name, const mmdpiMatrix& matrix )
+void mmdpi::set_bone_matrix( const char* bone_name, mmdpiMatrix& matrix )
 {
 	this->pmm->set_bone_matrix( bone_name, matrix );
 }
