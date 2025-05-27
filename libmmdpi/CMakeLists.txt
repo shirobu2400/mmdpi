@@ -135,19 +135,15 @@ else()
 	add_definitions(-D_MMDPI_OPENGL_ES_DEFINES_)
 	add_definitions(-D_MMDPI_PRIJECTION_MATRIX_SELF_)
 endif()
-
 include_directories(${GLEW_INCLUDE_DIRS})
 link_libraries(${GLEW_LIBRARIES})
 
 # Bullet
-find_package(Bullet)
-# if(bullet AND Bullet_FOUND)
-if(Bullet_FOUND)
-	set(libmmdpi_src ${libmmdpi_src} ${libmmdpi_bullet_src})
+find_package(Bullet REQUIRED)
+set(libmmdpi_src ${libmmdpi_src} ${libmmdpi_bullet_src})
 
-	add_definitions(-D_MMDPI_USING_PHYSICS_ENGINE_)
-	include_directories(Bullet_INCLUDE_DIRS /usr/local/include/bullet)
-endif()
+add_definitions(-D_MMDPI_USING_PHYSICS_ENGINE_)
+include_directories(Bullet_INCLUDE_DIRS /usr/local/include/bullet)
 
 # Outline
 # It needs a lot of VRAM.
